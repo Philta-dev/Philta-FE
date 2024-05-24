@@ -1,9 +1,9 @@
 import {StyleSheet, Text, View} from 'react-native';
 
-export default function Home() {
+export default function Favorite() {
   return (
     <View>
-      <Text>Home</Text>
+      <Text>Favorite</Text>
     </View>
   );
 }
