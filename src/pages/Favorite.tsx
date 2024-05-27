@@ -1,3 +1,4 @@
+import HorizontalPicker from '@vseslav/react-native-horizontal-picker';
 import {useRef, useState} from 'react';
 import {
   Animated,
@@ -7,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import {LinearGradient} from 'react-native-linear-gradient';
 
 const buttonWidth = 60;
 export default function Favorite() {
@@ -14,10 +16,10 @@ export default function Favorite() {
   const scrollRef2 = useRef(null);
   const scrollRef3 = useRef(null);
   const scrollRef4 = useRef(null);
-  const [testamentFocusedIndex, setTestamentFocusedIndex] = useState(2);
-  const [bookFocusedIndex, setBookFocusedIndex] = useState(2);
-  const [chapFocusedIndex, setChapFocusedIndex] = useState(2);
-  const [verseFocusedIndex, setVerseFocusedIndex] = useState(2);
+  const [testamentFocusedIndex, setTestamentFocusedIndex] = useState(0);
+  const [bookFocusedIndex, setBookFocusedIndex] = useState(0);
+  const [chapFocusedIndex, setChapFocusedIndex] = useState(0);
+  const [verseFocusedIndex, setVerseFocusedIndex] = useState(0);
   const testament = ['구약', '신약'];
   const bookOld = ['창세기', '출애굽기', '레위기', '민수기', '신명기'];
   const bookNew = ['마태복음', '마가복음', '누가복음', '요한복음', '사도행전'];
@@ -63,9 +65,77 @@ export default function Favorite() {
       </View>
     );
   };
+
   return (
-    <View style={{backgroundColor: 'skyblue'}}>
-      <ScrollView
+    <View style={{backgroundColor: 'white'}}>
+      <View>
+        <HorizontalPicker
+          style={{marginHorizontal: 10}}
+          data={testament}
+          itemWidth={60}
+          defaultIndex={0}
+          onChange={index => setTestamentFocusedIndex(index)}
+          renderItem={(item, index) => (
+            <View style={styles.button}>
+              <Text style={styles.buttonTxt}>{item}</Text>
+            </View>
+          )}
+        />
+        <HorizontalPicker
+          data={testamentFocusedIndex == 0 ? bookOld : bookNew}
+          itemWidth={60}
+          defaultIndex={0}
+          onChange={index => setBookFocusedIndex(index)}
+          renderItem={(item, index) => (
+            <View style={styles.button}>
+              <Text style={styles.buttonTxt}>{item}</Text>
+            </View>
+          )}
+        />
+        <HorizontalPicker
+          data={chap}
+          itemWidth={60}
+          defaultIndex={0}
+          onChange={index => setChapFocusedIndex(index)}
+          renderItem={(item, index) => (
+            <View style={styles.button}>
+              <Text style={styles.buttonTxt}>{item}</Text>
+            </View>
+          )}
+        />
+        <HorizontalPicker
+          data={verse}
+          itemWidth={60}
+          defaultIndex={0}
+          onChange={index => setVerseFocusedIndex(index)}
+          renderItem={(item, index) => (
+            <View style={styles.button}>
+              <Text style={styles.buttonTxt}>{item}</Text>
+            </View>
+          )}
+        />
+        <LinearGradient
+          pointerEvents="none"
+          colors={['white', 'transparent', 'white']}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          style={[styles.overlay]}
+        />
+      </View>
+      <View style={styles.overlayFocus} pointerEvents="none">
+        <View style={styles.overlayVisible}></View>
+      </View>
+      <Text style={styles.buttonTxt}>{`
+        ${testament[testamentFocusedIndex]} 
+        ${
+          testamentFocusedIndex == 0
+            ? bookOld[bookFocusedIndex]
+            : bookNew[bookFocusedIndex]
+        } 
+        ${chap[chapFocusedIndex]}장 
+        ${verse[verseFocusedIndex]}절
+      `}</Text>
+      {/* <ScrollView
         ref={scrollRef1}
         horizontal={true}
         style={styles.scrollView}
@@ -158,7 +228,7 @@ export default function Favorite() {
           '장 ' +
           verse[verseFocusedIndex - 2] +
           '절'}
-      </Text>
+      </Text> */}
     </View>
   );
 }
@@ -168,25 +238,27 @@ const styles = StyleSheet.create({
   button: {
     width: buttonWidth,
     height: 60,
-    backgroundColor: 'pink',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonTxt: {},
+  buttonTxt: {color: 'black'},
 
-  overlay: {
-    width: 5 * buttonWidth,
-    height: 240 + 10 * 8,
+  overlayFocus: {
+    height: 240,
     position: 'absolute',
     top: 0,
-    left: 10,
+    right: 0,
+    left: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
   overlayVisible: {
-    height: 240 + 10 * 8,
+    height: 240,
     width: buttonWidth,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0,0,0,0.1)',
     borderRadius: 10,
   },
 });
