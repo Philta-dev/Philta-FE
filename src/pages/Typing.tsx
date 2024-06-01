@@ -1,17 +1,11 @@
-import {
-  Pressable,
-  StyleSheet,
-  TextInput,
-  View,
-  Text,
-  Keyboard,
-} from 'react-native';
+import {Pressable, StyleSheet, TextInput, View, Keyboard} from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import Svg, {Line} from 'react-native-svg';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {RootStackParamList, RootTabParamList} from '../../AppInner';
+import {RootTabParamList} from '../../AppInner';
 import MyModal from '../components/MyModal';
+import Text from '../components/Text';
 
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
@@ -36,7 +30,7 @@ export default function Typing(props: TypingProps) {
   }, []);
 
   useEffect(() => {
-    const KeyboardDismiss = Keyboard.addListener('keyboardDidHide', () => {
+    const KeyboardDismiss = Keyboard.addListener('keyboardWillHide', () => {
       ref.current?.blur();
     });
 

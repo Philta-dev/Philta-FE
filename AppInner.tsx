@@ -7,7 +7,7 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 
 import {useSelector} from 'react-redux';
 import {RootState} from './src/store';
@@ -21,13 +21,20 @@ import Typing from './src/pages/Typing';
 import SignIn from './src/pages/SignIn';
 import Indexing from './src/pages/Indexing';
 import Favorite from './src/pages/Favorite';
+import EnterName from './src/pages/EnterName';
+import PhoneLogin from './src/pages/PhoneLogin';
+import Text from './src/components/Text';
 
-export type RootStackParamList = {
+export type SignInNavParamList = {
   SignIn: undefined;
+  EnterName: undefined;
+  PhoneLogin: undefined;
 };
 
-export type RootStackNavigationProp =
-  NativeStackNavigationProp<RootStackParamList>;
+export type SignInNavNavigationProp =
+  NativeStackNavigationProp<SignInNavParamList>;
+
+const Stack = createNativeStackNavigator<SignInNavParamList>();
 
 export type RootTabParamList = {
   Typing: undefined;
@@ -37,7 +44,6 @@ export type RootTabParamList = {
 
 export type RootTabNavigationProp = BottomTabNavigationProp<RootTabParamList>;
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const CustomTabbar = ({state, descriptors, navigation}: any) => {
@@ -92,10 +98,10 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 };
 
 function AppInner() {
-  // const isLoggedIn = useSelector(
-  //   (state: RootState) => !!state.user.accessToken,
-  // );
-  const isLoggedIn = true;
+  const isLoggedIn = useSelector(
+    (state: RootState) => !!state.user.accessToken,
+  );
+  // const isLoggedIn = true;
   return (
     <NavigationContainer>
       {isLoggedIn ? (
@@ -112,6 +118,8 @@ function AppInner() {
         <Safe color="#202020">
           <Stack.Navigator>
             <Stack.Screen name="SignIn" component={SignIn} />
+            <Stack.Screen name="EnterName" component={EnterName} />
+            <Stack.Screen name="PhoneLogin" component={PhoneLogin} />
           </Stack.Navigator>
         </Safe>
       )}

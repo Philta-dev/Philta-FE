@@ -1,12 +1,6 @@
 import {useState} from 'react';
-import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {FlatList, Pressable, ScrollView, StyleSheet, View} from 'react-native';
+import Text from '../components/Text';
 
 export default function Indexing() {
   const [bookname, setBookname] = useState(-1);

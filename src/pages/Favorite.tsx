@@ -1,14 +1,8 @@
 import HorizontalPicker from '@vseslav/react-native-horizontal-picker';
 import {useRef, useState} from 'react';
-import {
-  Animated,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Animated, Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import {LinearGradient} from 'react-native-linear-gradient';
+import Text from '../components/Text';
 
 const buttonWidth = 60;
 export default function Favorite() {
