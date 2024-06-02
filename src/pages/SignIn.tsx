@@ -4,6 +4,10 @@ import Config from 'react-native-config';
 import {SignInNavParamList} from '../../AppInner';
 import Text from '../components/Text';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
+import axios from 'axios';
+import {useAppDispatch} from '../store';
+import userSlice from '../slices/user';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -16,6 +20,7 @@ type SignInProps = {
 
 export default function SignIn(props: SignInProps) {
   const navigation = props.navigation;
+  const dispatch = useAppDispatch();
 
   const LoginWithKakao = async () => {
     console.log('카카오 로그인');
@@ -24,6 +29,29 @@ export default function SignIn(props: SignInProps) {
     try {
       console.log(token);
       console.log(profile.nickname);
+      const response = await axios.post(`${Config.API_URL}/auth/login`, {
+        socialType: 'kakao',
+        kakaoAccessToken: token.accessToken,
+      });
+      console.log(response.data);
+      if (response.data.isNew) {
+        dispatch(
+          userSlice.actions.setUser({
+            preAcc: response.data.accessToken,
+            preRef: response.data.refreshToken,
+          }),
+        );
+
+        navigation.navigate('EnterName');
+      } else {
+        dispatch(
+          userSlice.actions.setToken({accessToken: response.data.accessToken}),
+        );
+        await EncryptedStorage.setItem(
+          'refreshToken',
+          response.data.refreshToken,
+        );
+      }
     } catch (error) {
       console.log(error);
     }
