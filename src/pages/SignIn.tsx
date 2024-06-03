@@ -8,6 +8,7 @@ import axios from 'axios';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import appleAuth from '@invertase/react-native-apple-authentication';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -32,6 +33,55 @@ export default function SignIn(props: SignInProps) {
       const response = await axios.post(`${Config.API_URL}/auth/login`, {
         socialType: 'kakao',
         kakaoAccessToken: token.accessToken,
+      });
+      console.log(response.data);
+      if (response.data.isNew) {
+        dispatch(
+          userSlice.actions.setUser({
+            preAcc: response.data.accessToken,
+            preRef: response.data.refreshToken,
+          }),
+        );
+
+        navigation.navigate('EnterName');
+      } else {
+        dispatch(
+          userSlice.actions.setToken({accessToken: response.data.accessToken}),
+        );
+        await EncryptedStorage.setItem(
+          'refreshToken',
+          response.data.refreshToken,
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const LoginWithApple = async () => {
+    console.log('애플 로그인');
+    const applelAuthResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+    });
+    console.log(applelAuthResponse);
+    const {authorizationCode, fullName} = applelAuthResponse;
+
+    const familyName = fullName?.familyName;
+    const givenName = fullName?.givenName;
+    let name = '';
+    if (familyName !== null) {
+      name = name + familyName;
+    }
+    if (givenName !== null) {
+      name = name + givenName;
+    }
+    try {
+      console.log(authorizationCode);
+      console.log(name);
+      const response = await axios.post(`${Config.API_URL}/auth/login`, {
+        socialType: 'apple',
+        appleAccessToken: authorizationCode,
       });
       console.log(response.data);
       if (response.data.isNew) {
