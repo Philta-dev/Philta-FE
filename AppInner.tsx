@@ -116,7 +116,11 @@ function AppInner() {
         </Safe>
       ) : (
         <Safe color="#202020">
-          <Stack.Navigator>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+              contentStyle: {backgroundColor: '#FFFFFF'},
+            }}>
             <Stack.Screen name="SignIn" component={SignIn} />
             <Stack.Screen name="EnterName" component={EnterName} />
             <Stack.Screen name="PhoneLogin" component={PhoneLogin} />

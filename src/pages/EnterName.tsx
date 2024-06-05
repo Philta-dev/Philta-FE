@@ -1,16 +1,53 @@
-import {Pressable, StyleSheet, TextInput, View} from 'react-native';
+import {
+  BackHandler,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 import Text from '../components/Text';
-import {useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
 import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useSelector} from 'react-redux';
+import {SvgXml} from 'react-native-svg';
+import {svgList} from '../assets/svgList';
+import {SignInNavParamList} from '../../AppInner';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-export default function EnterName() {
+type EnterNameNavigationProp = NativeStackNavigationProp<
+  SignInNavParamList,
+  'EnterName'
+>;
+
+type EnterNameProps = {
+  navigation: EnterNameNavigationProp;
+};
+
+export default function EnterName(props: EnterNameProps) {
+  const [keyBoardStatus, setKeyBoardStatus] = useState(false);
   const [name, setName] = useState('');
   const nameRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    const keyBoardShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyBoardStatus(true);
+    });
+    const keyBoardHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyBoardStatus(false);
+      nameRef.current?.blur();
+    });
+    nameRef.current?.focus();
+
+    return () => {
+      keyBoardShowListener.remove();
+      keyBoardHideListener.remove();
+    };
+  }, []);
   const dispatch = useAppDispatch();
   const accessToken = useSelector((state: RootState) => state.user.preAcc);
   const refreshToken = useSelector((state: RootState) => state.user.preRef);
@@ -33,32 +70,84 @@ export default function EnterName() {
     }
   };
   return (
-    <View>
-      <Text>EnterName</Text>
-      <TextInput
-        placeholder="이름"
-        style={styles.input}
-        placeholderTextColor={'#3C3C4399'}
-        value={name}
-        onChangeText={e => setName(e.trim())}
-        ref={nameRef}
-        onSubmitEditing={() => {
-          enterName();
-        }}
-      />
-      <Pressable onPress={() => enterName()}>
-        <Text>이름 입력</Text>
+    <View
+      style={[
+        styles.entire,
+        keyBoardStatus ? {paddingBottom: 40} : {paddingBottom: 80},
+      ]}>
+      <View>
+        <Pressable
+          style={styles.backBtn}
+          onPress={() => props.navigation.goBack()}>
+          <SvgXml xml={svgList.backBtn} width={24} height={24} />
+        </Pressable>
+        <Text style={styles.titleTxt}>
+          {'이름을 입력하면\n 회원가입이 완료됩니다.'}
+        </Text>
+        <TextInput
+          placeholder="이름"
+          style={styles.input}
+          placeholderTextColor={'#3C3C4399'}
+          value={name}
+          onChangeText={e => setName(e.trim())}
+          ref={nameRef}
+          onSubmitEditing={() => {
+            enterName();
+          }}
+        />
+      </View>
+      <Pressable
+        onPress={() => enterName()}
+        style={[
+          styles.submitBtn,
+          name ? {backgroundColor: '#5856D6'} : {backgroundColor: '#9B9EA5'},
+        ]}>
+        <Text style={styles.btnTxt}>완료</Text>
       </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  entire: {
+    padding: 20,
+    flex: 1,
+    backgroundColor: 'white',
+    justifyContent: 'space-between',
+  },
+  backBtn: {
+    marginLeft: 4,
+  },
+  titleTxt: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginVertical: 24,
+  },
   input: {
-    borderColor: '#3C3C4399',
-    borderWidth: 1,
-    borderRadius: 7,
     backgroundColor: 'white',
     color: 'black',
+    fontSize: 16,
+    fontWeight: '400',
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: '#000000',
+    paddingBottom: 12,
+    paddingHorizontal: 2,
+    textAlignVertical: 'bottom',
+  },
+  submitBtn: {
+    borderRadius: 7,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  btnTxt: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: 'white',
   },
 });

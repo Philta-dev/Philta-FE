@@ -9,6 +9,8 @@ import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import {SvgXml} from 'react-native-svg';
+import {svgList} from '../assets/svgList';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -107,33 +109,75 @@ export default function SignIn(props: SignInProps) {
     }
   };
   return (
-    <View>
+    <View style={styles.entire}>
       {/* <Text>{Config.API_URL}</Text> */}
-      <Pressable style={styles.kakao} onPress={() => LoginWithKakao()}>
-        <Text>카카오</Text>
-      </Pressable>
-      <Pressable style={styles.apple}>
-        <Text>애플</Text>
-      </Pressable>
-      <Pressable
-        style={styles.phone}
-        onPress={() => {
-          navigation.navigate('PhoneLogin');
-        }}>
-        <Text>전화번호</Text>
-      </Pressable>
+      <View style={styles.title}>
+        <Text style={styles.titleTxt}>필타</Text>
+      </View>
+      <View style={styles.btnView}>
+        <Pressable
+          style={[styles.btn, {backgroundColor: '#FEE500'}]}
+          onPress={() => LoginWithKakao()}>
+          <SvgXml xml={svgList.socialLogin.kakao} width={48} height={48} />
+          <Text style={[styles.btnTxt, {color: '#191919'}]}>
+            카카오로 시작하기
+          </Text>
+        </Pressable>
+        <Pressable style={[styles.btn, {backgroundColor: '#000000'}]}>
+          <SvgXml xml={svgList.socialLogin.apple} width={48} height={48} />
+          <Text style={[styles.btnTxt, {color: '#FFFFFF'}]}>
+            Apple로 시작하기
+          </Text>
+        </Pressable>
+        <Pressable
+          style={[styles.btn, {backgroundColor: '#999999F7', padding: 12}]}
+          onPress={() => {
+            navigation.navigate('PhoneLogin');
+          }}>
+          <Text style={[styles.btnTxt, {color: '#48484A'}]}>
+            핸드폰 번호로 시작하기
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  kakao: {
+  entire: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  title: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 50,
+  },
+  titleTxt: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  btnView: {
+    flex: 3,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '100%',
+  },
+  btn: {
+    width: '100%',
+    // padding: 12,
+    marginBottom: 16,
     backgroundColor: '#FEE500',
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
   },
-  apple: {
-    backgroundColor: '#000000',
-  },
-  phone: {
-    backgroundColor: '#999999F7',
+  btnTxt: {
+    fontSize: 15,
+    fontWeight: '700',
   },
 });

@@ -7,8 +7,22 @@ import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useSelector} from 'react-redux';
 import Text from '../components/Text';
+import {SvgXml} from 'react-native-svg';
+import {svgList} from '../assets/svgList';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {SignInNavParamList} from '../../AppInner';
 
-export default function PhoneLogin() {
+type PhoneLoginNavigationProp = NativeStackNavigationProp<
+  SignInNavParamList,
+  'PhoneLogin'
+>;
+
+type PhoneLoginProps = {
+  navigation: PhoneLoginNavigationProp;
+};
+
+export default function PhoneLogin(props: PhoneLoginProps) {
+  const [keyBoardStatus, setKeyBoardStatus] = useState(false);
   const [time, setTime] = useState(180);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -21,7 +35,6 @@ export default function PhoneLogin() {
   const phoneRef = useRef<TextInput>(null);
   const authRef = useRef<TextInput>(null);
   const dispatch = useAppDispatch();
-  const accessToken = useSelector((state: RootState) => state.user.accessToken);
 
   useEffect(() => {
     if (isSent) {
@@ -39,15 +52,19 @@ export default function PhoneLogin() {
   }, [time]);
 
   useEffect(() => {
-    const keyboardHandler = Keyboard.addListener('keyboardWillHide', () => {
+    nameRef.current?.focus();
+    const keyboardHandler = Keyboard.addListener('keyboardDidHide', () => {
       nameRef.current?.blur();
-      phoneRef.current?.blur();
-      authRef.current?.blur();
+      setKeyBoardStatus(false);
+    });
+    const keyboardShowHandler = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyBoardStatus(true);
     });
     return () => {
       keyboardHandler.remove();
+      keyboardShowHandler.remove();
     };
-  });
+  }, []);
 
   const sendAuthNum = async () => {
     try {
@@ -59,7 +76,9 @@ export default function PhoneLogin() {
       );
       console.log(response.data);
       setIsSent(true);
-      authRef.current?.focus();
+      setTimeout(() => {
+        authRef.current?.focus();
+      }, 500);
     } catch (error: any) {
       const errorResponse = error.response;
       console.log('cannot send auth msg', error);
@@ -117,56 +136,79 @@ export default function PhoneLogin() {
     return `${min}:${remainSec > 9 ? '' : '0'}${remainSec}`;
   };
   return (
-    <View>
-      <Text>PhoneLogin</Text>
-      <TextInput
-        placeholder="이름"
-        style={styles.input}
-        placeholderTextColor={'#3C3C4399'}
-        value={name}
-        onChangeText={e => setName(e.trim())}
-        editable={!isSent}
-        ref={nameRef}
-        onSubmitEditing={() => {
-          phoneRef.current?.focus();
-        }}
-      />
-      <TextInput
-        placeholder="전화번호"
-        style={styles.input}
-        placeholderTextColor={'#3C3C4399'}
-        value={phone}
-        onChangeText={e => {
-          setPhone(e.trim());
-        }}
-        editable={!isSent}
-        ref={phoneRef}
-        onSubmitEditing={() => {
-          sendAuthNum();
-          authRef.current?.focus();
-        }}
-      />
-      {isSent && (
+    <View
+      style={[
+        styles.entire,
+        keyBoardStatus ? {paddingBottom: 40} : {paddingBottom: 80},
+      ]}>
+      <View>
+        <Pressable
+          style={styles.backBtn}
+          onPress={() => props.navigation.goBack()}>
+          <SvgXml xml={svgList.backBtn} width={24} height={24} />
+        </Pressable>
+        <Text style={styles.titleTxt}>회원가입</Text>
         <TextInput
-          placeholder="인증번호"
+          placeholder="이름"
           style={styles.input}
           placeholderTextColor={'#3C3C4399'}
-          value={authNum}
-          onChangeText={e => setAuthNum(e.trim())}
-          ref={authRef}
+          value={name}
+          onChangeText={e => setName(e.trim())}
+          editable={!isSent}
+          ref={nameRef}
+          onSubmitEditing={() => {
+            phoneRef.current?.focus();
+          }}
         />
-      )}
-      {isSent && (
-        <View>
-          <Text style={styles.timer}>{formatSectoMin(time)}</Text>
-        </View>
-      )}
-      {isSent && (
-        <Pressable onPress={() => checkAuthNum()}>
-          <Text>인증번호 확인</Text>
-        </Pressable>
-      )}
-      {phoneToken && <Text>{phoneToken}</Text>}
+        <TextInput
+          placeholder="전화번호"
+          style={styles.input}
+          placeholderTextColor={'#3C3C4399'}
+          value={phone}
+          onChangeText={e => {
+            setPhone(e.trim());
+          }}
+          editable={!isSent}
+          ref={phoneRef}
+          blurOnSubmit={false}
+          keyboardType="number-pad"
+          onSubmitEditing={() => {
+            if (isValidPhoneNum(phone)) {
+              sendAuthNum();
+            } else {
+              phoneRef.current?.focus();
+            }
+          }}
+        />
+        {isSent && (
+          <View>
+            <Pressable
+              onPress={() => checkAuthNum()}
+              style={[
+                styles.authBtn,
+                authNum.length == 6
+                  ? {backgroundColor: '#5856D6'}
+                  : {backgroundColor: '#989BA2F7'},
+              ]}>
+              <Text style={styles.authBtnTxt}>인증하기</Text>
+            </Pressable>
+
+            <TextInput
+              placeholder="인증번호"
+              style={[styles.input, {marginBottom: 10}]}
+              placeholderTextColor={'#3C3C4399'}
+              value={authNum}
+              onChangeText={e => setAuthNum(e.trim())}
+              ref={authRef}
+            />
+            <Text style={styles.timer}>{formatSectoMin(time)}</Text>
+            {isVerified && (
+              <Text style={styles.authTxt}>인증이 완료되었습니다.</Text>
+            )}
+          </View>
+        )}
+        {phoneToken && <Text>{phoneToken}</Text>}
+      </View>
       <Pressable
         disabled={
           !isValidPhoneNum(phone) ||
@@ -190,29 +232,80 @@ export default function PhoneLogin() {
           time <= 0 ||
           (isSent && !isVerified)
             ? {backgroundColor: '#C6C6C8'}
-            : {backgroundColor: '#000000'},
+            : {backgroundColor: '#5856D6'},
         ]}>
-        {!isSent ? <Text>인증번호 받기</Text> : <Text>가입하기</Text>}
-      </Pressable>
-      <Pressable onPress={() => console.log(accessToken)}>
-        <Text>acct</Text>
+        {!isSent ? (
+          <Text style={styles.btnTxt}>인증번호 받기</Text>
+        ) : (
+          <Text style={styles.btnTxt}>가입하기</Text>
+        )}
       </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  entire: {
+    padding: 20,
+    flex: 1,
+    backgroundColor: 'white',
+    justifyContent: 'space-between',
+  },
+  backBtn: {
+    marginLeft: 4,
+  },
+  titleTxt: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginVertical: 24,
+  },
   input: {
     borderColor: '#3C3C4399',
     borderWidth: 1,
     borderRadius: 7,
     backgroundColor: 'white',
+    marginBottom: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     color: 'black',
+    fontSize: 16,
+    fontWeight: '400',
   },
-  enterBtn: {
-    borderRadius: 7,
+  authBtn: {
+    borderRadius: 4,
+    backgroundColor: '#989BA2F7',
+    position: 'absolute',
+    right: 0,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    zIndex: 1,
+  },
+  authBtnTxt: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
   },
   timer: {
     color: '#FF3B30',
+    width: '100%',
+    textAlign: 'right',
+  },
+  authTxt: {
+    color: '#3C3C4399',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  enterBtn: {
+    borderRadius: 7,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  btnTxt: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: 'white',
   },
 });
