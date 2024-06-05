@@ -42,25 +42,26 @@ const useAxiosInterceptor = () => {
               }),
             );
           }
-          const resp = await axios.post(`${Config.API_URL}/auth/reissue`, {
+          const resp = await axios.post(`${Config.API_URL}/auth/token`, {
             refreshToken: refreshToken,
+            accessToken: store.getState().user.accessToken,
           });
-          await dispatch(
+          dispatch(
             userSlice.actions.setToken({
-              accessToken: resp.data.data.accessToken,
+              accessToken: resp.data.accessToken,
             }),
           );
           await EncryptedStorage.setItem(
             'refreshToken',
-            resp.data.data.refreshToken,
+            resp.data.refreshToken,
           );
           console.log('Token 재발급');
 
-          const accessToken = resp.data.data.accessToken;
+          const accessToken = resp.data.accessToken;
 
           error.config.headers = {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${resp.data.accessToken}`,
           };
 
           const response = await axios.request(error.config);
