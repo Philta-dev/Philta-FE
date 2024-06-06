@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -7,23 +7,30 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import {Platform, StyleSheet, View} from 'react-native';
+import {Keyboard, Platform, StyleSheet, View} from 'react-native';
 
 import {useSelector} from 'react-redux';
-import {RootState} from './src/store';
+import {RootState, useAppDispatch} from './src/store';
 
 import {svgList} from './src/assets/svgList';
 import {SvgXml} from 'react-native-svg';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {Safe} from './src/components/Safe';
+
 import Typing from './src/pages/Typing';
 import SignIn from './src/pages/SignIn';
 import Indexing from './src/pages/Indexing';
 import Favorite from './src/pages/Favorite';
 import EnterName from './src/pages/EnterName';
 import PhoneLogin from './src/pages/PhoneLogin';
+
 import Text from './src/components/Text';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import userSlice from './src/slices/user';
+import axios from 'axios';
+import Config from 'react-native-config';
+import useAxiosInterceptor from './src/hooks/useAxiosInterceptor';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -47,9 +54,39 @@ export type RootTabNavigationProp = BottomTabNavigationProp<RootTabParamList>;
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const CustomTabbar = ({state, descriptors, navigation}: any) => {
-  if (state.index === 0) return <></>;
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const iconList = [
+    svgList.tabbar.typing,
+    svgList.tabbar.indexing,
+    svgList.tabbar.favorite,
+  ];
+  const labelList = ['구절 타이핑', '전체 성경', '북마크'];
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
+  if (keyboardVisible) {
+    return null; // 키보드가 보일 때 탭 바 숨기기
+  }
   return (
-    <View style={{flexDirection: 'row'}}>
+    <View style={styles.tabBar}>
       {state.routes.map((route: any, index: number) => {
         const {options} = descriptors[route.key];
         const label =
@@ -81,14 +118,16 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
         };
 
         return (
-          <View
-            key={index}
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <View key={index} style={styles.tabBarButton}>
+            <SvgXml xml={iconList[index]} width={24} height={24} />
             <Text
               onPress={onPress}
               onLongPress={onLongPress}
-              style={{color: isFocused ? '#673ab7' : '#222'}}>
-              {label}
+              style={[
+                styles.tabBarButtonText,
+                isFocused ? {color: '#000000'} : {color: '#3C3C4399'},
+              ]}>
+              {labelList[index]}
             </Text>
           </View>
         );
@@ -98,10 +137,37 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 };
 
 function AppInner() {
+  // useAxiosInterceptor();
+  const dispatch = useAppDispatch();
   const isLoggedIn = useSelector(
     (state: RootState) => !!state.user.accessToken,
   );
-  // const isLoggedIn = true;
+  const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const reissue = async () => {
+    const refreshToken = await EncryptedStorage.getItem('refreshToken');
+    console.log(refreshToken);
+    if (!refreshToken) {
+      dispatch(
+        userSlice.actions.setToken({
+          accessToken: '',
+        }),
+      );
+    }
+    const response = await axios.post(`${Config.API_URL}/auth/token`, {
+      refreshToken: refreshToken,
+      // accessToken: accessToken,
+    });
+    dispatch(
+      userSlice.actions.setToken({
+        accessToken: response.data.accessToken,
+      }),
+    );
+    await EncryptedStorage.setItem('refreshToken', response.data.refreshToken);
+    console.log('Token 재발급');
+  };
+  // useEffect(() => {
+  //   reissue();
+  // }, [isLoggedIn]);
   return (
     <NavigationContainer>
       {isLoggedIn ? (
@@ -133,4 +199,26 @@ function AppInner() {
 
 export default AppInner;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  tabBar: {
+    flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    paddingTop: 16,
+    borderTopColor: '#7878805C',
+    borderTopWidth: 1,
+  },
+  tabBarButton: {
+    flex: 1,
+    marginHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tabBarButtonText: {
+    marginTop: 4,
+    fontSize: 13,
+    fontWeight: '400',
+    lineHeight: 18,
+    letterSpacing: -0.32,
+  },
+});

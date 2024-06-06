@@ -5,15 +5,17 @@ import {
   View,
   Keyboard,
   Dimensions,
+  StatusBar,
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import Svg, {Line, SvgXml} from 'react-native-svg';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../../AppInner';
 import MyModal from '../components/MyModal';
 import Text from '../components/Text';
 import {svgList} from '../assets/svgList';
+import ProgressBar from '../components/ProgessBar';
+import {useFocusEffect} from '@react-navigation/native';
 
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
@@ -27,8 +29,7 @@ export default function Typing(props: TypingProps) {
   const [text, setText] = useState('');
   const [cursor, setCursor] = useState(false);
   const [keyBoardStatus, setKeyBoardStatus] = useState(false);
-
-  const ref = useRef<TextInput>(null);
+  const ref = useRef<TextInput>();
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -36,6 +37,16 @@ export default function Typing(props: TypingProps) {
       headerShown: false,
     });
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const timer = setTimeout(() => {
+        ref.current?.focus();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }, []),
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -55,15 +66,10 @@ export default function Typing(props: TypingProps) {
       ref.current?.focus();
       setKeyBoardStatus(true);
     });
-    const focusListener = props.navigation.addListener('focus', () => {
-      ref.current?.focus();
-      setKeyBoardStatus(true);
-    });
 
     return () => {
       KeyboardDismiss.remove();
       KeyboardShow.remove();
-      focusListener();
     };
   }, []);
 
@@ -88,7 +94,20 @@ export default function Typing(props: TypingProps) {
   };
   return (
     <View style={styles.entire}>
-      <Text>status bar</Text>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="white"
+        // translucent={true}
+        // hidden={true}
+      />
+      <ProgressBar
+        height={4}
+        width={Dimensions.get('window').width - 1}
+        progressColor={'#5656D6'}
+        nonProgressColor={'#EBEBF5'}
+        progress={50}
+        borderRadius={8}
+      />
       <Pressable onPress={() => setShowModal(true)} style={styles.menuBtn}>
         <SvgXml xml={svgList.typing.menu} />
       </Pressable>
@@ -200,7 +219,13 @@ export default function Typing(props: TypingProps) {
           <View style={{flex: 2}} />
           <Pressable
             onPress={() => {
-              Keyboard.dismiss();
+              if (keyBoardStatus) {
+                ref.current?.blur();
+                setKeyBoardStatus(false);
+              } else {
+                ref.current?.focus();
+                setKeyBoardStatus(true);
+              }
             }}>
             <Text>key</Text>
           </Pressable>

@@ -30,8 +30,6 @@ export default function SignIn(props: SignInProps) {
     const token = await KakaoLogin.login();
     const profile = await KakaoLogin.getProfile();
     try {
-      console.log(token);
-      console.log(profile.nickname);
       const response = await axios.post(`${Config.API_URL}/auth/login`, {
         socialType: 'kakao',
         kakaoAccessToken: token.accessToken,

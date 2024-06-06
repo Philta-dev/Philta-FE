@@ -15,6 +15,8 @@
 		67597B7EF9D998CADD76D187 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */; };
 		7699B88040F8A987B510C191 /* libPods-Philta-PhiltaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Philta-PhiltaTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		D58A5EB60EBE4E94A95EF6B2 /* Eulyoo1945-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */; };
+		E4B4B5FCD4634EC5B03ADCE3 /* Eulyoo1945-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 347301D1BB4F48A3A19AA229 /* Eulyoo1945-SemiBold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		89C6BE57DB24E9ADA2F236DE /* Pods-Philta-PhiltaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta-PhiltaTests.release.xcconfig"; path = "Target Support Files/Pods-Philta-PhiltaTests/Pods-Philta-PhiltaTests.release.xcconfig"; sourceTree = "<group>"; };
 		B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */ = {isa = PBXFileReference; name = "Eulyoo1945-Regular.otf"; path = "../src/assets/fonts/Eulyoo1945-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		347301D1BB4F48A3A19AA229 /* Eulyoo1945-SemiBold.otf */ = {isa = PBXFileReference; name = "Eulyoo1945-SemiBold.otf"; path = "../src/assets/fonts/Eulyoo1945-SemiBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +131,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				41C7CE6C7D5740B29A4F721B /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -152,6 +157,16 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		41C7CE6C7D5740B29A4F721B /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */,
+				347301D1BB4F48A3A19AA229 /* Eulyoo1945-SemiBold.otf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -249,6 +264,8 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				67597B7EF9D998CADD76D187 /* PrivacyInfo.xcprivacy in Resources */,
+				D58A5EB60EBE4E94A95EF6B2 /* Eulyoo1945-Regular.otf in Resources */,
+				E4B4B5FCD4634EC5B03ADCE3 /* Eulyoo1945-SemiBold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
