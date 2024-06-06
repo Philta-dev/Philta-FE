@@ -1,12 +1,18 @@
 import axios from 'axios';
 import {useEffect, useRef, useState} from 'react';
-import {Keyboard, Pressable, StyleSheet, TextInput, View} from 'react-native';
+import {
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+} from 'react-native';
 import Config from 'react-native-config';
 import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useSelector} from 'react-redux';
-import Text from '../components/Text';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -255,6 +261,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   titleTxt: {
+    color: '#000000',
     fontSize: 20,
     fontWeight: '600',
     marginVertical: 24,

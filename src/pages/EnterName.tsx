@@ -5,8 +5,8 @@ import {
   StyleSheet,
   TextInput,
   View,
+  Text,
 } from 'react-native';
-import Text from '../components/Text';
 import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   titleTxt: {
+    color: '#000000',
     fontSize: 20,
     fontWeight: '600',
     marginVertical: 24,

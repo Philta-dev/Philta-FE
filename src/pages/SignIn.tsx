@@ -1,5 +1,5 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, View, Text as AppText} from 'react-native';
 import Config from 'react-native-config';
 import {SignInNavParamList} from '../../AppInner';
 import Text from '../components/Text';
@@ -117,24 +117,24 @@ export default function SignIn(props: SignInProps) {
           style={[styles.btn, {backgroundColor: '#FEE500'}]}
           onPress={() => LoginWithKakao()}>
           <SvgXml xml={svgList.socialLogin.kakao} width={48} height={48} />
-          <Text style={[styles.btnTxt, {color: '#191919'}]}>
+          <AppText style={[styles.btnTxt, {color: '#191919'}]}>
             카카오로 시작하기
-          </Text>
+          </AppText>
         </Pressable>
         <Pressable style={[styles.btn, {backgroundColor: '#000000'}]}>
           <SvgXml xml={svgList.socialLogin.apple} width={48} height={48} />
-          <Text style={[styles.btnTxt, {color: '#FFFFFF'}]}>
+          <AppText style={[styles.btnTxt, {color: '#FFFFFF'}]}>
             Apple로 시작하기
-          </Text>
+          </AppText>
         </Pressable>
         <Pressable
           style={[styles.btn, {backgroundColor: '#999999F7', padding: 12}]}
           onPress={() => {
             navigation.navigate('PhoneLogin');
           }}>
-          <Text style={[styles.btnTxt, {color: '#48484A'}]}>
+          <AppText style={[styles.btnTxt, {color: '#48484A'}]}>
             핸드폰 번호로 시작하기
-          </Text>
+          </AppText>
         </Pressable>
       </View>
     </View>
