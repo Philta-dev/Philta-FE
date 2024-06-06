@@ -41,6 +41,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Philta/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-Philta-PhiltaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Philta-PhiltaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		347301D1BB4F48A3A19AA229 /* Eulyoo1945-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Eulyoo1945-SemiBold.otf"; path = "../src/assets/fonts/Eulyoo1945-SemiBold.otf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Philta.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta.debug.xcconfig"; path = "Target Support Files/Pods-Philta/Pods-Philta.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Philta.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta.release.xcconfig"; path = "Target Support Files/Pods-Philta/Pods-Philta.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Philta-PhiltaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta-PhiltaTests.debug.xcconfig"; path = "Target Support Files/Pods-Philta-PhiltaTests/Pods-Philta-PhiltaTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -48,9 +49,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Philta/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Philta-PhiltaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta-PhiltaTests.release.xcconfig"; path = "Target Support Files/Pods-Philta-PhiltaTests/Pods-Philta-PhiltaTests.release.xcconfig"; sourceTree = "<group>"; };
 		B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Eulyoo1945-Regular.otf"; path = "../src/assets/fonts/Eulyoo1945-Regular.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */ = {isa = PBXFileReference; name = "Eulyoo1945-Regular.otf"; path = "../src/assets/fonts/Eulyoo1945-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		347301D1BB4F48A3A19AA229 /* Eulyoo1945-SemiBold.otf */ = {isa = PBXFileReference; name = "Eulyoo1945-SemiBold.otf"; path = "../src/assets/fonts/Eulyoo1945-SemiBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +115,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		41C7CE6C7D5740B29A4F721B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */,
+				347301D1BB4F48A3A19AA229 /* Eulyoo1945-SemiBold.otf */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -157,16 +167,6 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
-		};
-		41C7CE6C7D5740B29A4F721B /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */,
-				347301D1BB4F48A3A19AA229 /* Eulyoo1945-SemiBold.otf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 

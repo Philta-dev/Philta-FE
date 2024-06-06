@@ -18,10 +18,8 @@ import {SvgXml} from 'react-native-svg';
 import {NavigationContainer} from '@react-navigation/native';
 import {Safe} from './src/components/Safe';
 
-import Typing from './src/pages/Typing';
 import SignIn from './src/pages/SignIn';
-import Indexing from './src/pages/Indexing';
-import Favorite from './src/pages/Favorite';
+
 import EnterName from './src/pages/EnterName';
 import PhoneLogin from './src/pages/PhoneLogin';
 
@@ -31,6 +29,8 @@ import userSlice from './src/slices/user';
 import axios from 'axios';
 import Config from 'react-native-config';
 import useAxiosInterceptor from './src/hooks/useAxiosInterceptor';
+import Search from './src/pages/Search';
+import BaseNav from './src/navigations/BaseNav';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -43,110 +43,16 @@ export type SignInNavNavigationProp =
 
 const Stack = createNativeStackNavigator<SignInNavParamList>();
 
-export type RootTabParamList = {
-  Typing: undefined;
-  Indexing: {test: number; book: number; chapter: number; verse: number};
+export type NavParamList = {
+  Base: undefined;
+  Search: {page: string};
   Favorite: undefined;
+  Indexing: undefined;
 };
 
-export type RootTabNavigationProp = BottomTabNavigationProp<RootTabParamList>;
+export type NavNavigationProp = NativeStackNavigationProp<NavParamList>;
 
-const Tab = createBottomTabNavigator<RootTabParamList>();
-
-const CustomTabbar = ({state, descriptors, navigation}: any) => {
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const iconList = [
-    svgList.tabbar.typing,
-    svgList.tabbar.indexing,
-    svgList.tabbar.favorite,
-  ];
-  const iconPressedList = [
-    svgList.tabbar.typingPressed,
-    svgList.tabbar.indexingPressed,
-    svgList.tabbar.favoritePressed,
-  ];
-  const labelList = ['구절 타이핑', '전체 성경', '북마크'];
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
-
-  if (keyboardVisible) {
-    return null; // 키보드가 보일 때 탭 바 숨기기
-  }
-  return (
-    <View style={styles.tabBar}>
-      {state.routes.map((route: any, index: number) => {
-        const {options} = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
-
-        const isFocused = state.index === index;
-
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
-
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          });
-        };
-
-        return (
-          <Pressable
-            onPress={onPress}
-            onLongPress={onLongPress}
-            key={index}
-            style={styles.tabBarButton}>
-            <SvgXml
-              xml={isFocused ? iconPressedList[index] : iconList[index]}
-              width={24}
-              height={24}
-              // style={index == 2 && {marginHorizontal: 4, marginVertical: 3}}
-            />
-            <Text
-              style={[
-                styles.tabBarButtonText,
-                isFocused ? {color: '#000000'} : {color: '#9B9EA5'},
-              ]}>
-              {labelList[index]}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-};
+const BaseStack = createNativeStackNavigator<NavParamList>();
 
 function AppInner() {
   // useAxiosInterceptor();
@@ -184,13 +90,10 @@ function AppInner() {
     <NavigationContainer>
       {isLoggedIn ? (
         <Safe color="#ffffff">
-          <Tab.Navigator
-            initialRouteName="Typing"
-            tabBar={props => <CustomTabbar {...props} />}>
-            <Tab.Screen name="Typing" component={Typing} />
-            <Tab.Screen name="Indexing" component={Indexing} />
-            <Tab.Screen name="Favorite" component={Favorite} />
-          </Tab.Navigator>
+          <BaseStack.Navigator screenOptions={{headerShown: false}}>
+            <BaseStack.Screen name="Base" component={BaseNav} />
+            <BaseStack.Screen name="Search" component={Search} />
+          </BaseStack.Navigator>
         </Safe>
       ) : (
         <Safe color="#202020">
@@ -210,27 +113,3 @@ function AppInner() {
 }
 
 export default AppInner;
-
-const styles = StyleSheet.create({
-  tabBar: {
-    flexDirection: 'row',
-    paddingHorizontal: 24,
-    paddingBottom: 24,
-    paddingTop: 16,
-    borderTopColor: '#7878805C',
-    borderTopWidth: 1,
-  },
-  tabBarButton: {
-    flex: 1,
-    marginHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tabBarButtonText: {
-    marginTop: 4,
-    fontSize: 13,
-    fontWeight: '400',
-    lineHeight: 18,
-    letterSpacing: -0.32,
-  },
-});

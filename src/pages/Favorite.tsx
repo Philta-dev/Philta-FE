@@ -1,13 +1,23 @@
 import {useState} from 'react';
 import {FlatList, Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import Text from '../components/Text';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {NavParamList} from '../../AppInner';
 
-export default function Favorite() {
+type FavScreenNavigationProp = NativeStackNavigationProp<
+  NavParamList,
+  'Favorite'
+>;
+type FavProps = {
+  navigation: FavScreenNavigationProp;
+};
+
+export default function Favorite(props: FavProps) {
   const [bookname, setBookname] = useState(-1);
   const [testament, setTestament] = useState('old');
   return (
     <View>
-      <Text>Indexing</Text>
+      <Text>Fav</Text>
       <Pressable
         onPress={() => {
           if (testament == 'old') setTestament('new');
@@ -33,6 +43,12 @@ export default function Favorite() {
         />
       </View>
       <Text style={{color: 'black'}}>{bookname}</Text>
+      <Pressable
+        onPress={() => {
+          props.navigation.navigate('Search', {page: 'favorite'});
+        }}>
+        <Text>search</Text>
+      </Pressable>
     </View>
   );
 }

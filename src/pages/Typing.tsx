@@ -13,20 +13,29 @@ import {
 import {useCallback, useEffect, useRef, useState} from 'react';
 import Svg, {Line, SvgXml} from 'react-native-svg';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {RootTabParamList} from '../../AppInner';
+import {RootTabParamList} from '../navigations/BaseNav';
 import MyModal from '../components/MyModal';
 import Text from '../components/Text';
 import {svgList} from '../assets/svgList';
 import ProgressBar from '../components/ProgessBar';
 import {useFocusEffect} from '@react-navigation/native';
 import {StatusBarHeight} from '../components/Safe';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {NavParamList} from '../../AppInner';
+import {useAppDispatch} from '../store';
+import userSlice from '../slices/user';
 
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
 >;
+// type TypingWithSearchScreenNavigationProp = NativeStackNavigationProp<
+//   NavParamList,
+//   'Base'
+// >;
 type TypingProps = {
   navigation: TypingScreenNavigationProp;
+  // navigation: TypingWithSearchScreenNavigationProp;
 };
 
 export default function Typing(props: TypingProps) {
@@ -38,6 +47,7 @@ export default function Typing(props: TypingProps) {
   const [showModal, setShowModal] = useState(false);
   const windowHeight = Dimensions.get('window').height;
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     props.navigation.setOptions({
@@ -304,12 +314,15 @@ export default function Typing(props: TypingProps) {
         <Pressable
           onPress={() => {
             setShowModal(false);
-            props.navigation.navigate('Indexing', {
-              test: 0,
-              book: 0,
-              chapter: 0,
-              verse: 0,
-            });
+            dispatch(
+              userSlice.actions.setIndex({
+                testament: 0,
+                book: 0,
+                chapter: 0,
+                verse: 0,
+              }),
+            );
+            props.navigation.navigate('Indexing');
           }}
           style={styles.modalBtn}>
           <View style={styles.modalBtnIcon}>
