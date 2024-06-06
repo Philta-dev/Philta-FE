@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 20,
     fontWeight: '600',
+    fontFamily: 'Eulyoo1945-SemiBold',
     marginVertical: 24,
   },
   input: {
@@ -148,6 +149,7 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Eulyoo1945-SemiBold',
     textAlign: 'center',
     color: 'white',
   },

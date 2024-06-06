@@ -7,7 +7,7 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
-import {Keyboard, Platform, StyleSheet, View} from 'react-native';
+import {Keyboard, Platform, Pressable, StyleSheet, View} from 'react-native';
 
 import {useSelector} from 'react-redux';
 import {RootState, useAppDispatch} from './src/store';
@@ -59,6 +59,11 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
     svgList.tabbar.typing,
     svgList.tabbar.indexing,
     svgList.tabbar.favorite,
+  ];
+  const iconPressedList = [
+    svgList.tabbar.typingPressed,
+    svgList.tabbar.indexingPressed,
+    svgList.tabbar.favoritePressed,
   ];
   const labelList = ['구절 타이핑', '전체 성경', '북마크'];
 
@@ -118,18 +123,25 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
         };
 
         return (
-          <View key={index} style={styles.tabBarButton}>
-            <SvgXml xml={iconList[index]} width={24} height={24} />
+          <Pressable
+            onPress={onPress}
+            onLongPress={onLongPress}
+            key={index}
+            style={styles.tabBarButton}>
+            <SvgXml
+              xml={isFocused ? iconPressedList[index] : iconList[index]}
+              width={index != 0 ? 15 : 24}
+              height={index != 0 ? 19 : 24}
+              style={index != 0 && {marginHorizontal: 4, marginVertical: 3}}
+            />
             <Text
-              onPress={onPress}
-              onLongPress={onLongPress}
               style={[
                 styles.tabBarButtonText,
                 isFocused ? {color: '#000000'} : {color: '#3C3C4399'},
               ]}>
               {labelList[index]}
             </Text>
-          </View>
+          </Pressable>
         );
       })}
     </View>

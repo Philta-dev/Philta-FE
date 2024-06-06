@@ -109,9 +109,13 @@ export default function SignIn(props: SignInProps) {
   return (
     <View style={styles.entire}>
       {/* <Text>{Config.API_URL}</Text> */}
-      <View style={styles.title}>
+      <Pressable
+        onPress={() =>
+          dispatch(userSlice.actions.setToken({accessToken: '1234'}))
+        }
+        style={styles.title}>
         <Text style={styles.titleTxt}>필타</Text>
-      </View>
+      </Pressable>
       <View style={styles.btnView}>
         <Pressable
           style={[styles.btn, {backgroundColor: '#FEE500'}]}
@@ -156,6 +160,7 @@ const styles = StyleSheet.create({
   },
   titleTxt: {
     fontSize: 16,
+    fontFamily: 'Eulyoo1945-SemiBold',
     fontWeight: '600',
   },
   btnView: {
@@ -177,5 +182,6 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: 15,
     fontWeight: '700',
+    fontFamily: 'Eulyoo1945-SemiBold',
   },
 });

@@ -6,6 +6,9 @@ import {
   Keyboard,
   Dimensions,
   StatusBar,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import Svg, {Line, SvgXml} from 'react-native-svg';
@@ -30,7 +33,10 @@ export default function Typing(props: TypingProps) {
   const [cursor, setCursor] = useState(false);
   const [keyBoardStatus, setKeyBoardStatus] = useState(false);
   const ref = useRef<TextInput>();
+  const scrollRef = useRef<ScrollView>(null);
   const [showModal, setShowModal] = useState(false);
+  const windowHeight = Dimensions.get('window').height;
+  const [keyBoardHeight, setKeyBoardHeight] = useState(0);
 
   useEffect(() => {
     props.navigation.setOptions({
@@ -58,11 +64,13 @@ export default function Typing(props: TypingProps) {
 
   useEffect(() => {
     const KeyboardDismiss = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyBoardHeight(0);
       console.log('keyboard dismiss');
       ref.current?.blur();
       setKeyBoardStatus(false);
     });
-    const KeyboardShow = Keyboard.addListener('keyboardDidShow', () => {
+    const KeyboardShow = Keyboard.addListener('keyboardDidShow', e => {
+      setKeyBoardHeight(e.endCoordinates.height);
       ref.current?.focus();
       setKeyBoardStatus(true);
     });
@@ -74,13 +82,18 @@ export default function Typing(props: TypingProps) {
   }, []);
 
   const givenText =
-    '내가 이같이 쓴 것은 내가 갈 때에 마땅히 나를 기쁘게 할 자로부터 도리어 근심을 얻을까 염려함이요 또 너희 무리를 대하여 나의 기쁨이 너희 무리의 기쁨인줄 확신함이로라';
+    '그 때에 엘리사가 그 집에 앉았고 장로들이 저와 함께 앉았는데 왕이 자기 처소에서 사람을 보내었더니 그 사자가 이르기 전에 엘리사가 장로들에게 이르되 너희는 이 살인한 자의 자식이 내 머리를 취하려고 사람을 보내는 것을 보느냐 너희는 보다가 사자가 오거든 문을 닫고 문 안에 들이지 말라 그 주인의 발소리가 그 뒤에서 나지 아니하느냐 하고';
   const handleTextChange = (textEntered: string) => {
     if (
       textEntered.slice(0, textEntered.length - 1) ===
       givenText.slice(0, textEntered.length - 1)
     ) {
       setText(textEntered);
+      if (textEntered.length >= givenText.length / 2) {
+        scrollRef.current?.scrollToEnd({animated: true});
+      } else {
+        scrollRef.current?.scrollTo({x: 0, y: 0, animated: true});
+      }
       if (
         textEntered.length === givenText.length + 1 &&
         textEntered.slice(0, textEntered.length - 1) === givenText
@@ -109,15 +122,22 @@ export default function Typing(props: TypingProps) {
         borderRadius={8}
       />
       <Pressable onPress={() => setShowModal(true)} style={styles.menuBtn}>
-        <SvgXml xml={svgList.typing.menu} />
+        {showModal ? (
+          <View style={{height: 24}} />
+        ) : (
+          <SvgXml xml={svgList.typing.menu} />
+        )}
       </Pressable>
       <View style={[{justifyContent: 'center'}, !keyBoardStatus && {flex: 1}]}>
         <View style={styles.typingArea}>
           <Pressable style={styles.anotherVerseArea}>
             <Text style={styles.anotherVerseNum}>1</Text>
-            <Text style={styles.anotherVerseContent} numberOfLines={2}>
-              내가 너희를 근심하게 하면 나의 근심하게 한 자 밖에 나를 기쁘게
-              하는 자가 누구냐
+            <Text
+              style={styles.anotherVerseContent}
+              numberOfLines={keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2}>
+              내가 큰 환난과 애통한 마음이 있어 많은 눈물로 너희에서 썼노니 이는
+              너희로 근심하게 하려 한 것이 아니요 오직 내가 너희를 향하여 넘치는
+              사랑이 있음을 너희로 알게 하려 함이라
             </Text>
           </Pressable>
           <Pressable
@@ -147,10 +167,22 @@ export default function Typing(props: TypingProps) {
               onSubmitEditing={() => handleTextChange(text + ' ')}
             />
             <View style={styles.bookmarked}>
-              <Text>북</Text>
+              <SvgXml
+                xml={svgList.typing.bookmarkBlue}
+                width={16}
+                height={16}
+                color={'#5856D6'}
+              />
             </View>
-            <Text style={styles.currentVerseNum}>2</Text>
-            <View style={styles.currentVerseContent}>
+            <View>
+              <Text style={styles.currentVerseNum}>2</Text>
+            </View>
+            <ScrollView
+              style={[
+                styles.currentVerseContent,
+                keyBoardStatus && {height: 170},
+              ]}
+              ref={scrollRef}>
               <Text style={{flexWrap: 'wrap'}}>
                 <Text
                   style={{
@@ -178,6 +210,7 @@ export default function Typing(props: TypingProps) {
                 </Text>
                 <Text
                   style={{
+                    backgroundColor: 'pink',
                     color: '#9B9EA5',
                     fontSize: 18,
                     fontWeight: '400',
@@ -187,11 +220,13 @@ export default function Typing(props: TypingProps) {
                   {givenText.slice(text.length)}
                 </Text>
               </Text>
-            </View>
+            </ScrollView>
           </Pressable>
           <Pressable style={styles.anotherVerseArea}>
             <Text style={styles.anotherVerseNum}>3</Text>
-            <Text style={styles.anotherVerseContent} numberOfLines={2}>
+            <Text
+              style={styles.anotherVerseContent}
+              numberOfLines={keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2}>
               내가 큰 환난과 애통한 마음이 있어 많은 눈물로 너희에서 썼노니 이는
               너희로 근심하게 하려 한 것이 아니요 오직 내가 너희를 향하여 넘치는
               사랑이 있음을 너희로 알게 하려 함이라
@@ -200,9 +235,15 @@ export default function Typing(props: TypingProps) {
         </View>
       </View>
       {keyBoardStatus && (
-        <View style={styles.keyBoardBtnView}>
+        <View
+          style={[
+            styles.keyBoardBtnView,
+            Platform.OS == 'ios' && {bottom: keyBoardHeight},
+          ]}>
+          <View style={{flex: 0.8}} />
+
           <Pressable>
-            <Text>book</Text>
+            <SvgXml xml={svgList.typing.bookmarkAdd} width={32} height={32} />
           </Pressable>
           <View style={{flex: 1}} />
           <Pressable>
@@ -214,7 +255,7 @@ export default function Typing(props: TypingProps) {
           </Pressable>
           <View style={{flex: 1}} />
           <Pressable>
-            <Text>clip</Text>
+            <SvgXml xml={svgList.typing.clipboard} width={32} height={32} />
           </Pressable>
           <View style={{flex: 2}} />
           <Pressable
@@ -227,17 +268,54 @@ export default function Typing(props: TypingProps) {
                 setKeyBoardStatus(true);
               }
             }}>
-            <Text>key</Text>
+            <SvgXml xml={svgList.typing.keyboardDown} width={32} height={32} />
           </Pressable>
+          <View style={{flex: 0.8}} />
         </View>
       )}
 
       <MyModal showModal={showModal} setShowModal={setShowModal}>
-        <Pressable onPress={() => props.navigation.navigate('Favorite')}>
-          <Text>Fav</Text>
+        <SvgXml
+          xml={svgList.typing.menux}
+          width={24}
+          height={24}
+          style={{marginBottom: 16}}
+        />
+        <Pressable style={styles.modalBtn} onPress={() => setShowModal(false)}>
+          <View style={[styles.modalBtnIcon, {backgroundColor: '#EBEBF599'}]}>
+            <SvgXml
+              xml={svgList.tabbar.favoritePressed}
+              width={15}
+              height={19}
+            />
+          </View>
+          <Text style={[styles.modalBtnTxt, {color: '#EBEBF599'}]}>
+            구절 타이핑
+          </Text>
         </Pressable>
-        <Pressable onPress={() => props.navigation.navigate('Indexing')}>
-          <Text>Indexing</Text>
+        <Pressable
+          onPress={() => props.navigation.navigate('Indexing')}
+          style={styles.modalBtn}>
+          <View style={styles.modalBtnIcon}>
+            <SvgXml
+              xml={svgList.tabbar.favoritePressed}
+              width={15}
+              height={19}
+            />
+          </View>
+          <Text style={styles.modalBtnTxt}>전체 성경</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => props.navigation.navigate('Favorite')}
+          style={styles.modalBtn}>
+          <View style={styles.modalBtnIcon}>
+            <SvgXml
+              xml={svgList.tabbar.favoritePressed}
+              width={15}
+              height={19}
+            />
+          </View>
+          <Text style={styles.modalBtnTxt}>북마크</Text>
         </Pressable>
       </MyModal>
     </View>
@@ -254,6 +332,29 @@ const styles = StyleSheet.create({
     height: 24,
     marginLeft: 24,
     marginVertical: 8,
+  },
+  modalBtn: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  modalBtnIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 40,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  modalBtnTxt: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 21,
+    letterSpacing: -0.32,
+    fontFamily: 'Eulyoo1945-SemiBold',
   },
   typingArea: {
     paddingHorizontal: 40,
@@ -278,10 +379,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   currentVerseArea: {
+    // flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'yellow',
     marginVertical: 24,
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
   },
   bookmarked: {
     position: 'absolute',
@@ -289,7 +390,6 @@ const styles = StyleSheet.create({
     left: -18,
     width: 16,
     height: 16,
-    backgroundColor: 'red',
   },
   currentVerseNum: {
     color: '#000000',
@@ -299,15 +399,17 @@ const styles = StyleSheet.create({
     width: 20,
   },
   currentVerseContent: {
-    flexDirection: 'row',
+    // height: 200,
+    backgroundColor: 'yellow',
+    // flexDirection: 'row',
   },
   keyBoardBtnView: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    backgroundColor: 'red',
     flexDirection: 'row',
-    paddingHorizontal: 8,
+    paddingVertical: 10,
+    backgroundColor: 'white',
   },
   keyBoradBtn: {
     flex: 1,

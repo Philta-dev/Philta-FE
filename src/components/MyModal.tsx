@@ -24,30 +24,28 @@ export default function MyModal(props: ModalProps) {
         onPress={() => {
           setshowModal(false);
         }}>
-        <Pressable style={styles.modalView} onPress={e => e.stopPropagation()}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalBody}>{props.children}</View>
-          </View>
-        </Pressable>
+        {props.children}
       </Pressable>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  entire: {},
+  entire: {
+    flex: 1,
+    margin: 0,
+  },
   modalBGView: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 30,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
   },
   modalView: {
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    borderRadius: 60,
-    borderColor: '#FFFFFF',
-    borderWidth: 2,
+    flex: 1,
     padding: 16,
     width: '100%',
   },
