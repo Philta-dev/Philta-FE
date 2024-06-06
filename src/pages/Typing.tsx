@@ -282,7 +282,9 @@ export default function Typing(props: TypingProps) {
           height={24}
           style={[
             {marginBottom: 16},
-            Platform.OS == 'ios' && {marginTop: StatusBarHeight},
+            Platform.OS == 'ios'
+              ? {marginTop: StatusBarHeight}
+              : {marginTop: 12},
           ]}
         />
         <Pressable
