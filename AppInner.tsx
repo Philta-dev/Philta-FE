@@ -130,14 +130,14 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
             style={styles.tabBarButton}>
             <SvgXml
               xml={isFocused ? iconPressedList[index] : iconList[index]}
-              width={index != 0 ? 15 : 24}
-              height={index != 0 ? 19 : 24}
-              style={index != 0 && {marginHorizontal: 4, marginVertical: 3}}
+              width={24}
+              height={24}
+              // style={index == 2 && {marginHorizontal: 4, marginVertical: 3}}
             />
             <Text
               style={[
                 styles.tabBarButtonText,
-                isFocused ? {color: '#000000'} : {color: '#3C3C4399'},
+                isFocused ? {color: '#000000'} : {color: '#9B9EA5'},
               ]}>
               {labelList[index]}
             </Text>

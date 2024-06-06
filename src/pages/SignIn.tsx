@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Eulyoo1945-SemiBold',
     fontWeight: '600',
+    color: '#000000',
   },
   btnView: {
     flex: 3,
