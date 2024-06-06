@@ -19,6 +19,7 @@ import Text from '../components/Text';
 import {svgList} from '../assets/svgList';
 import ProgressBar from '../components/ProgessBar';
 import {useFocusEffect} from '@react-navigation/native';
+import {StatusBarHeight} from '../components/Safe';
 
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
@@ -32,7 +33,7 @@ export default function Typing(props: TypingProps) {
   const [text, setText] = useState('');
   const [cursor, setCursor] = useState(false);
   const [keyBoardStatus, setKeyBoardStatus] = useState(false);
-  const ref = useRef<TextInput>();
+  const ref = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
   const [showModal, setShowModal] = useState(false);
   const windowHeight = Dimensions.get('window').height;
@@ -246,12 +247,12 @@ export default function Typing(props: TypingProps) {
             <SvgXml xml={svgList.typing.bookmarkAdd} width={32} height={32} />
           </Pressable>
           <View style={{flex: 1}} />
-          <Pressable>
-            <Text>index</Text>
+          <Pressable style={styles.keyBoradBtn}>
+            <Text>SSSS 22:22</Text>
           </Pressable>
           <View style={{flex: 1}} />
-          <Pressable>
-            <Text>ver</Text>
+          <Pressable style={styles.keyBoradBtn}>
+            <Text>KRVD</Text>
           </Pressable>
           <View style={{flex: 1}} />
           <Pressable>
@@ -279,9 +280,14 @@ export default function Typing(props: TypingProps) {
           xml={svgList.typing.menux}
           width={24}
           height={24}
-          style={{marginBottom: 16}}
+          style={[
+            {marginBottom: 16},
+            Platform.OS == 'ios' && {marginTop: StatusBarHeight},
+          ]}
         />
-        <Pressable style={styles.modalBtn} onPress={() => setShowModal(false)}>
+        <Pressable
+          style={styles.modalBtn}
+          onPress={() => console.log(StatusBarHeight)}>
           <View style={[styles.modalBtnIcon, {backgroundColor: '#EBEBF599'}]}>
             <SvgXml
               xml={svgList.tabbar.favoritePressed}
@@ -294,7 +300,15 @@ export default function Typing(props: TypingProps) {
           </Text>
         </Pressable>
         <Pressable
-          onPress={() => props.navigation.navigate('Indexing')}
+          onPress={() => {
+            setShowModal(false);
+            props.navigation.navigate('Indexing', {
+              test: 0,
+              book: 0,
+              chapter: 0,
+              verse: 0,
+            });
+          }}
           style={styles.modalBtn}>
           <View style={styles.modalBtnIcon}>
             <SvgXml
@@ -306,7 +320,10 @@ export default function Typing(props: TypingProps) {
           <Text style={styles.modalBtnTxt}>전체 성경</Text>
         </Pressable>
         <Pressable
-          onPress={() => props.navigation.navigate('Favorite')}
+          onPress={() => {
+            setShowModal(false);
+            props.navigation.navigate('Favorite');
+          }}
           style={styles.modalBtn}>
           <View style={styles.modalBtnIcon}>
             <SvgXml
@@ -412,10 +429,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   keyBoradBtn: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    borderWidth: 1,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: '#EEEEEE',
+    borderRadius: 4,
   },
 });

@@ -45,7 +45,7 @@ const Stack = createNativeStackNavigator<SignInNavParamList>();
 
 export type RootTabParamList = {
   Typing: undefined;
-  Indexing: undefined;
+  Indexing: {test: number; book: number; chapter: number; verse: number};
   Favorite: undefined;
 };
 

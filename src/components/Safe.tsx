@@ -2,7 +2,7 @@ import React, {ReactNode} from 'react';
 import {SafeAreaView, ViewStyle} from 'react-native';
 import {getStatusBarHeight} from 'react-native-safearea-height';
 
-export const StatusBarHeight = getStatusBarHeight(true);
+export const StatusBarHeight = getStatusBarHeight(true) - 10;
 
 interface SafeProps {
   children: ReactNode;
