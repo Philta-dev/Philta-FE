@@ -33,6 +33,7 @@ export default function SignIn(props: SignInProps) {
         socialType: 'kakao',
         kakaoAccessToken: token.accessToken,
       });
+      console.log('kakao token:', token.accessToken);
       console.log(response.data);
       if (response.data.isNew) {
         dispatch(

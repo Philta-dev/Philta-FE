@@ -55,37 +55,46 @@ export type NavNavigationProp = NativeStackNavigationProp<NavParamList>;
 const BaseStack = createNativeStackNavigator<NavParamList>();
 
 function AppInner() {
-  // useAxiosInterceptor();
+  useAxiosInterceptor();
   const dispatch = useAppDispatch();
   const isLoggedIn = useSelector(
     (state: RootState) => !!state.user.accessToken,
   );
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const reissue = async () => {
-    const refreshToken = await EncryptedStorage.getItem('refreshToken');
-    console.log(refreshToken);
-    if (!refreshToken) {
+    try {
+      const refreshToken = await EncryptedStorage.getItem('refreshToken');
+      console.log('before', refreshToken);
+      if (!refreshToken) {
+        dispatch(
+          userSlice.actions.setToken({
+            accessToken: '',
+          }),
+        );
+        return;
+      }
+      const response = await axios.post(`${Config.API_URL}/auth/token`, {
+        refreshToken: refreshToken,
+      });
       dispatch(
         userSlice.actions.setToken({
-          accessToken: '',
+          accessToken: response.data.accessToken,
         }),
       );
+      await EncryptedStorage.setItem(
+        'refreshToken',
+        response.data.refreshToken,
+      );
+      console.log('after', response.data.refreshToken);
+      console.log('Token 재발급(자동로그인)');
+      console.log('accessToken', response.data.accessToken);
+    } catch (error) {
+      console.log('error');
     }
-    const response = await axios.post(`${Config.API_URL}/auth/token`, {
-      refreshToken: refreshToken,
-      // accessToken: accessToken,
-    });
-    dispatch(
-      userSlice.actions.setToken({
-        accessToken: response.data.accessToken,
-      }),
-    );
-    await EncryptedStorage.setItem('refreshToken', response.data.refreshToken);
-    console.log('Token 재발급');
   };
-  // useEffect(() => {
-  //   reissue();
-  // }, [isLoggedIn]);
+  useEffect(() => {
+    reissue();
+  }, [isLoggedIn]);
   return (
     <NavigationContainer>
       {isLoggedIn ? (

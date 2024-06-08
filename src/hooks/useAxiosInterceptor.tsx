@@ -41,10 +41,10 @@ const useAxiosInterceptor = () => {
                 accessToken: '',
               }),
             );
+            return;
           }
           const resp = await axios.post(`${Config.API_URL}/auth/token`, {
             refreshToken: refreshToken,
-            accessToken: store.getState().user.accessToken,
           });
           dispatch(
             userSlice.actions.setToken({
@@ -57,8 +57,6 @@ const useAxiosInterceptor = () => {
           );
           console.log('Token 재발급');
 
-          const accessToken = resp.data.accessToken;
-
           error.config.headers = {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${resp.data.accessToken}`,
@@ -68,11 +66,8 @@ const useAxiosInterceptor = () => {
           return response;
         } catch (error2: any) {
           const douleErrorResponseStatusCode = error2.response?.data.statusCode;
-          if (
-            douleErrorResponseStatusCode == 1070 ||
-            douleErrorResponseStatusCode == 1080 ||
-            douleErrorResponseStatusCode == 1060
-          ) {
+          if (douleErrorResponseStatusCode == 1083) {
+            console.log('refresh token expired');
             await EncryptedStorage.removeItem('refreshToken');
             dispatch(
               userSlice.actions.setToken({
