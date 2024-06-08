@@ -7,6 +7,8 @@ import {
   TextInput,
   View,
   Text,
+  Alert,
+  Platform,
 } from 'react-native';
 import Config from 'react-native-config';
 import {RootState, useAppDispatch} from '../store';
@@ -17,6 +19,8 @@ import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SignInNavParamList} from '../../AppInner';
+import Modal from 'react-native-modal';
+import {Shadow} from 'react-native-shadow-2';
 
 type PhoneLoginNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -29,12 +33,20 @@ type PhoneLoginProps = {
 
 export default function PhoneLogin(props: PhoneLoginProps) {
   const [keyBoardStatus, setKeyBoardStatus] = useState(false);
-  const [time, setTime] = useState(180);
+  const [isNameRefFocused, setIsNameRefFocused] = useState(false);
+  const [isPhoneRefFocused, setIsPhoneRefFocused] = useState(false);
+  const [isAuthRefFocused, setIsAuthRefFocused] = useState(false);
+  const [keyBoardHeight, setKeyBoardHeight] = useState(0);
+
+  const TIME_AUTH = 180;
+  const [time, setTime] = useState(TIME_AUTH);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [authNum, setAuthNum] = useState('');
+
   const [isSent, setIsSent] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  const [isVerified, setIsVerified] = useState('yet');
+  const [showTimeAlert, setShowTimeAlert] = useState(false);
   const [phoneToken, setPhoneToken] = useState('');
   const timerRef = useRef<any>(null);
   const nameRef = useRef<TextInput>(null);
@@ -44,6 +56,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
 
   useEffect(() => {
     if (isSent) {
+      setTime(TIME_AUTH);
       timerRef.current = setInterval(() => {
         setTime(prev => prev - 1);
       }, 1000);
@@ -52,8 +65,9 @@ export default function PhoneLogin(props: PhoneLoginProps) {
 
   useEffect(() => {
     if (time <= 0) {
-      setIsSent(false);
-      setTime(180);
+      // setIsSent(false);
+      setTime(TIME_AUTH);
+      setShowTimeAlert(true);
     }
   }, [time]);
 
@@ -62,9 +76,11 @@ export default function PhoneLogin(props: PhoneLoginProps) {
     const keyboardHandler = Keyboard.addListener('keyboardDidHide', () => {
       nameRef.current?.blur();
       setKeyBoardStatus(false);
+      setKeyBoardHeight(0);
     });
-    const keyboardShowHandler = Keyboard.addListener('keyboardDidShow', () => {
+    const keyboardShowHandler = Keyboard.addListener('keyboardDidShow', e => {
       setKeyBoardStatus(true);
+      setKeyBoardHeight(e.endCoordinates.height);
     });
     return () => {
       keyboardHandler.remove();
@@ -81,6 +97,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         },
       );
       console.log(response.data);
+      setTime(TIME_AUTH);
       setIsSent(true);
       setTimeout(() => {
         authRef.current?.focus();
@@ -101,12 +118,18 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         },
       );
       console.log(response.data);
-      setIsVerified(true);
+      setIsVerified('false');
       clearInterval(timerRef.current);
       setPhoneToken(response.data.phoneNumberToken);
     } catch (error: any) {
       const errorResponse = error.response;
       console.log('cannot confirm', errorResponse);
+      if (
+        errorResponse.data.statusCode === 1001 ||
+        errorResponse.data.statusCode === 1002
+      ) {
+        setIsVerified('false');
+      }
     }
   };
 
@@ -146,6 +169,8 @@ export default function PhoneLogin(props: PhoneLoginProps) {
       style={[
         styles.entire,
         keyBoardStatus ? {paddingBottom: 40} : {paddingBottom: 80},
+        Platform.OS === 'ios' &&
+          keyBoardStatus && {paddingBottom: keyBoardHeight + 40},
       ]}>
       <View>
         <Pressable
@@ -156,11 +181,18 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         <Text style={styles.titleTxt}>회원가입</Text>
         <TextInput
           placeholder="이름"
-          style={styles.input}
+          style={[
+            styles.input,
+            isNameRefFocused && {
+              borderColor: '#5856D6',
+              borderWidth: 1.5,
+            },
+          ]}
           placeholderTextColor={'#3C3C4399'}
           value={name}
           onChangeText={e => setName(e.trim())}
-          editable={!isSent}
+          onFocus={() => setIsNameRefFocused(true)}
+          onBlur={() => setIsNameRefFocused(false)}
           ref={nameRef}
           onSubmitEditing={() => {
             phoneRef.current?.focus();
@@ -168,14 +200,28 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         />
         <TextInput
           placeholder="전화번호"
-          style={styles.input}
+          maxLength={11}
+          style={[
+            styles.input,
+            isPhoneRefFocused && {
+              borderColor: '#5856D6',
+              borderWidth: 1.5,
+            },
+          ]}
           placeholderTextColor={'#3C3C4399'}
           value={phone}
           onChangeText={e => {
             setPhone(e.trim());
+            setIsSent(false);
+            setIsVerified('yet');
+            setTime(TIME_AUTH);
+            setAuthNum('');
+            clearInterval(timerRef.current);
+            setShowTimeAlert(false);
           }}
-          editable={!isSent}
           ref={phoneRef}
+          onFocus={() => setIsPhoneRefFocused(true)}
+          onBlur={() => setIsPhoneRefFocused(false)}
           blurOnSubmit={false}
           keyboardType="number-pad"
           onSubmitEditing={() => {
@@ -188,28 +234,64 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         />
         {isSent && (
           <View>
-            <Pressable
-              onPress={() => checkAuthNum()}
-              style={[
-                styles.authBtn,
-                authNum.length == 6
-                  ? {backgroundColor: '#5856D6'}
-                  : {backgroundColor: '#989BA2F7'},
-              ]}>
-              <Text style={styles.authBtnTxt}>인증하기</Text>
-            </Pressable>
-
-            <TextInput
-              placeholder="인증번호"
-              style={[styles.input, {marginBottom: 10}]}
-              placeholderTextColor={'#3C3C4399'}
-              value={authNum}
-              onChangeText={e => setAuthNum(e.trim())}
-              ref={authRef}
-            />
-            <Text style={styles.timer}>{formatSectoMin(time)}</Text>
-            {isVerified && (
+            <View style={{flexDirection: 'row'}}>
+              <TextInput
+                placeholder="인증번호"
+                maxLength={6}
+                keyboardType="number-pad"
+                style={[
+                  styles.input,
+                  {
+                    marginBottom: 10,
+                    flex: 1,
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
+                  },
+                  isAuthRefFocused && {
+                    borderColor: '#5856D6',
+                    borderWidth: 1.5,
+                  },
+                ]}
+                placeholderTextColor={'#3C3C4399'}
+                value={authNum}
+                onChangeText={e => {
+                  setAuthNum(e.trim());
+                  setIsVerified('yet');
+                }}
+                ref={authRef}
+                onFocus={() => setIsAuthRefFocused(true)}
+                onBlur={() => setIsAuthRefFocused(false)}
+              />
+              <Pressable
+                onPress={() => {
+                  console.log('send auth num');
+                  if (authNum.length == 6) checkAuthNum();
+                }}
+                style={[
+                  styles.authBtn,
+                  isVerified == 'yet' && authNum.length == 6
+                    ? {backgroundColor: '#5856D6'}
+                    : {backgroundColor: '#989BA2F7'},
+                ]}>
+                <Text style={styles.authBtnTxt}>인증하기</Text>
+              </Pressable>
+            </View>
+            {isVerified === 'true' ? (
               <Text style={styles.authTxt}>인증이 완료되었습니다.</Text>
+            ) : isVerified === 'false' ? (
+              <Text style={[styles.authTxt, {color: '#FF3B30'}]}>
+                인증번호가 일치하지 않습니다.
+              </Text>
+            ) : showTimeAlert ? (
+              <Text
+                style={[
+                  styles.authTxt,
+                  {color: '#FF3B30', textAlign: 'right'},
+                ]}>
+                인증시간 만료
+              </Text>
+            ) : (
+              <Text style={styles.timer}>{formatSectoMin(time)}</Text>
             )}
           </View>
         )}
@@ -224,7 +306,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         }
         onPress={() => {
           if (isSent) {
-            if (isVerified) {
+            if (isVerified === 'true') {
               login();
             } else checkAuthNum();
           } else {
@@ -236,8 +318,8 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           !isValidPhoneNum(phone) ||
           name.length == 0 ||
           time <= 0 ||
-          (isSent && !isVerified)
-            ? {backgroundColor: '#C6C6C8'}
+          (isSent && isVerified !== 'true')
+            ? {backgroundColor: '#9B9EA5'}
             : {backgroundColor: '#5856D6'},
         ]}>
         {!isSent ? (
@@ -246,6 +328,59 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           <Text style={styles.btnTxt}>가입하기</Text>
         )}
       </Pressable>
+      <Modal
+        isVisible={showTimeAlert}
+        hasBackdrop={true}
+        backdropOpacity={0}
+        onBackdropPress={() => {
+          setShowTimeAlert(false);
+          clearInterval(timerRef.current);
+          setIsSent(false);
+        }}
+        onBackButtonPress={() => {
+          setShowTimeAlert(false);
+          clearInterval(timerRef.current);
+          setIsSent(false);
+        }}>
+        <View
+          style={[
+            styles.modalView,
+            Platform.OS === 'ios'
+              ? {marginBottom: keyBoardHeight + 16}
+              : {marginBottom: 16},
+          ]}>
+          <Shadow distance={4} style={{borderRadius: 8, width: '100%'}}>
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+                // backgroundColor: 'yellow',
+                padding: 16,
+              }}>
+              <View style={styles.textView}>
+                <SvgXml
+                  xml={svgList.socialLogin.timeout}
+                  width={24}
+                  height={24}
+                  style={{
+                    marginBottom: 8,
+                  }}
+                />
+                <Text style={styles.modalTxt}>인증시간이 만료되었습니다.</Text>
+              </View>
+              <Pressable
+                style={styles.modalBtn}
+                onPress={() => {
+                  setIsSent(false);
+                  setShowTimeAlert(false);
+                  sendAuthNum();
+                }}>
+                <Text style={styles.modalBtnTxt}>인증번호 재전송</Text>
+              </Pressable>
+            </View>
+          </Shadow>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -264,7 +399,6 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 20,
     fontWeight: '600',
-    fontFamily: 'Eulyoo1945-SemiBold',
     marginVertical: 24,
   },
   input: {
@@ -280,13 +414,14 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   authBtn: {
-    borderRadius: 4,
+    borderTopRightRadius: 7,
+    borderBottomRightRadius: 7,
     backgroundColor: '#989BA2F7',
-    position: 'absolute',
-    right: 0,
-    paddingVertical: 12,
+    paddingVertical: 8,
     paddingHorizontal: 24,
-    zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   authBtnTxt: {
     color: '#FFFFFF',
@@ -301,7 +436,6 @@ const styles = StyleSheet.create({
   authTxt: {
     color: '#3C3C4399',
     fontWeight: '600',
-    fontFamily: 'Eulyoo1945-SemiBold',
     fontSize: 14,
   },
   enterBtn: {
@@ -314,8 +448,38 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'Eulyoo1945-SemiBold',
     textAlign: 'center',
     color: 'white',
+  },
+  modalView: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    bottom: 0,
+    left: -4,
+    right: -4,
+    borderRadius: 8,
+    // padding: 16,
+  },
+  textView: {
+    flexDirection: 'row',
+    width: '100%',
+  },
+  modalTxt: {
+    marginLeft: 8,
+    color: '#000000',
+    fontSize: 16,
+    fontWeight: '500',
+    lineHeight: 26,
+  },
+  modalBtn: {
+    marginBottom: 2,
+    width: '100%',
+  },
+  modalBtnTxt: {
+    color: '#5856D6',
+    fontSize: 14,
+    fontWeight: '600',
+    lineHeight: 31,
+    textAlign: 'right',
   },
 });

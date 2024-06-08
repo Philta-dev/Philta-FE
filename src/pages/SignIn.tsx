@@ -108,7 +108,6 @@ export default function SignIn(props: SignInProps) {
   };
   return (
     <View style={styles.entire}>
-      {/* <Text>{Config.API_URL}</Text> */}
       <Pressable
         onPress={() =>
           dispatch(userSlice.actions.setToken({accessToken: '1234'}))
@@ -132,7 +131,7 @@ export default function SignIn(props: SignInProps) {
           </Text>
         </Pressable>
         <Pressable
-          style={[styles.btn, {backgroundColor: '#999999F7', padding: 12}]}
+          style={[styles.btn, {backgroundColor: '#F4F4F4', padding: 12}]}
           onPress={() => {
             navigation.navigate('PhoneLogin');
           }}>

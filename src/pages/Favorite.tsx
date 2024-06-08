@@ -3,6 +3,11 @@ import {FlatList, Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import Text from '../components/Text';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {NavParamList} from '../../AppInner';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import {useAppDispatch} from '../store';
+import userSlice from '../slices/user';
+import axios from 'axios';
+import Config from 'react-native-config';
 
 type FavScreenNavigationProp = NativeStackNavigationProp<
   NavParamList,
@@ -13,8 +18,22 @@ type FavProps = {
 };
 
 export default function Favorite(props: FavProps) {
+  const dispatch = useAppDispatch();
   const [bookname, setBookname] = useState(-1);
   const [testament, setTestament] = useState('old');
+  const logout = async () => {
+    try {
+      const response = await axios.post(`${Config.API_URL}/auth/logout`);
+      await EncryptedStorage.removeItem('refreshToken');
+      dispatch(
+        userSlice.actions.setToken({
+          accessToken: '',
+        }),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <View>
       <Text>Fav</Text>
@@ -48,6 +67,9 @@ export default function Favorite(props: FavProps) {
           props.navigation.navigate('Search', {page: 'favorite'});
         }}>
         <Text>search</Text>
+      </Pressable>
+      <Pressable onPress={() => logout()}>
+        <Text>logout</Text>
       </Pressable>
     </View>
   );
