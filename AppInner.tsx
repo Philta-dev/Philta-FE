@@ -48,6 +48,7 @@ export type NavParamList = {
   Search: {page: string};
   Favorite: undefined;
   Indexing: undefined;
+  Typing: undefined;
 };
 
 export type NavNavigationProp = NativeStackNavigationProp<NavParamList>;

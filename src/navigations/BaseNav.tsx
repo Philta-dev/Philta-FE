@@ -122,8 +122,58 @@ export default function BaseNav() {
       initialRouteName="Typing"
       tabBar={props => <CustomTabbar {...props} />}>
       <Tab.Screen name="Typing" component={Typing} />
-      <Tab.Screen name="Indexing" component={Indexing} />
-      <Tab.Screen name="Favorite" component={Favorite} />
+      <Tab.Screen
+        name="Indexing"
+        component={Indexing}
+        options={{
+          header: props => (
+            <View style={styles.header}>
+              <View style={styles.headerLeft} />
+              <View style={styles.headerCenter}>
+                <Text style={styles.headerTitleTxt}>전체 성경</Text>
+              </View>
+              <View style={styles.headerRight}>
+                <Pressable
+                  onPress={() =>
+                    props.navigation.navigate('Search', {page: 'indexing'})
+                  }>
+                  <SvgXml xml={svgList.searchBtn} width={24} height={24} />
+                </Pressable>
+
+                <Pressable style={styles.headerDropDown}>
+                  <Text style={styles.headerDropDownTxt}>KRV</Text>
+                </Pressable>
+              </View>
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Favorite"
+        component={Favorite}
+        options={{
+          header: props => (
+            <View style={styles.header}>
+              <View style={styles.headerLeft} />
+              <View style={styles.headerCenter}>
+                <Text style={styles.headerTitleTxt}>북마크</Text>
+              </View>
+              <View style={styles.headerRight}>
+                <Pressable
+                  onPress={() =>
+                    props.navigation.navigate('Search', {page: 'favorite'})
+                  }>
+                  <SvgXml xml={svgList.searchBtn} width={24} height={24} />
+                </Pressable>
+
+                <Pressable style={styles.headerDropDown}>
+                  <Text style={styles.headerDropDownTxt}>KRV</Text>
+                </Pressable>
+              </View>
+            </View>
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -136,6 +186,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     borderTopColor: '#7878805C',
     borderTopWidth: 1,
+    backgroundColor: '#FFFFFF',
   },
   tabBarButton: {
     flex: 1,
@@ -149,5 +200,49 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 18,
     letterSpacing: -0.32,
+  },
+  header: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    backgroundColor: '#fff',
+    borderBottomColor: '#3C3C432E',
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+  },
+  headerTitleTxt: {
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'Eulyoo1945-SemiBold',
+    lineHeight: 21,
+    letterSpacing: -0.32,
+  },
+  headerRight: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  headerDropDown: {
+    marginLeft: 8,
+    paddingVertical: 9,
+    borderRadius: 8,
+    backgroundColor: '#2C2C2E',
+    width: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerDropDownTxt: {
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 21,
+    letterSpacing: -0.32,
+    color: '#FFFFFF',
   },
 });

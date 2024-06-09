@@ -8,6 +8,7 @@ import {
   Pressable,
   StyleSheet,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import {LinearGradient} from 'react-native-linear-gradient';
 import Text from '../components/Text';
@@ -16,6 +17,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useSelector} from 'react-redux';
 import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
+import {SvgXml} from 'react-native-svg';
+import {svgList} from '../assets/svgList';
 
 const buttonWidth = 80;
 const buttonSmallWidth = 40;
@@ -45,6 +48,8 @@ export default function Indexing(props: IndexProps) {
   const [bookFocusedIndex, setBookFocusedIndex] = useState(0);
   const [chapFocusedIndex, setChapFocusedIndex] = useState(0);
   const [verseFocusedIndex, setVerseFocusedIndex] = useState(0);
+  const windowHeight = useWindowDimensions().height;
+  let itemHeight = (windowHeight / 2 - 48) / 4;
 
   useEffect(() => {
     if (reduxTestament !== testamentFocusedIndex) {
@@ -69,6 +74,25 @@ export default function Indexing(props: IndexProps) {
       // scrollToIndex(reduxVerse, verse, scrollRef4, setVerseFocusedIndex);
     }
   }, [reduxTestament, reduxBook, reduxChap, reduxVerse]);
+
+  // useEffect(() => {
+  //   props.navigation.setOptions({
+  //     header: () => {
+  //       return (
+  //         <View style={styles.header}>
+  //           <View style={styles.headerLeft} />
+  //           <View style={styles.headerCenter}>
+  //             <Text style={styles.headerTitleTxt}>전체 성경</Text>
+  //           </View>
+  //           <View style={styles.headerRight}>
+  //             <SvgXml xml={svgList.searchBtn} width={24} height={24} />
+  //           </View>
+  //         </View>
+  //       );
+  //     },
+  //   });
+  // }, [props.navigation]);
+
   useEffect(() => {
     const blurListener = props.navigation.addListener('blur', () => {
       dispatch(
@@ -175,9 +199,13 @@ export default function Indexing(props: IndexProps) {
     },
   ) => {
     const offsetX = e.nativeEvent.contentOffset.x;
+    let direction =
+      offsetX > chapFocusedIndex * buttonSmallWidth + 20 ? 'right' : 'left';
     const index =
       type == 'testament' || type == 'book'
         ? Math.round(offsetX / buttonWidth)
+        : direction == 'right'
+        ? Math.round((offsetX - 40) / buttonSmallWidth)
         : Math.round((offsetX - 20) / buttonSmallWidth);
     if (index !== selectedIndex) {
       setSelectedIndex(index);
@@ -197,8 +225,10 @@ export default function Indexing(props: IndexProps) {
     }
   };
   return (
-    <View style={{backgroundColor: 'white'}}>
-      <Text>좌우로 스크롤하여 구절 선택</Text>
+    <View style={{backgroundColor: 'white', paddingTop: 8, flex: 1}}>
+      <Text style={{marginVertical: 32, marginLeft: 24}}>
+        좌우로 스크롤하여 구절 선택
+      </Text>
       <View>
         <View>
           <FlatList
@@ -212,7 +242,7 @@ export default function Indexing(props: IndexProps) {
                   setChapFocusedIndex(0);
                   setVerseFocusedIndex(0);
                 }}
-                style={styles.item}>
+                style={[styles.item, {height: itemHeight}]}>
                 <Text
                   style={[
                     styles.itemText,
@@ -252,7 +282,7 @@ export default function Indexing(props: IndexProps) {
                   setChapFocusedIndex(0);
                   setVerseFocusedIndex(0);
                 }}
-                style={styles.item}>
+                style={[styles.item, {height: itemHeight}]}>
                 <Text
                   style={[
                     styles.itemText,
@@ -294,6 +324,7 @@ export default function Indexing(props: IndexProps) {
                 style={[
                   styles.item,
                   chapFocusedIndex !== index && {width: buttonSmallWidth},
+                  {height: itemHeight},
                 ]}>
                 <Text
                   style={[
@@ -335,6 +366,7 @@ export default function Indexing(props: IndexProps) {
                 style={[
                   styles.item,
                   verseFocusedIndex !== index && {width: buttonSmallWidth},
+                  {height: itemHeight},
                 ]}>
                 <Text
                   style={[
@@ -372,19 +404,25 @@ export default function Indexing(props: IndexProps) {
             style={[styles.overlay]}
           />
         </View>
-        <View style={styles.overlayFocus} pointerEvents="none">
-          <View style={styles.overlayVisible}></View>
+        <View
+          style={[styles.overlayFocus, {height: windowHeight / 2}]}
+          pointerEvents="none">
+          <View
+            style={[styles.overlayVisible, {height: windowHeight / 2}]}></View>
         </View>
       </View>
-      <Text style={styles.itemText}>{`
-        ${testament[testamentFocusedIndex]} ${book[bookFocusedIndex]} ${chap[chapFocusedIndex]}장 ${verse[verseFocusedIndex]}절
-      `}</Text>
-      <Pressable
-        onPress={() => {
-          props.navigation.navigate('Search', {page: 'indexing'});
-        }}>
-        <Text>search</Text>
-      </Pressable>
+
+      <View style={styles.bottomView}>
+        <Text style={styles.indexingTxt}>{`
+        ${book[bookFocusedIndex]} ${chap[chapFocusedIndex]}장 ${verse[verseFocusedIndex]}절`}</Text>
+        <Pressable
+          style={styles.confirmBtn}
+          onPress={() => {
+            props.navigation.navigate('Typing');
+          }}>
+          <Text style={styles.confirmBtnTxt}>완료</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -420,5 +458,35 @@ const styles = StyleSheet.create({
     width: buttonWidth,
     backgroundColor: 'rgba(0,0,0,0.1)',
     borderRadius: 10,
+  },
+  bottomView: {
+    width: '100%',
+    paddingHorizontal: 40,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  indexingTxt: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '400',
+    lineHeight: 25,
+    letterSpacing: -0.32,
+  },
+  confirmBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 4,
+    backgroundColor: '#5856D6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+  },
+  confirmBtnTxt: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Eulyoo1945-SemiBold',
+    lineHeight: 24,
+    letterSpacing: -0.32,
   },
 });
