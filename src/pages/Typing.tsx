@@ -301,11 +301,7 @@ export default function Typing(props: TypingProps) {
           style={styles.modalBtn}
           onPress={() => console.log(StatusBarHeight)}>
           <View style={[styles.modalBtnIcon, {backgroundColor: '#EBEBF599'}]}>
-            <SvgXml
-              xml={svgList.tabbar.favoritePressed}
-              width={15}
-              height={19}
-            />
+            <SvgXml xml={svgList.tabbar.modal.typing} width={20} height={20} />
           </View>
           <Text style={[styles.modalBtnTxt, {color: '#EBEBF599'}]}>
             구절 타이핑
@@ -327,9 +323,9 @@ export default function Typing(props: TypingProps) {
           style={styles.modalBtn}>
           <View style={styles.modalBtnIcon}>
             <SvgXml
-              xml={svgList.tabbar.favoritePressed}
-              width={15}
-              height={19}
+              xml={svgList.tabbar.modal.indexing}
+              width={40}
+              height={40}
             />
           </View>
           <Text style={styles.modalBtnTxt}>전체 성경</Text>
@@ -342,9 +338,9 @@ export default function Typing(props: TypingProps) {
           style={styles.modalBtn}>
           <View style={styles.modalBtnIcon}>
             <SvgXml
-              xml={svgList.tabbar.favoritePressed}
-              width={15}
-              height={19}
+              xml={svgList.tabbar.modal.favorite}
+              width={40}
+              height={40}
             />
           </View>
           <Text style={styles.modalBtnTxt}>북마크</Text>

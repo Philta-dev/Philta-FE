@@ -10,6 +10,7 @@ import Text from '../components/Text';
 import Typing from '../pages/Typing';
 import Indexing from '../pages/Indexing';
 import Favorite from '../pages/Favorite';
+import DropDownModal from '../components/DropDownModal';
 
 export type RootTabParamList = {
   Typing: undefined;
@@ -117,64 +118,84 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 };
 
 export default function BaseNav() {
+  const [dropDown, setDropDown] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
   return (
-    <Tab.Navigator
-      initialRouteName="Typing"
-      tabBar={props => <CustomTabbar {...props} />}>
-      <Tab.Screen name="Typing" component={Typing} />
-      <Tab.Screen
-        name="Indexing"
-        component={Indexing}
-        options={{
-          header: props => (
-            <View style={styles.header}>
-              <View style={styles.headerLeft} />
-              <View style={styles.headerCenter}>
-                <Text style={styles.headerTitleTxt}>전체 성경</Text>
-              </View>
-              <View style={styles.headerRight}>
-                <Pressable
-                  onPress={() =>
-                    props.navigation.navigate('Search', {page: 'indexing'})
-                  }>
-                  <SvgXml xml={svgList.searchBtn} width={24} height={24} />
-                </Pressable>
+    <View style={{flex: 1}}>
+      <Tab.Navigator
+        initialRouteName="Typing"
+        tabBar={props => <CustomTabbar {...props} />}>
+        <Tab.Screen name="Typing" component={Typing} />
+        <Tab.Screen
+          name="Indexing"
+          component={Indexing}
+          options={{
+            header: props => (
+              <View style={styles.header}>
+                <View style={styles.headerLeft} />
+                <View style={styles.headerCenter}>
+                  <Text style={styles.headerTitleTxt}>전체 성경</Text>
+                </View>
+                <View style={styles.headerRight}>
+                  <Pressable
+                    onPress={() =>
+                      props.navigation.navigate('Search', {page: 'indexing'})
+                    }>
+                    <SvgXml xml={svgList.searchBtn} width={24} height={24} />
+                  </Pressable>
 
-                <Pressable style={styles.headerDropDown}>
-                  <Text style={styles.headerDropDownTxt}>KRV</Text>
-                </Pressable>
+                  <Pressable
+                    style={styles.headerDropDown}
+                    onPress={() => setDropDown(true)}>
+                    <Text style={styles.headerDropDownTxt}>
+                      {dropDownItems[selectedIndex]}
+                    </Text>
+                  </Pressable>
+                </View>
               </View>
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Favorite"
-        component={Favorite}
-        options={{
-          header: props => (
-            <View style={styles.header}>
-              <View style={styles.headerLeft} />
-              <View style={styles.headerCenter}>
-                <Text style={styles.headerTitleTxt}>북마크</Text>
-              </View>
-              <View style={styles.headerRight}>
-                <Pressable
-                  onPress={() =>
-                    props.navigation.navigate('Search', {page: 'favorite'})
-                  }>
-                  <SvgXml xml={svgList.searchBtn} width={24} height={24} />
-                </Pressable>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Favorite"
+          component={Favorite}
+          options={{
+            header: props => (
+              <View style={styles.header}>
+                <View style={styles.headerLeft} />
+                <View style={styles.headerCenter}>
+                  <Text style={styles.headerTitleTxt}>북마크</Text>
+                </View>
+                <View style={styles.headerRight}>
+                  <Pressable
+                    onPress={() =>
+                      props.navigation.navigate('Search', {page: 'favorite'})
+                    }>
+                    <SvgXml xml={svgList.searchBtn} width={24} height={24} />
+                  </Pressable>
 
-                <Pressable style={styles.headerDropDown}>
-                  <Text style={styles.headerDropDownTxt}>KRV</Text>
-                </Pressable>
+                  <Pressable
+                    style={styles.headerDropDown}
+                    onPress={() => setDropDown(true)}>
+                    <Text style={styles.headerDropDownTxt}>
+                      {dropDownItems[selectedIndex]}
+                    </Text>
+                  </Pressable>
+                </View>
               </View>
-            </View>
-          ),
-        }}
+            ),
+          }}
+        />
+      </Tab.Navigator>
+      <DropDownModal
+        visible={dropDown}
+        setVisible={setDropDown}
+        selectedIndex={selectedIndex}
+        setSelectedIndex={setSelectedIndex}
+        dropDownItems={dropDownItems}
       />
-    </Tab.Navigator>
+    </View>
   );
 }
 
