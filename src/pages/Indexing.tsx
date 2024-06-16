@@ -56,17 +56,24 @@ export default function Indexing(props: IndexProps) {
   let itemHeight = (windowHeight / 2 - 48) / 4;
 
   useEffect(() => {
-    if (reduxTestament !== testamentFocusedIndex) {
-      setTestamentFocusedIndex(reduxTestament);
-    }
-    if (reduxBook !== bookFocusedIndex) {
-      setBookFocusedIndex(reduxBook);
-    }
-    if (reduxChap !== chapFocusedIndex) {
-      setChapFocusedIndex(reduxChap);
-    }
-    if (reduxVerse !== verseFocusedIndex) {
-      setVerseFocusedIndex(reduxVerse);
+    if (reduxTestament == -1) {
+      setTestamentFocusedIndex(0);
+      setBookFocusedIndex(0);
+      setChapFocusedIndex(0);
+      setVerseFocusedIndex(0);
+    } else {
+      if (reduxTestament !== testamentFocusedIndex) {
+        setTestamentFocusedIndex(reduxTestament);
+      }
+      if (reduxBook !== bookFocusedIndex) {
+        setBookFocusedIndex(reduxBook);
+      }
+      if (reduxChap !== chapFocusedIndex) {
+        setChapFocusedIndex(reduxChap);
+      }
+      if (reduxVerse !== verseFocusedIndex) {
+        setVerseFocusedIndex(reduxVerse);
+      }
     }
   }, [reduxTestament, reduxBook, reduxChap, reduxVerse]);
 
@@ -78,10 +85,10 @@ export default function Indexing(props: IndexProps) {
       setVerseFocusedIndex(0);
       dispatch(
         userSlice.actions.setIndex({
-          testament: 0,
-          book: 0,
-          chapter: 0,
-          verse: 0,
+          testament: -1,
+          book: -1,
+          chapter: -1,
+          verse: -1,
         }),
       );
     });

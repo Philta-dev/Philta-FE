@@ -5,10 +5,10 @@ const initialState = {
   preAcc: '',
   preRef: '',
   version: '',
-  testament: 0,
-  book: 0,
-  chapter: 0,
-  verse: 0,
+  testament: -1,
+  book: -1,
+  chapter: -1,
+  verse: -1,
 };
 
 const userSlice = createSlice({

@@ -86,16 +86,14 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name);
-            if (route.name !== 'Indexing') {
-              dispatch(
-                userSlice.actions.setIndex({
-                  testament: 0,
-                  book: 0,
-                  chapter: 0,
-                  verse: 0,
-                }),
-              );
-            }
+            dispatch(
+              userSlice.actions.setIndex({
+                testament: -1,
+                book: -1,
+                chapter: -1,
+                verse: -1,
+              }),
+            );
           }
         };
 
