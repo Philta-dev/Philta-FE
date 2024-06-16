@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, TextInput, View} from 'react-native';
+import {FlatList, Pressable, StyleSheet, TextInput, View} from 'react-native';
 import Text from '../components/Text';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {NavParamList} from '../../AppInner';
@@ -7,6 +7,8 @@ import userSlice from '../slices/user';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 import {useEffect, useRef, useState} from 'react';
+import axios, {AxiosError} from 'axios';
+import Config from 'react-native-config';
 
 type SearchScreenNavigationProp = NativeStackNavigationProp<
   NavParamList,
@@ -16,14 +18,49 @@ type SearchProps = {
   navigation: SearchScreenNavigationProp;
   route: {params: {page: string}};
 };
+
+type searchResult = {
+  name: string;
+  T: number;
+  B: number;
+};
+type itemProps = {
+  item: searchResult;
+  index: number;
+};
 export default function Search(props: SearchProps) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState('');
+  const [searched, setSearched] = useState<searchResult[]>([
+    // {name: '창세기', T: 1, B: 1},
+    // {name: '출애굽기', T: 1, B: 2},
+  ]);
   const ref = useRef<TextInput>(null);
   useEffect(() => {
     ref.current?.setNativeProps({style: {fontFamily: 'Eulyoo1945-Regular'}});
     ref.current?.focus();
   });
+  const searchData = async () => {
+    if (search == '') {
+      setSearched([]);
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${Config.API_URL}/index/search?query=${search}`,
+      );
+      console.log(response.data);
+      setSearched(response.data.searchResult);
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+  useEffect(() => {
+    searchData();
+  }, [search]);
   return (
     <View style={styles.entire}>
       <View style={styles.header}>
@@ -32,7 +69,7 @@ export default function Search(props: SearchProps) {
         </Pressable>
         <View style={styles.searchView}>
           <TextInput
-            style={styles.serachArea}
+            style={styles.searchArea}
             placeholder="책 검색..."
             placeholderTextColor={'#3C3C4399'}
             value={search}
@@ -48,30 +85,50 @@ export default function Search(props: SearchProps) {
           </Pressable>
         </View>
 
-        <Pressable>
+        <Pressable onPress={searchData}>
           <SvgXml xml={svgList.searchBtn} width={24} height={24} />
         </Pressable>
       </View>
       <View style={styles.container}>
-        <Pressable
-          onPress={() => {
-            if (props.route.params.page == 'favorite') {
-              props.navigation.navigate('Favorite');
-            } else {
-              dispatch(
-                userSlice.actions.setIndex({
-                  testament: 1,
-                  book: 2,
-                  chapter: 3,
-                  verse: 4,
-                }),
-              );
-              props.navigation.navigate('Indexing');
-            }
-          }}>
-          <Text style={styles.searchedTxt}>{props.route.params.page}</Text>
-          <Text style={styles.searchedBoldTxt}>{props.route.params.page}</Text>
-        </Pressable>
+        <FlatList
+          keyboardShouldPersistTaps="always"
+          data={searched}
+          renderItem={({item, index}: itemProps) => (
+            <Pressable
+              style={styles.searchedItem}
+              onPress={() => {
+                if (props.route.params.page == 'favorite') {
+                  props.navigation.navigate('Favorite');
+                } else {
+                  dispatch(
+                    userSlice.actions.setIndex({
+                      testament: item.T - 1,
+                      book: item.B - 1,
+                      chapter: 0,
+                      verse: 0,
+                    }),
+                  );
+                  props.navigation.navigate('Indexing');
+                }
+              }}>
+              {/* <Text style={styles.searchedTxt}>{props.route.params.page}</Text> */}
+              {/* <Text style={styles.searchedTxt}>{item.name}</Text>
+              <Text style={styles.searchedBoldTxt}>{item.name}</Text> */}
+              {item.name.split('').map((txt, i) =>
+                txt.toLocaleLowerCase() == search.toLocaleLowerCase() ? (
+                  <Text style={styles.searchedBoldTxt} key={`${index}-${i}`}>
+                    {txt}
+                  </Text>
+                ) : (
+                  <Text style={styles.searchedTxt} key={`${index}-${i}`}>
+                    {txt}
+                  </Text>
+                ),
+              )}
+            </Pressable>
+          )}
+          keyExtractor={item => item.name}
+        />
       </View>
     </View>
   );
@@ -100,7 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  serachArea: {
+  searchArea: {
     flex: 1,
     paddingVertical: 8,
     paddingLeft: 16,
@@ -122,13 +179,18 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 70,
   },
+  searchedItem: {
+    flexDirection: 'row',
+  },
   searchedTxt: {
+    color: 'black',
     fontSize: 16,
     fontWeight: '400',
     lineHeight: 32,
     letterSpacing: -0.32,
   },
   searchedBoldTxt: {
+    color: 'black',
     fontSize: 16,
     fontWeight: '600',
     fontFamily: 'Eulyoo1945-SemiBold',
