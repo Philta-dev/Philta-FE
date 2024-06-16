@@ -35,13 +35,13 @@ type IndexProps = {
 };
 
 export default function Indexing(props: IndexProps) {
-  // const dispatch = useAppDispatch();
-  // const reduxTestament = useSelector(
-  //   (state: RootState) => state.user.testament,
-  // );
-  // const reduxBook = useSelector((state: RootState) => state.user.book);
-  // const reduxChap = useSelector((state: RootState) => state.user.chapter);
-  // const reduxVerse = useSelector((state: RootState) => state.user.verse);
+  const dispatch = useAppDispatch();
+  const reduxTestament = useSelector(
+    (state: RootState) => state.user.testament,
+  );
+  const reduxBook = useSelector((state: RootState) => state.user.book);
+  const reduxChap = useSelector((state: RootState) => state.user.chapter);
+  const reduxVerse = useSelector((state: RootState) => state.user.verse);
   const version = useSelector((state: RootState) => state.user.version);
   const scrollRef1 = useRef(null);
   const scrollRef2 = useRef(null);
@@ -51,37 +51,42 @@ export default function Indexing(props: IndexProps) {
   const [bookFocusedIndex, setBookFocusedIndex] = useState(0);
   const [chapFocusedIndex, setChapFocusedIndex] = useState(0);
   const [verseFocusedIndex, setVerseFocusedIndex] = useState(0);
+  const [verseId, setVerseId] = useState(0);
   const windowHeight = useWindowDimensions().height;
   let itemHeight = (windowHeight / 2 - 48) / 4;
 
-  // useEffect(() => {
-  //   if (reduxTestament !== testamentFocusedIndex) {
-  //     setTestamentFocusedIndex(reduxTestament);
-  //   }
-  //   if (reduxBook !== bookFocusedIndex) {
-  //     setBookFocusedIndex(reduxBook);
-  //   }
-  //   if (reduxChap !== chapFocusedIndex) {
-  //     setChapFocusedIndex(reduxChap);
-  //   }
-  //   if (reduxVerse !== verseFocusedIndex) {
-  //     setVerseFocusedIndex(reduxVerse);
-  //   }
-  // }, [reduxTestament, reduxBook, reduxChap, reduxVerse]);
+  useEffect(() => {
+    if (reduxTestament !== testamentFocusedIndex) {
+      setTestamentFocusedIndex(reduxTestament);
+    }
+    if (reduxBook !== bookFocusedIndex) {
+      setBookFocusedIndex(reduxBook);
+    }
+    if (reduxChap !== chapFocusedIndex) {
+      setChapFocusedIndex(reduxChap);
+    }
+    if (reduxVerse !== verseFocusedIndex) {
+      setVerseFocusedIndex(reduxVerse);
+    }
+  }, [reduxTestament, reduxBook, reduxChap, reduxVerse]);
 
-  // useEffect(() => {
-  //   const blurListener = props.navigation.addListener('blur', () => {
-  //     dispatch(
-  //       userSlice.actions.setIndex({
-  //         testament: testamentFocusedIndex,
-  //         book: bookFocusedIndex,
-  //         chapter: chapFocusedIndex,
-  //         verse: verseFocusedIndex,
-  //       }),
-  //     );
-  //   });
-  //   return blurListener;
-  // }, []);
+  useEffect(() => {
+    const blurListener = props.navigation.addListener('blur', () => {
+      setTestamentFocusedIndex(0);
+      setBookFocusedIndex(0);
+      setChapFocusedIndex(0);
+      setVerseFocusedIndex(0);
+      dispatch(
+        userSlice.actions.setIndex({
+          testament: 0,
+          book: 0,
+          chapter: 0,
+          verse: 0,
+        }),
+      );
+    });
+    return blurListener;
+  }, []);
   useEffect(() => {
     scrollToIndex(
       'testament',
@@ -215,6 +220,7 @@ export default function Indexing(props: IndexProps) {
 
   const getData = async () => {
     try {
+      console.log('redux', reduxTestament, reduxBook, reduxChap, reduxVerse);
       console.log(
         't',
         testamentFocusedIndex,
@@ -239,6 +245,35 @@ export default function Indexing(props: IndexProps) {
       setChap(response.data.chapters);
       setVerse(response.data.verses);
       setFullname(response.data.full_name);
+      setVerseId(response.data.verseId);
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+
+  const handlePointer = async () => {
+    console.log('verseId', verseId);
+    try {
+      const response = await axios.post(`${Config.API_URL}/index/current`, {
+        verseId: verseId,
+      });
+      console.log(response.data);
+      // setTestamentFocusedIndex(0);
+      // setBookFocusedIndex(0);
+      // setChapFocusedIndex(0);
+      // setVerseFocusedIndex(0);
+      // dispatch(
+      //   userSlice.actions.setIndex({
+      //     testament: 0,
+      //     book: 0,
+      //     chapter: 0,
+      //     verse: 0,
+      //   }),
+      // );
+      props.navigation.navigate('Typing');
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -436,13 +471,13 @@ export default function Indexing(props: IndexProps) {
       </View>
 
       <View style={styles.bottomView}>
-        <Text style={styles.indexingTxt}>{`
-        ${book[bookFocusedIndex]} ${chapFocusedIndex}장 ${verseFocusedIndex}절`}</Text>
+        {/* <Text style={styles.indexingTxt}>{`
+        ${book[bookFocusedIndex]} ${chapFocusedIndex}장 ${verseFocusedIndex}절`}</Text> */}
         <Text style={styles.indexingTxt}>{fullname}</Text>
         <Pressable
           style={styles.confirmBtn}
           onPress={() => {
-            props.navigation.navigate('Typing');
+            handlePointer();
           }}>
           <Text style={styles.confirmBtnTxt}>완료</Text>
         </Pressable>
@@ -490,6 +525,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   indexingTxt: {
+    marginTop: 24,
     color: 'black',
     fontSize: 16,
     fontWeight: '400',

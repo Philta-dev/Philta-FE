@@ -27,6 +27,7 @@ export type RootTabNavigationProp = BottomTabNavigationProp<RootTabParamList>;
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const CustomTabbar = ({state, descriptors, navigation}: any) => {
+  const dispatch = useAppDispatch();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const iconList = [
     svgList.tabbar.typing,
@@ -85,6 +86,16 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name);
+            if (route.name !== 'Indexing') {
+              dispatch(
+                userSlice.actions.setIndex({
+                  testament: 0,
+                  book: 0,
+                  chapter: 0,
+                  verse: 0,
+                }),
+              );
+            }
           }
         };
 
