@@ -13,6 +13,8 @@ import Favorite from '../pages/Favorite';
 import DropDownModal from '../components/DropDownModal';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
+import {useAppDispatch} from '../store';
+import userSlice from '../slices/user';
 
 export type RootTabParamList = {
   Typing: undefined;
@@ -120,6 +122,7 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 };
 
 export default function BaseNav() {
+  const dispatch = useAppDispatch();
   const [dropDown, setDropDown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
@@ -140,10 +143,16 @@ export default function BaseNav() {
   };
   const selectVersion = async (index: number) => {
     try {
-      const response = await axios.post(`${Config.API_URL}/index/version`, {
-        version: dropDownItems[index],
-      });
-      console.log(response.data);
+      // const response = await axios.post(`${Config.API_URL}/index/version`, {
+      //   version: dropDownItems[index],
+      // });
+      // console.log(response.data);
+      // getVersionData();
+      dispatch(
+        userSlice.actions.setVersion({
+          version: dropDownItems[index],
+        }),
+      );
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -154,6 +163,9 @@ export default function BaseNav() {
 
   useEffect(() => {
     getVersionData();
+  }, []);
+  useEffect(() => {
+    selectVersion(selectedIndex);
   }, [selectedIndex]);
   return (
     <View style={{flex: 1}}>

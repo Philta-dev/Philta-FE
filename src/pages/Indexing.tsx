@@ -42,6 +42,7 @@ export default function Indexing(props: IndexProps) {
   // const reduxBook = useSelector((state: RootState) => state.user.book);
   // const reduxChap = useSelector((state: RootState) => state.user.chapter);
   // const reduxVerse = useSelector((state: RootState) => state.user.verse);
+  const version = useSelector((state: RootState) => state.user.version);
   const scrollRef1 = useRef(null);
   const scrollRef2 = useRef(null);
   const scrollRef3 = useRef(null);
@@ -209,6 +210,7 @@ export default function Indexing(props: IndexProps) {
     bookFocusedIndex,
     chapFocusedIndex,
     verseFocusedIndex,
+    version,
   ]);
 
   const getData = async () => {

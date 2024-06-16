@@ -4,6 +4,7 @@ const initialState = {
   accessToken: '',
   preAcc: '',
   preRef: '',
+  version: '',
   testament: 0,
   book: 0,
   chapter: 0,
@@ -38,6 +39,9 @@ const userSlice = createSlice({
     },
     setVerse(state, action) {
       state.verse = action.payload.verse;
+    },
+    setVersion(state, action) {
+      state.version = action.payload.version;
     },
   },
   extraReducers: builder => {},
