@@ -11,6 +11,8 @@ import Typing from '../pages/Typing';
 import Indexing from '../pages/Indexing';
 import Favorite from '../pages/Favorite';
 import DropDownModal from '../components/DropDownModal';
+import axios, {AxiosError} from 'axios';
+import Config from 'react-native-config';
 
 export type RootTabParamList = {
   Typing: undefined;
@@ -121,6 +123,38 @@ export default function BaseNav() {
   const [dropDown, setDropDown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
+  const getVersionData = async () => {
+    try {
+      const response = await axios.get(`${Config.API_URL}/index/version`);
+      console.log(response.data);
+      setDropDownItems(response.data.versions);
+      setSelectedIndex(
+        response.data.versions.indexOf(response.data.current_version),
+      );
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+  const selectVersion = async (index: number) => {
+    try {
+      const response = await axios.post(`${Config.API_URL}/index/version`, {
+        version: dropDownItems[index],
+      });
+      console.log(response.data);
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+
+  useEffect(() => {
+    getVersionData();
+  }, [selectedIndex]);
   return (
     <View style={{flex: 1}}>
       <Tab.Navigator

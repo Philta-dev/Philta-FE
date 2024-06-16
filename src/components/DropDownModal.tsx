@@ -15,6 +15,8 @@ type DropDownModalProps = {
 export default function DropDownModal(props: DropDownModalProps) {
   return (
     <Modal
+      animationIn={'fadeIn'}
+      animationOut={'fadeOut'}
       isVisible={props.visible}
       style={{flex: 1, padding: 0, margin: 0}}
       hasBackdrop
