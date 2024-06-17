@@ -14,6 +14,8 @@ export default function MyModal(props: ModalProps) {
 
   return (
     <Modal
+      animationIn={'fadeIn'}
+      animationOut={'fadeOut'}
       style={styles.entire}
       isVisible={showModal}
       hasBackdrop={true}

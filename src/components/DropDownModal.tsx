@@ -3,6 +3,7 @@ import Modal from 'react-native-modal';
 import Text from './Text';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
+import {Shadow} from 'react-native-shadow-2';
 
 type DropDownModalProps = {
   visible: boolean;
@@ -23,23 +24,34 @@ export default function DropDownModal(props: DropDownModalProps) {
       backdropOpacity={0}>
       <Pressable style={styles.modalBG} onPress={() => props.setVisible(false)}>
         <View style={styles.modalContainer}>
-          <FlatList
-            data={props.dropDownItems}
-            renderItem={({item, index}) => (
-              <Pressable
-                style={styles.item}
-                onPress={() => {
-                  props.setSelectedIndex(index);
-                }}>
-                {index == props.selectedIndex ? (
-                  <SvgXml xml={svgList.dropDown.checked} width={8} height={8} />
-                ) : (
-                  <View style={{width: 8, height: 8}} />
-                )}
-                <Text style={styles.itemTxt}>{item}</Text>
-              </Pressable>
-            )}
-          />
+          <Shadow
+            distance={6}
+            style={{borderRadius: 8, width: '100%', height: '100%'}}
+            startColor="rgba(0, 0, 0, 0.08)"
+            endColor="rgba(0, 0, 0, 0)">
+            <FlatList
+              style={{width: '100%', height: '100%'}}
+              data={props.dropDownItems}
+              renderItem={({item, index}) => (
+                <Pressable
+                  style={styles.item}
+                  onPress={() => {
+                    props.setSelectedIndex(index);
+                  }}>
+                  {index == props.selectedIndex ? (
+                    <SvgXml
+                      xml={svgList.dropDown.checked}
+                      width={8}
+                      height={8}
+                    />
+                  ) : (
+                    <View style={{width: 8, height: 8}} />
+                  )}
+                  <Text style={styles.itemTxt}>{item}</Text>
+                </Pressable>
+              )}
+            />
+          </Shadow>
         </View>
       </Pressable>
     </Modal>

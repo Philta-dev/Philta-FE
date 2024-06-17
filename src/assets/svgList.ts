@@ -193,6 +193,16 @@ export const svgList = {
     </g>
     </svg>
     `,
+    bookmarkEmpty: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <mask id="mask0_246_3717" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
+    <rect width="16" height="16" fill="#D9D9D9"/>
+    </mask>
+    <g mask="url(#mask0_246_3717)">
+    <path d="M3.66663 13.5V3.53848C3.66663 3.2017 3.78329 2.91665 4.01663 2.68331C4.24996 2.44998 4.53501 2.33331 4.87179 2.33331H11.1281C11.4649 2.33331 11.75 2.44998 11.9833 2.68331C12.2166 2.91665 12.3333 3.2017 12.3333 3.53848V13.5L7.99996 11.641L3.66663 13.5ZM4.66663 11.9666L7.99996 10.5333L11.3333 11.9666V3.53848C11.3333 3.48715 11.3119 3.44015 11.2691 3.39748C11.2265 3.3547 11.1795 3.33331 11.1281 3.33331H4.87179C4.82046 3.33331 4.77346 3.3547 4.73079 3.39748C4.68801 3.44015 4.66663 3.48715 4.66663 3.53848V11.9666Z" fill="#1C1B1F"/>
+    </g>
+    </svg>
+    `,
+
     clipboard: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="mask0_170_4334" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="32" height="32">
     <rect width="32" height="32" transform="matrix(-1 0 0 1 32 0)" fill="#D9D9D9"/>

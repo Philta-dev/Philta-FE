@@ -312,10 +312,10 @@ export default function Typing(props: TypingProps) {
             setShowModal(false);
             dispatch(
               userSlice.actions.setIndex({
-                testament: 0,
-                book: 0,
-                chapter: 0,
-                verse: 0,
+                testament: -1,
+                book: -1,
+                chapter: -1,
+                verse: -1,
               }),
             );
             props.navigation.navigate('Indexing');

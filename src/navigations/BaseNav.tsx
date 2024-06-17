@@ -86,16 +86,14 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(route.name);
-            if (route.name !== 'Indexing') {
-              dispatch(
-                userSlice.actions.setIndex({
-                  testament: 0,
-                  book: 0,
-                  chapter: 0,
-                  verse: 0,
-                }),
-              );
-            }
+            dispatch(
+              userSlice.actions.setIndex({
+                testament: -1,
+                book: -1,
+                chapter: -1,
+                verse: -1,
+              }),
+            );
           }
         };
 
@@ -154,11 +152,14 @@ export default function BaseNav() {
   };
   const selectVersion = async (index: number) => {
     try {
-      // const response = await axios.post(`${Config.API_URL}/index/version`, {
-      //   version: dropDownItems[index],
-      // });
-      // console.log(response.data);
-      // getVersionData();
+      const response = await axios.post(
+        `${Config.API_URL}/index/changeversion`,
+        {
+          version: dropDownItems[index],
+        },
+      );
+      console.log(response.data);
+      getVersionData();
       dispatch(
         userSlice.actions.setVersion({
           version: dropDownItems[index],

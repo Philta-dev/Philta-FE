@@ -90,16 +90,18 @@ export default function Search(props: SearchProps) {
         </Pressable>
       </View>
       <View style={styles.container}>
-        <FlatList
-          keyboardShouldPersistTaps="always"
-          data={searched}
-          renderItem={({item, index}: itemProps) => (
-            <Pressable
-              style={styles.searchedItem}
-              onPress={() => {
-                if (props.route.params.page == 'favorite') {
-                  props.navigation.navigate('Favorite');
-                } else {
+        {search == '' ? (
+          <Text style={styles.searchedTxt}>검색어를 입력해주세요.</Text>
+        ) : searched.length == 0 ? (
+          <Text style={styles.searchedTxt}>검색 결과가 없습니다.</Text>
+        ) : (
+          <FlatList
+            keyboardShouldPersistTaps="always"
+            data={searched}
+            renderItem={({item, index}: itemProps) => (
+              <Pressable
+                style={styles.searchedItem}
+                onPress={() => {
                   dispatch(
                     userSlice.actions.setIndex({
                       testament: item.T - 1,
@@ -108,27 +110,31 @@ export default function Search(props: SearchProps) {
                       verse: 0,
                     }),
                   );
-                  props.navigation.navigate('Indexing');
-                }
-              }}>
-              {/* <Text style={styles.searchedTxt}>{props.route.params.page}</Text> */}
-              {/* <Text style={styles.searchedTxt}>{item.name}</Text>
+                  if (props.route.params.page == 'favorite') {
+                    props.navigation.navigate('Favorite');
+                  } else {
+                    props.navigation.navigate('Indexing');
+                  }
+                }}>
+                {/* <Text style={styles.searchedTxt}>{props.route.params.page}</Text> */}
+                {/* <Text style={styles.searchedTxt}>{item.name}</Text>
               <Text style={styles.searchedBoldTxt}>{item.name}</Text> */}
-              {item.name.split('').map((txt, i) =>
-                txt.toLocaleLowerCase() == search.toLocaleLowerCase() ? (
-                  <Text style={styles.searchedBoldTxt} key={`${index}-${i}`}>
-                    {txt}
-                  </Text>
-                ) : (
-                  <Text style={styles.searchedTxt} key={`${index}-${i}`}>
-                    {txt}
-                  </Text>
-                ),
-              )}
-            </Pressable>
-          )}
-          keyExtractor={item => item.name}
-        />
+                {item.name.split('').map((txt, i) =>
+                  txt.toLocaleLowerCase() == search.toLocaleLowerCase() ? (
+                    <Text style={styles.searchedBoldTxt} key={`${index}-${i}`}>
+                      {txt}
+                    </Text>
+                  ) : (
+                    <Text style={styles.searchedTxt} key={`${index}-${i}`}>
+                      {txt}
+                    </Text>
+                  ),
+                )}
+              </Pressable>
+            )}
+            keyExtractor={item => item.name}
+          />
+        )}
       </View>
     </View>
   );
