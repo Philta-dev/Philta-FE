@@ -22,9 +22,13 @@ import {useFocusEffect} from '@react-navigation/native';
 import {StatusBarHeight} from '../components/Safe';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {NavParamList} from '../../AppInner';
-import {useAppDispatch} from '../store';
+import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
-
+import axios, {AxiosError} from 'axios';
+import Config from 'react-native-config';
+import Clipboard from '@react-native-clipboard/clipboard';
+import {useSelector} from 'react-redux';
+import {get} from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -38,6 +42,13 @@ type TypingProps = {
   // navigation: TypingWithSearchScreenNavigationProp;
 };
 
+type verseContent = {
+  id: number;
+  content: string;
+  chapter_id: number;
+  verse_number: number;
+};
+
 export default function Typing(props: TypingProps) {
   const [text, setText] = useState('');
   const [cursor, setCursor] = useState(false);
@@ -48,6 +59,7 @@ export default function Typing(props: TypingProps) {
   const windowHeight = Dimensions.get('window').height;
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
   const dispatch = useAppDispatch();
+  const reduxVersion = useSelector((state: RootState) => state.user.version);
 
   useEffect(() => {
     props.navigation.setOptions({
@@ -92,8 +104,6 @@ export default function Typing(props: TypingProps) {
     };
   }, []);
 
-  const givenText =
-    '그 때에 엘리사가 그 집에 앉았고 장로들이 저와 함께 앉았는데 왕이 자기 처소에서 사람을 보내었더니 그 사자가 이르기 전에 엘리사가 장로들에게 이르되 너희는 이 살인한 자의 자식이 내 머리를 취하려고 사람을 보내는 것을 보느냐 너희는 보다가 사자가 오거든 문을 닫고 문 안에 들이지 말라 그 주인의 발소리가 그 뒤에서 나지 아니하느냐 하고';
   const handleTextChange = (textEntered: string) => {
     if (
       textEntered.slice(0, textEntered.length - 1) ===
@@ -114,6 +124,75 @@ export default function Typing(props: TypingProps) {
     } else {
       setText(textEntered.slice(0, textEntered.length - 2)) +
         textEntered.slice(-1);
+    }
+  };
+  const [givenText, setGivenText] = useState('');
+  const [givenVerse, setGivenVerse] = useState<verseContent>();
+  const [prevVerse, setPrevVerse] = useState<verseContent>();
+  const [nextVerse, setNextVerse] = useState<verseContent>();
+  const [testament, setTestament] = useState(0);
+  const [book, setBook] = useState(0);
+  const [chapter, setChapter] = useState(0);
+  const [verse, setVerse] = useState(0);
+  const [version, setVersion] = useState('');
+  const [bookmarked, setBookmarked] = useState(false);
+  const [current_location, setCurrentLocation] = useState('');
+  useEffect(() => {
+    getData();
+  }, [reduxVersion]);
+  const getData = async () => {
+    try {
+      const response = await axios.get(`${Config.API_URL}/typing/baseinfo`);
+      console.log(response.data);
+      setTestament(response.data.T - 1);
+      setBook(response.data.B - 1);
+      setChapter(response.data.C - 1);
+      setVerse(response.data.V - 1);
+      setGivenText(response.data.current_verse.content);
+      setGivenVerse({
+        id: response.data.current_verse.id,
+        content: response.data.current_verse.content,
+        chapter_id: response.data.C,
+        verse_number: response.data.V,
+      });
+      setPrevVerse(response.data.previous_verse);
+      setNextVerse(response.data.next_verse);
+      setVersion(response.data.version);
+      setBookmarked(response.data.bookmarked);
+      setCurrentLocation(response.data.current_location);
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+  const bookmark = async () => {
+    try {
+      const response = await axios.post(`${Config.API_URL}/favorite/add`, {
+        verseId: givenVerse?.id,
+      });
+      console.log(response.data);
+      setBookmarked(true);
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+  const unbookmark = async () => {
+    try {
+      const response = await axios.delete(`${Config.API_URL}/favorite/delete`, {
+        data: {verseId: givenVerse?.id},
+      });
+      console.log(response.data);
+      setBookmarked(false);
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
     }
   };
   return (
@@ -142,13 +221,13 @@ export default function Typing(props: TypingProps) {
       <View style={[{justifyContent: 'center'}, !keyBoardStatus && {flex: 1}]}>
         <View style={styles.typingArea}>
           <Pressable style={styles.anotherVerseArea}>
-            <Text style={styles.anotherVerseNum}>1</Text>
+            <Text style={styles.anotherVerseNum}>
+              {prevVerse?.verse_number}
+            </Text>
             <Text
               style={styles.anotherVerseContent}
               numberOfLines={keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2}>
-              내가 큰 환난과 애통한 마음이 있어 많은 눈물로 너희에서 썼노니 이는
-              너희로 근심하게 하려 한 것이 아니요 오직 내가 너희를 향하여 넘치는
-              사랑이 있음을 너희로 알게 하려 함이라
+              {prevVerse?.content}
             </Text>
           </Pressable>
           <Pressable
@@ -170,6 +249,7 @@ export default function Typing(props: TypingProps) {
                 right: 0,
                 bottom: 0,
               }}
+              maxLength={givenText.length + 1}
               caretHidden={true}
               onChangeText={text => handleTextChange(text)}
               value={text}
@@ -178,15 +258,17 @@ export default function Typing(props: TypingProps) {
               onSubmitEditing={() => handleTextChange(text + ' ')}
             />
             <View style={styles.bookmarked}>
-              <SvgXml
-                xml={svgList.typing.bookmarkBlue}
-                width={16}
-                height={16}
-                color={'#5856D6'}
-              />
+              {bookmarked && (
+                <SvgXml
+                  xml={svgList.typing.bookmarkBlue}
+                  width={16}
+                  height={16}
+                  color={'#5856D6'}
+                />
+              )}
             </View>
             <View>
-              <Text style={styles.currentVerseNum}>2</Text>
+              <Text style={styles.currentVerseNum}>{verse + 1}</Text>
             </View>
             <ScrollView
               style={[
@@ -234,13 +316,11 @@ export default function Typing(props: TypingProps) {
             </ScrollView>
           </Pressable>
           <Pressable style={styles.anotherVerseArea}>
-            <Text style={styles.anotherVerseNum}>3</Text>
+            <Text style={styles.anotherVerseNum}>{nextVerse?.id}</Text>
             <Text
               style={styles.anotherVerseContent}
               numberOfLines={keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2}>
-              내가 큰 환난과 애통한 마음이 있어 많은 눈물로 너희에서 썼노니 이는
-              너희로 근심하게 하려 한 것이 아니요 오직 내가 너희를 향하여 넘치는
-              사랑이 있음을 너희로 알게 하려 함이라
+              {nextVerse?.content}
             </Text>
           </Pressable>
         </View>
@@ -253,19 +333,49 @@ export default function Typing(props: TypingProps) {
           ]}>
           <View style={{flex: 0.8}} />
 
-          <Pressable>
-            <SvgXml xml={svgList.typing.bookmarkAdd} width={32} height={32} />
+          <Pressable
+            onPress={() => {
+              if (bookmarked) {
+                unbookmark();
+              } else {
+                bookmark();
+              }
+            }}>
+            {bookmarked ? (
+              <SvgXml
+                xml={svgList.typing.bookmarkBlack}
+                width={32}
+                height={32}
+              />
+            ) : (
+              <SvgXml xml={svgList.typing.bookmarkAdd} width={32} height={32} />
+            )}
+          </Pressable>
+          <View style={{flex: 1}} />
+          <Pressable
+            style={styles.keyBoradBtn}
+            onPress={() => {
+              dispatch(
+                userSlice.actions.setIndex({
+                  testament: testament,
+                  book: book,
+                  chapter: chapter,
+                  verse: verse,
+                }),
+              );
+              props.navigation.navigate('Indexing');
+            }}>
+            <Text>{current_location}</Text>
           </Pressable>
           <View style={{flex: 1}} />
           <Pressable style={styles.keyBoradBtn}>
-            <Text>SSSS 22:22</Text>
+            <Text>{version}</Text>
           </Pressable>
           <View style={{flex: 1}} />
-          <Pressable style={styles.keyBoradBtn}>
-            <Text>KRVD</Text>
-          </Pressable>
-          <View style={{flex: 1}} />
-          <Pressable>
+          <Pressable
+            onPress={() => {
+              Clipboard.setString(`${givenText} (${current_location})`);
+            }}>
             <SvgXml xml={svgList.typing.clipboard} width={32} height={32} />
           </Pressable>
           <View style={{flex: 2}} />
