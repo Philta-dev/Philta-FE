@@ -152,11 +152,14 @@ export default function BaseNav() {
   };
   const selectVersion = async (index: number) => {
     try {
-      // const response = await axios.post(`${Config.API_URL}/index/version`, {
-      //   version: dropDownItems[index],
-      // });
-      // console.log(response.data);
-      // getVersionData();
+      const response = await axios.post(
+        `${Config.API_URL}/index/changeversion`,
+        {
+          version: dropDownItems[index],
+        },
+      );
+      console.log(response.data);
+      getVersionData();
       dispatch(
         userSlice.actions.setVersion({
           version: dropDownItems[index],
