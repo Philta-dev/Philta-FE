@@ -7,11 +7,11 @@ import {
   Dimensions,
   StatusBar,
   ScrollView,
-  KeyboardAvoidingView,
   Platform,
+  Animated,
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import Svg, {Line, SvgXml} from 'react-native-svg';
+import {SvgXml} from 'react-native-svg';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../navigations/BaseNav';
 import MyModal from '../components/MyModal';
@@ -20,15 +20,13 @@ import {svgList} from '../assets/svgList';
 import ProgressBar from '../components/ProgessBar';
 import {useFocusEffect} from '@react-navigation/native';
 import {StatusBarHeight} from '../components/Safe';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {NavParamList} from '../../AppInner';
 import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useSelector} from 'react-redux';
-import {get} from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import FadingView from '../components/Fading';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -50,6 +48,10 @@ type verseContent = {
 };
 
 export default function Typing(props: TypingProps) {
+  const [pressedButton, setPressedButton] = useState('');
+  const [status, setStatus] = useState('');
+  const fadingTime = 200;
+
   const [text, setText] = useState('');
   const [cursor, setCursor] = useState(false);
   const [keyBoardStatus, setKeyBoardStatus] = useState(false);
@@ -138,7 +140,11 @@ export default function Typing(props: TypingProps) {
   const [bookmarked, setBookmarked] = useState(false);
   const [current_location, setCurrentLocation] = useState('');
   useEffect(() => {
+    const focusListener = props.navigation.addListener('focus', () => {
+      getData();
+    });
     getData();
+    return focusListener;
   }, [reduxVersion]);
   const getData = async () => {
     try {
@@ -160,6 +166,7 @@ export default function Typing(props: TypingProps) {
       setVersion(response.data.version);
       setBookmarked(response.data.bookmarked);
       setCurrentLocation(response.data.current_location);
+      ref.current?.focus();
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -195,6 +202,24 @@ export default function Typing(props: TypingProps) {
       console.log(errorResponse?.data);
     }
   };
+  const handlePointer = async (id: number) => {
+    try {
+      const response = await axios.post(`${Config.API_URL}/index/current`, {
+        verseId: id,
+      });
+      console.log(response.data);
+      setStatus('changing');
+      setTimeout(() => {
+        getData();
+        setStatus('');
+      }, fadingTime);
+    } catch (error) {
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
   return (
     <View style={styles.entire}>
       <StatusBar
@@ -203,6 +228,7 @@ export default function Typing(props: TypingProps) {
         // translucent={true}
         // hidden={true}
       />
+      {status === 'changing' && <FadingView time={fadingTime} />}
       <ProgressBar
         height={4}
         width={Dimensions.get('window').width - 1}
@@ -220,7 +246,11 @@ export default function Typing(props: TypingProps) {
       </Pressable>
       <View style={[{justifyContent: 'center'}, !keyBoardStatus && {flex: 1}]}>
         <View style={styles.typingArea}>
-          <Pressable style={styles.anotherVerseArea}>
+          <Pressable
+            style={styles.anotherVerseArea}
+            onPress={() => {
+              if (prevVerse) handlePointer(prevVerse?.id);
+            }}>
             <Text style={styles.anotherVerseNum}>
               {prevVerse?.verse_number}
             </Text>
@@ -233,9 +263,10 @@ export default function Typing(props: TypingProps) {
           <Pressable
             style={styles.currentVerseArea}
             onPress={() => {
+              setPressedButton('keyboard');
+              setPressedButton('');
               ref.current?.focus();
               console.log('pressed');
-              setKeyBoardStatus(true);
             }}>
             <TextInput
               style={{
@@ -274,6 +305,7 @@ export default function Typing(props: TypingProps) {
               style={[
                 styles.currentVerseContent,
                 keyBoardStatus && {height: 170},
+                // keyBoardStatus && {maxHeight: 170},
               ]}
               ref={scrollRef}>
               <Text style={{flexWrap: 'wrap'}}>
@@ -315,8 +347,14 @@ export default function Typing(props: TypingProps) {
               </Text>
             </ScrollView>
           </Pressable>
-          <Pressable style={styles.anotherVerseArea}>
-            <Text style={styles.anotherVerseNum}>{nextVerse?.id}</Text>
+          <Pressable
+            style={styles.anotherVerseArea}
+            onPress={() => {
+              if (nextVerse) handlePointer(nextVerse?.id);
+            }}>
+            <Text style={styles.anotherVerseNum}>
+              {nextVerse?.verse_number}
+            </Text>
             <Text
               style={styles.anotherVerseContent}
               numberOfLines={keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2}>
@@ -373,15 +411,38 @@ export default function Typing(props: TypingProps) {
           </Pressable>
           <View style={{flex: 1}} />
           <Pressable
+            onPressIn={() => {
+              setPressedButton('clipboard');
+            }}
+            onPressOut={() => {
+              setPressedButton('');
+            }}
             onPress={() => {
+              setPressedButton('clipboard');
               Clipboard.setString(`${givenText} (${current_location})`);
             }}>
-            <SvgXml xml={svgList.typing.clipboard} width={32} height={32} />
+            {pressedButton == 'clipboard' ? (
+              <SvgXml
+                xml={svgList.typing.clipboardPressed}
+                width={32}
+                height={32}
+              />
+            ) : (
+              <SvgXml xml={svgList.typing.clipboard} width={32} height={32} />
+            )}
           </Pressable>
           <View style={{flex: 2}} />
           <Pressable
+            onPressIn={() => {
+              setPressedButton('keyboard');
+            }}
+            onPressOut={() => {
+              setPressedButton('');
+            }}
             onPress={() => {
               if (keyBoardStatus) {
+                setPressedButton('keyboard');
+                setPressedButton('');
                 ref.current?.blur();
                 setKeyBoardStatus(false);
               } else {
@@ -389,7 +450,19 @@ export default function Typing(props: TypingProps) {
                 setKeyBoardStatus(true);
               }
             }}>
-            <SvgXml xml={svgList.typing.keyboardDown} width={32} height={32} />
+            {pressedButton == 'keyboard' ? (
+              <SvgXml
+                xml={svgList.typing.keyboardDownPressed}
+                width={32}
+                height={32}
+              />
+            ) : (
+              <SvgXml
+                xml={svgList.typing.keyboardDown}
+                width={32}
+                height={32}
+              />
+            )}
           </Pressable>
           <View style={{flex: 0.8}} />
         </View>

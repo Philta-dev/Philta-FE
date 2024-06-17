@@ -83,6 +83,12 @@ export default function Favorite(props: FavProps) {
     return blurListener;
   }, []);
   useEffect(() => {
+    const focusListener = props.navigation.addListener('focus', () => {
+      getData();
+    });
+    return focusListener;
+  }, []);
+  useEffect(() => {
     getData();
   }, [testament, bookname]);
   const getData = async () => {
