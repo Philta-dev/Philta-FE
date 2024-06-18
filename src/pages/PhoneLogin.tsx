@@ -22,6 +22,7 @@ import {SignInNavParamList} from '../../AppInner';
 import Modal from 'react-native-modal';
 import {Shadow} from 'react-native-shadow-2';
 import ToastModal from '../components/ToastModal';
+import CustomToastScreen from '../components/CustomToastScreen';
 
 type PhoneLoginNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -400,6 +401,18 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         }}
         keyBoardHeight={keyBoardHeight}
       />
+      {/* <CustomToastScreen
+        showModal={showTimeAlert}
+        setShowModal={setShowTimeAlert}
+        svgxml={svgList.socialLogin.timeout}
+        text="인증시간이 만료되었습니다."
+        btnText="인증번호 재전송"
+        onBtnPress={() => {
+          setIsSent(false);
+          setShowTimeAlert(false);
+          sendAuthNum();
+        }}
+      /> */}
     </View>
   );
 }

@@ -28,6 +28,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {useSelector} from 'react-redux';
 import FadingView from '../components/Fading';
 import ToastModal from '../components/ToastModal';
+import ToastScreen from '../components/ToastScreen';
+import CustomToastScreen from '../components/CustomToastScreen';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -52,6 +54,7 @@ export default function Typing(props: TypingProps) {
   const [pressedButton, setPressedButton] = useState('');
   const [status, setStatus] = useState('');
   const fadingTime = 200;
+  const [red, setRed] = useState(false);
 
   const [text, setText] = useState('');
   const [cursor, setCursor] = useState(false);
@@ -101,18 +104,38 @@ export default function Typing(props: TypingProps) {
       ref.current?.focus();
       setKeyBoardStatus(true);
     });
+    const blurListener = props.navigation.addListener('blur', () => {
+      setText('');
+    });
 
     return () => {
       KeyboardDismiss.remove();
       KeyboardShow.remove();
+      blurListener();
     };
   }, []);
 
   const handleTextChange = (textEntered: string) => {
+    if (textEntered.length < 1) {
+      setText('');
+      return;
+    }
+    if (textEntered.length == 1) {
+      setText(textEntered);
+      return;
+    }
     if (
-      textEntered.slice(0, textEntered.length - 1) ===
-      givenText.slice(0, textEntered.length - 1)
+      textEntered.slice(0, textEntered.length - 2) ===
+      givenText.slice(0, textEntered.length - 2)
     ) {
+      if (
+        textEntered.slice(0, textEntered.length - 1) ===
+        givenText.slice(0, textEntered.length - 1)
+      ) {
+        setRed(false);
+      } else {
+        setRed(true);
+      }
       setText(textEntered);
       if (textEntered.length >= givenText.length / 2) {
         scrollRef.current?.scrollToEnd({animated: true});
@@ -124,10 +147,13 @@ export default function Typing(props: TypingProps) {
         textEntered.slice(0, textEntered.length - 1) === givenText
       ) {
         console.log('done');
+        complete();
+        // if (nextVerse) handlePointer(nextVerse?.id);
       }
     } else {
-      setText(textEntered.slice(0, textEntered.length - 2)) +
-        textEntered.slice(-1);
+      // setText(textEntered.slice(0, textEntered.length - 2)) +
+      //   textEntered.slice(-1);
+      setRed(true);
     }
   };
   const [givenText, setGivenText] = useState('');
@@ -140,6 +166,8 @@ export default function Typing(props: TypingProps) {
   const [verse, setVerse] = useState(0);
   const [version, setVersion] = useState('');
   const [bookmarked, setBookmarked] = useState(false);
+  const [is_last_in_chapter, setIsLastInChapter] = useState(false);
+  const [is_last_in_book, setIsLastInBook] = useState(false);
   const [current_location, setCurrentLocation] = useState('');
   useEffect(() => {
     const focusListener = props.navigation.addListener('focus', () => {
@@ -168,7 +196,23 @@ export default function Typing(props: TypingProps) {
       setVersion(response.data.version);
       setBookmarked(response.data.bookmarked);
       setCurrentLocation(response.data.current_location);
+      setIsLastInBook(response.data.is_last_in_book);
+      setIsLastInChapter(response.data.is_last_in_chapter);
       ref.current?.focus();
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+  const complete = async () => {
+    try {
+      const response = await axios.post(`${Config.API_URL}/typing/complete`, {
+        verseId: givenVerse?.id,
+      });
+      console.log(response.data);
+      if (is_last_in_chapter || is_last_in_book) setShowToast(true);
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -210,6 +254,7 @@ export default function Typing(props: TypingProps) {
         verseId: id,
       });
       console.log(response.data);
+      setText('');
       setStatus('changing');
       setTimeout(() => {
         getData();
@@ -224,322 +269,374 @@ export default function Typing(props: TypingProps) {
   };
   return (
     <View style={styles.entire}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="white"
-        // translucent={true}
-        // hidden={true}
-      />
-      {status === 'changing' && <FadingView time={fadingTime} />}
-      <ProgressBar
-        height={4}
-        width={Dimensions.get('window').width - 1}
-        progressColor={'#5656D6'}
-        nonProgressColor={'#EBEBF5'}
-        progress={50}
-        borderRadius={8}
-      />
-      <Pressable onPress={() => setShowModal(true)} style={styles.menuBtn}>
-        {showModal ? (
-          <View style={{height: 24}} />
-        ) : (
-          <SvgXml xml={svgList.typing.menu} />
-        )}
-      </Pressable>
-      <View style={[{justifyContent: 'center'}, !keyBoardStatus && {flex: 1}]}>
-        <View style={styles.typingArea}>
-          <Pressable
-            style={styles.anotherVerseArea}
-            onPress={() => {
-              if (prevVerse) handlePointer(prevVerse?.id);
-            }}>
-            <Text style={styles.anotherVerseNum}>
-              {prevVerse?.verse_number}
-            </Text>
-            <Text
-              style={styles.anotherVerseContent}
-              numberOfLines={keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2}>
-              {prevVerse?.content}
-            </Text>
-          </Pressable>
-          <Pressable
-            style={styles.currentVerseArea}
-            onPress={() => {
-              setPressedButton('keyboard');
-              setPressedButton('');
-              ref.current?.focus();
-              console.log('pressed');
-            }}>
-            <TextInput
-              style={{
-                height: 40,
-                backgroundColor: 'transparent',
-                color: 'transparent',
-                padding: 0,
-                position: 'absolute',
-                top: -10000,
-                left: 0,
-                right: 0,
-                bottom: 0,
-              }}
-              maxLength={givenText.length + 1}
-              caretHidden={true}
-              onChangeText={text => handleTextChange(text)}
-              value={text}
-              ref={ref}
-              blurOnSubmit={false}
-              onSubmitEditing={() => handleTextChange(text + ' ')}
-            />
-            <View style={styles.bookmarked}>
-              {bookmarked && (
-                <SvgXml
-                  xml={svgList.typing.bookmarkBlue}
-                  width={16}
-                  height={16}
-                  color={'#5856D6'}
-                />
-              )}
-            </View>
-            <View>
-              <Text style={styles.currentVerseNum}>{verse + 1}</Text>
-            </View>
-            <ScrollView
-              style={[
-                styles.currentVerseContent,
-                keyBoardStatus && {height: 170},
-                // keyBoardStatus && {maxHeight: 170},
-              ]}
-              ref={scrollRef}>
-              <Text style={{flexWrap: 'wrap'}}>
-                <Text
-                  style={{
-                    color: '#000000',
-                    fontSize: 18,
-                    fontWeight: '400',
-                    lineHeight: 30,
-                    letterSpacing: -0.36,
-                    zIndex: 1,
-                  }}>
-                  {text}
-                </Text>
-                <Text
-                  style={[
-                    {
+      <View style={{flex: 1}}>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="white"
+          // translucent={true}
+          // hidden={true}
+        />
+        {status === 'changing' && <FadingView time={fadingTime} />}
+        <ProgressBar
+          height={4}
+          width={Dimensions.get('window').width - 1}
+          progressColor={'#5656D6'}
+          nonProgressColor={'#EBEBF5'}
+          progress={50}
+          borderRadius={8}
+        />
+        <Pressable onPress={() => setShowModal(true)} style={styles.menuBtn}>
+          {showModal ? (
+            <View style={{height: 24}} />
+          ) : (
+            <SvgXml xml={svgList.typing.menu} />
+          )}
+        </Pressable>
+        <View
+          style={[{justifyContent: 'center'}, !keyBoardStatus && {flex: 1}]}>
+          <View style={styles.typingArea}>
+            <Pressable
+              style={styles.anotherVerseArea}
+              onPress={() => {
+                if (prevVerse) handlePointer(prevVerse?.id);
+              }}>
+              <Text style={styles.anotherVerseNum}>
+                {prevVerse?.verse_number}
+              </Text>
+              <Text
+                style={styles.anotherVerseContent}
+                numberOfLines={
+                  keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
+                }>
+                {prevVerse?.content}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={styles.currentVerseArea}
+              onPress={() => {
+                setPressedButton('keyboard');
+                setPressedButton('');
+                ref.current?.focus();
+                console.log('pressed');
+              }}>
+              <TextInput
+                style={{
+                  height: 40,
+                  backgroundColor: 'transparent',
+                  color: 'transparent',
+                  padding: 0,
+                  position: 'absolute',
+                  top: -10000,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}
+                maxLength={givenText.length + 1}
+                caretHidden={true}
+                onChangeText={text => handleTextChange(text)}
+                value={text}
+                ref={ref}
+                blurOnSubmit={false}
+                onSubmitEditing={() => handleTextChange(text + ' ')}
+              />
+              <View style={styles.bookmarked}>
+                {bookmarked && (
+                  <SvgXml
+                    xml={svgList.typing.bookmarkBlue}
+                    width={16}
+                    height={16}
+                    color={'#5856D6'}
+                  />
+                )}
+              </View>
+              <View>
+                <Text style={styles.currentVerseNum}>{verse + 1}</Text>
+              </View>
+              <ScrollView
+                style={[
+                  styles.currentVerseContent,
+                  keyBoardStatus && {height: 170},
+                  // keyBoardStatus && {maxHeight: 170},
+                ]}
+                ref={scrollRef}>
+                <Text style={{flexWrap: 'wrap'}}>
+                  <Text
+                    style={{
+                      color: '#000000',
                       fontSize: 18,
-                      fontWeight: '100',
+                      fontWeight: '400',
                       lineHeight: 30,
                       letterSpacing: -0.36,
                       zIndex: 1,
-                    },
-                    cursor ? {color: 'transparent'} : {color: 'red'},
-                  ]}>
-                  |
+                    }}>
+                    {text.length >= 2 && text.slice(0, text.length - 2)}
+                  </Text>
+                  <Text
+                    style={{
+                      color: red ? 'red' : '#000000',
+                      fontSize: 18,
+                      fontWeight: '400',
+                      lineHeight: 30,
+                      letterSpacing: -0.36,
+                      zIndex: 1,
+                    }}>
+                    {text.slice(text.length - 2, text.length)}
+                  </Text>
+                  <Text
+                    style={[
+                      {
+                        fontSize: 18,
+                        fontWeight: '100',
+                        lineHeight: 30,
+                        letterSpacing: -0.36,
+                        zIndex: 1,
+                      },
+                      cursor ? {color: 'transparent'} : {color: 'red'},
+                    ]}>
+                    |
+                  </Text>
+                  <Text
+                    style={{
+                      // backgroundColor: 'pink',
+                      color: '#9B9EA5',
+                      fontSize: 18,
+                      fontWeight: '400',
+                      lineHeight: 30,
+                      letterSpacing: -0.36,
+                    }}>
+                    {givenText.slice(text.length)}
+                  </Text>
                 </Text>
-                <Text
-                  style={{
-                    backgroundColor: 'pink',
-                    color: '#9B9EA5',
-                    fontSize: 18,
-                    fontWeight: '400',
-                    lineHeight: 30,
-                    letterSpacing: -0.36,
-                  }}>
-                  {givenText.slice(text.length)}
-                </Text>
+              </ScrollView>
+            </Pressable>
+            <Pressable
+              style={styles.anotherVerseArea}
+              onPress={() => {
+                if (nextVerse) handlePointer(nextVerse?.id);
+              }}>
+              <Text style={styles.anotherVerseNum}>
+                {nextVerse?.verse_number}
               </Text>
-            </ScrollView>
-          </Pressable>
-          <Pressable
-            style={styles.anotherVerseArea}
-            onPress={() => {
-              if (nextVerse) handlePointer(nextVerse?.id);
-            }}>
-            <Text style={styles.anotherVerseNum}>
-              {nextVerse?.verse_number}
-            </Text>
-            <Text
-              style={styles.anotherVerseContent}
-              numberOfLines={keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2}>
-              {nextVerse?.content}
-            </Text>
-          </Pressable>
+              <Text
+                style={styles.anotherVerseContent}
+                numberOfLines={
+                  keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
+                }>
+                {nextVerse?.content}
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </View>
-      {keyBoardStatus && (
-        <View
-          style={[
-            styles.keyBoardBtnView,
-            Platform.OS == 'ios' && {bottom: keyBoardHeight},
-          ]}>
-          <View style={{flex: 0.8}} />
+        {keyBoardStatus && (
+          <View
+            style={[
+              styles.keyBoardBtnView,
+              Platform.OS == 'ios' && {bottom: keyBoardHeight},
+            ]}>
+            <View style={{flex: 0.8}} />
 
+            <Pressable
+              onPress={() => {
+                if (bookmarked) {
+                  unbookmark();
+                } else {
+                  bookmark();
+                }
+              }}>
+              {bookmarked ? (
+                <SvgXml
+                  xml={svgList.typing.bookmarkBlack}
+                  width={32}
+                  height={32}
+                />
+              ) : (
+                <SvgXml
+                  xml={svgList.typing.bookmarkAdd}
+                  width={32}
+                  height={32}
+                />
+              )}
+            </Pressable>
+            <View style={{flex: 1}} />
+            <Pressable
+              style={styles.keyBoradBtn}
+              onPress={() => {
+                dispatch(
+                  userSlice.actions.setIndex({
+                    testament: testament,
+                    book: book,
+                    chapter: chapter,
+                    verse: verse,
+                  }),
+                );
+                props.navigation.navigate('Indexing');
+              }}>
+              <Text>{current_location}</Text>
+            </Pressable>
+            <View style={{flex: 1}} />
+            <Pressable style={styles.keyBoradBtn}>
+              <Text>{version}</Text>
+            </Pressable>
+            <View style={{flex: 1}} />
+            <Pressable
+              onPressIn={() => {
+                setPressedButton('clipboard');
+              }}
+              onPressOut={() => {
+                setPressedButton('');
+              }}
+              onPress={() => {
+                setPressedButton('clipboard');
+                Clipboard.setString(`${givenText} (${current_location})`);
+              }}>
+              {pressedButton == 'clipboard' ? (
+                <SvgXml
+                  xml={svgList.typing.clipboardPressed}
+                  width={32}
+                  height={32}
+                />
+              ) : (
+                <SvgXml xml={svgList.typing.clipboard} width={32} height={32} />
+              )}
+            </Pressable>
+            <View style={{flex: 2}} />
+            <Pressable
+              onPressIn={() => {
+                setPressedButton('keyboard');
+              }}
+              onPressOut={() => {
+                setPressedButton('');
+              }}
+              onPress={() => {
+                if (keyBoardStatus) {
+                  setPressedButton('keyboard');
+                  setPressedButton('');
+                  ref.current?.blur();
+                  setKeyBoardStatus(false);
+                } else {
+                  ref.current?.focus();
+                  setKeyBoardStatus(true);
+                }
+              }}>
+              {pressedButton == 'keyboard' ? (
+                <SvgXml
+                  xml={svgList.typing.keyboardDownPressed}
+                  width={32}
+                  height={32}
+                />
+              ) : (
+                <SvgXml
+                  xml={svgList.typing.keyboardDown}
+                  width={32}
+                  height={32}
+                />
+              )}
+            </Pressable>
+            <View style={{flex: 0.8}} />
+          </View>
+        )}
+
+        <MenuModal showModal={showModal} setShowModal={setShowModal}>
+          <SvgXml
+            xml={svgList.typing.menux}
+            width={24}
+            height={24}
+            style={[
+              {marginBottom: 16},
+              Platform.OS == 'ios'
+                ? {marginTop: StatusBarHeight}
+                : {marginTop: 12},
+            ]}
+          />
           <Pressable
-            onPress={() => {
-              if (bookmarked) {
-                unbookmark();
-              } else {
-                bookmark();
-              }
-            }}>
-            {bookmarked ? (
+            style={styles.modalBtn}
+            onPress={() => console.log(StatusBarHeight)}>
+            <View style={[styles.modalBtnIcon, {backgroundColor: '#EBEBF599'}]}>
               <SvgXml
-                xml={svgList.typing.bookmarkBlack}
-                width={32}
-                height={32}
+                xml={svgList.tabbar.modal.typing}
+                width={20}
+                height={20}
               />
-            ) : (
-              <SvgXml xml={svgList.typing.bookmarkAdd} width={32} height={32} />
-            )}
+            </View>
+            <Text style={[styles.modalBtnTxt, {color: '#EBEBF599'}]}>
+              구절 타이핑
+            </Text>
           </Pressable>
-          <View style={{flex: 1}} />
           <Pressable
-            style={styles.keyBoradBtn}
             onPress={() => {
+              setShowModal(false);
               dispatch(
                 userSlice.actions.setIndex({
-                  testament: testament,
-                  book: book,
-                  chapter: chapter,
-                  verse: verse,
+                  testament: -1,
+                  book: -1,
+                  chapter: -1,
+                  verse: -1,
                 }),
               );
               props.navigation.navigate('Indexing');
-            }}>
-            <Text>{current_location}</Text>
+            }}
+            style={styles.modalBtn}>
+            <View style={styles.modalBtnIcon}>
+              <SvgXml
+                xml={svgList.tabbar.modal.indexing}
+                width={40}
+                height={40}
+              />
+            </View>
+            <Text style={styles.modalBtnTxt}>전체 성경</Text>
           </Pressable>
-          <View style={{flex: 1}} />
-          <Pressable style={styles.keyBoradBtn}>
-            <Text>{version}</Text>
-          </Pressable>
-          <View style={{flex: 1}} />
           <Pressable
-            onPressIn={() => {
-              setPressedButton('clipboard');
-            }}
-            onPressOut={() => {
-              setPressedButton('');
-            }}
             onPress={() => {
-              setPressedButton('clipboard');
-              Clipboard.setString(`${givenText} (${current_location})`);
-            }}>
-            {pressedButton == 'clipboard' ? (
-              <SvgXml
-                xml={svgList.typing.clipboardPressed}
-                width={32}
-                height={32}
-              />
-            ) : (
-              <SvgXml xml={svgList.typing.clipboard} width={32} height={32} />
-            )}
-          </Pressable>
-          <View style={{flex: 2}} />
-          <Pressable
-            onPressIn={() => {
-              setPressedButton('keyboard');
+              setShowModal(false);
+              props.navigation.navigate('Favorite');
             }}
-            onPressOut={() => {
-              setPressedButton('');
-            }}
-            onPress={() => {
-              if (keyBoardStatus) {
-                setPressedButton('keyboard');
-                setPressedButton('');
-                ref.current?.blur();
-                setKeyBoardStatus(false);
-              } else {
-                ref.current?.focus();
-                setKeyBoardStatus(true);
-              }
-            }}>
-            {pressedButton == 'keyboard' ? (
+            style={styles.modalBtn}>
+            <View style={styles.modalBtnIcon}>
               <SvgXml
-                xml={svgList.typing.keyboardDownPressed}
-                width={32}
-                height={32}
+                xml={svgList.tabbar.modal.favorite}
+                width={40}
+                height={40}
               />
-            ) : (
-              <SvgXml
-                xml={svgList.typing.keyboardDown}
-                width={32}
-                height={32}
-              />
-            )}
+            </View>
+            <Text style={styles.modalBtnTxt}>북마크</Text>
           </Pressable>
-          <View style={{flex: 0.8}} />
-        </View>
-      )}
-
-      <MenuModal showModal={showModal} setShowModal={setShowModal}>
-        <SvgXml
-          xml={svgList.typing.menux}
-          width={24}
-          height={24}
-          style={[
-            {marginBottom: 16},
-            Platform.OS == 'ios'
-              ? {marginTop: StatusBarHeight}
-              : {marginTop: 12},
-          ]}
+        </MenuModal>
+        {/* <ToastModal
+          showModal={showToast}
+          svgxml={svgList.modal.check}
+          text="모든 절 타이핑을 완료했습니다."
+          btnText={
+            is_last_in_book ? '다음 책으로 넘어가기' : '다음 장으로 넘어가기'
+          }
+          onBtnPress={() => {
+            setShowToast(false);
+            if (nextVerse) handlePointer(nextVerse?.id);
+          }}
+        /> */}
+      </View>
+      {/* <ToastScreen
+        message="모든 절 타이핑을 완료했습니다."
+        height={40}
+        marginBottom={
+          Platform.OS == 'ios' && keyBoardStatus ? keyBoardHeight + 16 : 60
+        }
+        onClose={() => {}}
+      /> */}
+      {showToast && (
+        <CustomToastScreen
+          showModal={showToast}
+          setShowModal={setShowToast}
+          svgxml={svgList.modal.check}
+          text="모든 절 타이핑을 완료했습니다."
+          btnText={
+            is_last_in_book ? '다음 책으로 넘어가기' : '다음 장으로 넘어가기'
+          }
+          onBtnPress={() => {
+            setShowToast(false);
+            if (nextVerse) handlePointer(nextVerse?.id);
+          }}
         />
-        <Pressable
-          style={styles.modalBtn}
-          onPress={() => console.log(StatusBarHeight)}>
-          <View style={[styles.modalBtnIcon, {backgroundColor: '#EBEBF599'}]}>
-            <SvgXml xml={svgList.tabbar.modal.typing} width={20} height={20} />
-          </View>
-          <Text style={[styles.modalBtnTxt, {color: '#EBEBF599'}]}>
-            구절 타이핑
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setShowModal(false);
-            dispatch(
-              userSlice.actions.setIndex({
-                testament: -1,
-                book: -1,
-                chapter: -1,
-                verse: -1,
-              }),
-            );
-            props.navigation.navigate('Indexing');
-          }}
-          style={styles.modalBtn}>
-          <View style={styles.modalBtnIcon}>
-            <SvgXml
-              xml={svgList.tabbar.modal.indexing}
-              width={40}
-              height={40}
-            />
-          </View>
-          <Text style={styles.modalBtnTxt}>전체 성경</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setShowModal(false);
-            props.navigation.navigate('Favorite');
-          }}
-          style={styles.modalBtn}>
-          <View style={styles.modalBtnIcon}>
-            <SvgXml
-              xml={svgList.tabbar.modal.favorite}
-              width={40}
-              height={40}
-            />
-          </View>
-          <Text style={styles.modalBtnTxt}>북마크</Text>
-        </Pressable>
-      </MenuModal>
-      <ToastModal
-        showModal={showToast}
-        svgxml={svgList.modal.check}
-        text="모든 절 타이핑을 완료했습니다."
-        btnText="다음 책으로 넘어가기"
-        onBtnPress={() => {
-          setShowToast(false);
-        }}
-      />
+      )}
     </View>
   );
 }
@@ -548,6 +645,7 @@ const styles = StyleSheet.create({
   entire: {
     flex: 1,
     backgroundColor: 'white',
+    alignItems: 'center',
   },
   menuBtn: {
     width: 24,
@@ -622,7 +720,7 @@ const styles = StyleSheet.create({
   },
   currentVerseContent: {
     // height: 200,
-    backgroundColor: 'yellow',
+    // backgroundColor: 'yellow',
     // flexDirection: 'row',
   },
   keyBoardBtnView: {
