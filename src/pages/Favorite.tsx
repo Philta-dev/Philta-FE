@@ -98,7 +98,7 @@ export default function Favorite(props: FavProps) {
       );
       console.log(response.data);
       setTestamentList([
-        '전체',
+        response.data.total,
         response.data.old_testament_name,
         response.data.new_testament_name,
       ]);
