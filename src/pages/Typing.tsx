@@ -14,7 +14,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {SvgXml} from 'react-native-svg';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../navigations/BaseNav';
-import MyModal from '../components/MyModal';
+import MenuModal from '../components/MenuModal';
 import Text from '../components/Text';
 import {svgList} from '../assets/svgList';
 import ProgressBar from '../components/ProgessBar';
@@ -27,6 +27,7 @@ import Config from 'react-native-config';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useSelector} from 'react-redux';
 import FadingView from '../components/Fading';
+import ToastModal from '../components/ToastModal';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -58,6 +59,7 @@ export default function Typing(props: TypingProps) {
   const ref = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const windowHeight = Dimensions.get('window').height;
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
   const dispatch = useAppDispatch();
@@ -468,7 +470,7 @@ export default function Typing(props: TypingProps) {
         </View>
       )}
 
-      <MyModal showModal={showModal} setShowModal={setShowModal}>
+      <MenuModal showModal={showModal} setShowModal={setShowModal}>
         <SvgXml
           xml={svgList.typing.menux}
           width={24}
@@ -528,7 +530,16 @@ export default function Typing(props: TypingProps) {
           </View>
           <Text style={styles.modalBtnTxt}>북마크</Text>
         </Pressable>
-      </MyModal>
+      </MenuModal>
+      <ToastModal
+        showModal={showToast}
+        svgxml={svgList.modal.check}
+        text="모든 절 타이핑을 완료했습니다."
+        btnText="다음 책으로 넘어가기"
+        onBtnPress={() => {
+          setShowToast(false);
+        }}
+      />
     </View>
   );
 }

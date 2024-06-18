@@ -51,6 +51,8 @@ export default function Indexing(props: IndexProps) {
   const [bookFocusedIndex, setBookFocusedIndex] = useState(0);
   const [chapFocusedIndex, setChapFocusedIndex] = useState(0);
   const [verseFocusedIndex, setVerseFocusedIndex] = useState(0);
+  const [chapWord, setChapWord] = useState('');
+  const [verseWord, setVerseWord] = useState('');
   const [verseId, setVerseId] = useState(0);
   const windowHeight = useWindowDimensions().height;
   let itemHeight = (windowHeight / 2 - 48) / 4;
@@ -245,6 +247,8 @@ export default function Indexing(props: IndexProps) {
       setBook(response.data.books);
       setChap(Array.from({length: response.data.chapters}, (_, i) => i + 1));
       setVerse(Array.from({length: response.data.verses}, (_, i) => i + 1));
+      setChapWord(response.data.chapter);
+      setVerseWord(response.data.verse);
       setFullname(response.data.full_name);
       setVerseId(response.data.verseId);
     } catch (e) {
@@ -392,7 +396,10 @@ export default function Indexing(props: IndexProps) {
                       ? {fontSize: 18}
                       : {fontSize: 17},
                   ]}>
-                  {item + (index === chapFocusedIndex ? '장' : '')}
+                  {/* {item + (index === chapFocusedIndex ? '장' : '')} */}
+                  {index === chapFocusedIndex
+                    ? chapWord.replace('#', item.toString())
+                    : item}
                 </Text>
               </Pressable>
             )}
@@ -434,7 +441,10 @@ export default function Indexing(props: IndexProps) {
                       ? {fontSize: 18}
                       : {fontSize: 17},
                   ]}>
-                  {item + (index === verseFocusedIndex ? '절' : '')}
+                  {/* {item + (index === verseFocusedIndex ? '절' : '')} */}
+                  {index === verseFocusedIndex
+                    ? verseWord.replace('#', item.toString())
+                    : item}
                 </Text>
               </Pressable>
             )}
