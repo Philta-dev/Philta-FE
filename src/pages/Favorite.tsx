@@ -35,7 +35,7 @@ export default function Favorite(props: FavProps) {
   const dispatch = useAppDispatch();
   const [testament, setTestament] = useState(0);
   const [bookname, setBookname] = useState(0);
-  const [testamentList, setTestamentList] = useState(['전체', '구약', '신약']);
+  const [testamentList, setTestamentList] = useState<string[]>([]);
   const [bookList, setBookList] = useState<string[]>([]);
   const [favData, setFavData] = useState<favItem[]>([
     // {
@@ -83,6 +83,12 @@ export default function Favorite(props: FavProps) {
     return blurListener;
   }, []);
   useEffect(() => {
+    const focusListener = props.navigation.addListener('focus', () => {
+      getData();
+    });
+    return focusListener;
+  }, []);
+  useEffect(() => {
     getData();
   }, [testament, bookname]);
   const getData = async () => {
@@ -97,7 +103,7 @@ export default function Favorite(props: FavProps) {
         response.data.new_testament_name,
       ]);
       setBookList(['전체', ...response.data.books]);
-      // setFavData(['전체', ...response.data.favorites]);
+      setFavData(response.data.favorites);
     } catch (error) {
       const errorResponse = (
         error as AxiosError<{message: string; statusCode: number}>
@@ -149,7 +155,7 @@ export default function Favorite(props: FavProps) {
                 color: '#000000',
               },
             ]}>
-            전체
+            {testamentList[0]}
           </Text>
           {testament == 0 && <View style={styles.topTabbarButtonSelected} />}
         </Pressable>
@@ -168,7 +174,7 @@ export default function Favorite(props: FavProps) {
                 color: '#000000',
               },
             ]}>
-            구약
+            {testamentList[1]}
           </Text>
           {testament == 1 && <View style={styles.topTabbarButtonSelected} />}
         </Pressable>
@@ -187,7 +193,7 @@ export default function Favorite(props: FavProps) {
                 color: '#000000',
               },
             ]}>
-            신약
+            {testamentList[2]}
           </Text>
           {testament == 2 && <View style={styles.topTabbarButtonSelected} />}
         </Pressable>

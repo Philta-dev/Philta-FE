@@ -51,6 +51,8 @@ export default function Indexing(props: IndexProps) {
   const [bookFocusedIndex, setBookFocusedIndex] = useState(0);
   const [chapFocusedIndex, setChapFocusedIndex] = useState(0);
   const [verseFocusedIndex, setVerseFocusedIndex] = useState(0);
+  const [chapWord, setChapWord] = useState('');
+  const [verseWord, setVerseWord] = useState('');
   const [verseId, setVerseId] = useState(0);
   const windowHeight = useWindowDimensions().height;
   let itemHeight = (windowHeight / 2 - 48) / 4;
@@ -94,78 +96,72 @@ export default function Indexing(props: IndexProps) {
     });
     return blurListener;
   }, []);
-  useEffect(() => {
-    scrollToIndex(
-      'testament',
-      testamentFocusedIndex,
-      testament,
-      scrollRef1,
-      setTestamentFocusedIndex,
-    );
-  }, [testamentFocusedIndex]);
-  useEffect(() => {
-    scrollToIndex(
-      'book',
-      bookFocusedIndex,
-      book,
-      scrollRef2,
-      setBookFocusedIndex,
-    );
-  }, [bookFocusedIndex]);
-  useEffect(() => {
-    scrollToIndex(
-      'chap',
-      chapFocusedIndex,
-      chap,
-      scrollRef3,
-      setChapFocusedIndex,
-    );
-  }, [chapFocusedIndex]);
-  useEffect(() => {
-    scrollToIndex(
-      'verse',
-      verseFocusedIndex,
-      verse,
-      scrollRef4,
-      setVerseFocusedIndex,
-    );
-  }, [verseFocusedIndex]);
-
   const [testament, setTestament] = useState(['구약', '신약']);
   const [book, setBook] = useState(['창', '출', '레', '민', '신']);
-  // useEffect(() => {
-  //   if (testamentFocusedIndex === 0) {
-  //     setBook(['창세기', '출애굽기', '레위기', '민수기', '신명기']);
-  //   } else {
-  //     setBook(['마태복음', '마가복음', '누가복음', '요한복음', '사도행전']);
-  //   }
-  // }, [testamentFocusedIndex]);
-  // const chap = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const [chap, setChap] = useState(10);
-  // const verse = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const [verse, setVerse] = useState(10);
+  const [chap, setChap] = useState(Array.from({length: 10}, (_, i) => i + 1));
+  const [verse, setVerse] = useState(Array.from({length: 10}, (_, i) => i + 1));
   const [fullname, setFullname] = useState('');
+  useEffect(() => {
+    setTimeout(() => {
+      scrollToIndex(
+        'testament',
+        testamentFocusedIndex,
+        testament,
+        scrollRef1,
+        setTestamentFocusedIndex,
+      );
+    }, 0);
+  }, [testament, testamentFocusedIndex]);
+  useEffect(() => {
+    setTimeout(() => {
+      scrollToIndex(
+        'book',
+        bookFocusedIndex,
+        book,
+        scrollRef2,
+        setBookFocusedIndex,
+      );
+    }, 0);
+  }, [book, bookFocusedIndex]);
+  useEffect(() => {
+    setTimeout(() => {
+      scrollToIndex(
+        'chap',
+        chapFocusedIndex,
+        chap,
+        scrollRef3,
+        setChapFocusedIndex,
+      );
+    }, 0);
+  }, [chap, chapFocusedIndex]);
+  useEffect(() => {
+    setTimeout(() => {
+      scrollToIndex(
+        'verse',
+        verseFocusedIndex,
+        verse,
+        scrollRef4,
+        setVerseFocusedIndex,
+      );
+    }, 0);
+  }, [verse, verseFocusedIndex]);
 
   const scrollToIndex = (
     type: string,
     index: number,
-    data: string[] | number,
+    data: string[] | number[],
     ref: React.RefObject<FlatList>,
     setSelectedIndex: React.Dispatch<SetStateAction<number>>,
   ) => {
-    if (typeof data === 'object') {
+    if (type == 'testament' || type == 'book') {
       if (index >= 0 && index < data.length) {
         ref.current?.scrollToOffset({
           animated: true,
           offset: index * buttonWidth,
         });
-        //   // setSelectedIndex(index);
-        //   if (type == 'testament' || type == 'book') {
-        //   } else if (type == 'chap' || type == 'verse') {
-        //   });
       }
     } else {
-      if (index >= 0 && index < data) {
+      if (index >= 0 && index < data.length) {
         ref.current?.scrollToOffset({
           animated: true,
           offset: index * buttonSmallWidth + 20,
@@ -216,7 +212,7 @@ export default function Indexing(props: IndexProps) {
   };
 
   useEffect(() => {
-    getData();
+    setTimeout(() => getData(), 500);
   }, [
     testamentFocusedIndex,
     bookFocusedIndex,
@@ -249,8 +245,10 @@ export default function Indexing(props: IndexProps) {
         response.data.new_testament_name,
       ]);
       setBook(response.data.books);
-      setChap(response.data.chapters);
-      setVerse(response.data.verses);
+      setChap(Array.from({length: response.data.chapters}, (_, i) => i + 1));
+      setVerse(Array.from({length: response.data.verses}, (_, i) => i + 1));
+      setChapWord(response.data.chapter);
+      setVerseWord(response.data.verse);
       setFullname(response.data.full_name);
       setVerseId(response.data.verseId);
     } catch (e) {
@@ -379,7 +377,7 @@ export default function Indexing(props: IndexProps) {
           <View style={{height: 16}} />
           <FlatList
             ref={scrollRef3}
-            data={Array.from({length: chap}, (_, i) => i + 1)}
+            data={chap}
             renderItem={({item, index}) => (
               <Pressable
                 onPress={() => {
@@ -398,7 +396,10 @@ export default function Indexing(props: IndexProps) {
                       ? {fontSize: 18}
                       : {fontSize: 17},
                   ]}>
-                  {item + (index === chapFocusedIndex ? '장' : '')}
+                  {/* {item + (index === chapFocusedIndex ? '장' : '')} */}
+                  {index === chapFocusedIndex
+                    ? chapWord.replace('#', item.toString())
+                    : item}
                 </Text>
               </Pressable>
             )}
@@ -410,7 +411,7 @@ export default function Indexing(props: IndexProps) {
             onMomentumScrollEnd={e =>
               handleScroll(e, {
                 type: 'chap',
-                datalen: chap,
+                datalen: chap.length,
                 selectedIndex: chapFocusedIndex,
                 setSelectedIndex: setChapFocusedIndex,
               })
@@ -422,7 +423,7 @@ export default function Indexing(props: IndexProps) {
           <View style={{height: 16}} />
           <FlatList
             ref={scrollRef4}
-            data={Array.from({length: verse}, (_, i) => i + 1)}
+            data={verse}
             renderItem={({item, index}) => (
               <Pressable
                 onPress={() => {
@@ -440,7 +441,10 @@ export default function Indexing(props: IndexProps) {
                       ? {fontSize: 18}
                       : {fontSize: 17},
                   ]}>
-                  {item + (index === verseFocusedIndex ? '절' : '')}
+                  {/* {item + (index === verseFocusedIndex ? '절' : '')} */}
+                  {index === verseFocusedIndex
+                    ? verseWord.replace('#', item.toString())
+                    : item}
                 </Text>
               </Pressable>
             )}
@@ -452,7 +456,7 @@ export default function Indexing(props: IndexProps) {
             onMomentumScrollEnd={e =>
               handleScroll(e, {
                 type: 'verse',
-                datalen: verse,
+                datalen: verse.length,
                 selectedIndex: verseFocusedIndex,
                 setSelectedIndex: setVerseFocusedIndex,
               })

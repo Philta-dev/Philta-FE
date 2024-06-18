@@ -21,6 +21,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SignInNavParamList} from '../../AppInner';
 import Modal from 'react-native-modal';
 import {Shadow} from 'react-native-shadow-2';
+import ToastModal from '../components/ToastModal';
 
 type PhoneLoginNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -328,7 +329,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           <Text style={styles.btnTxt}>가입하기</Text>
         )}
       </Pressable>
-      <Modal
+      {/* <Modal
         isVisible={showTimeAlert}
         hasBackdrop={true}
         backdropOpacity={0}
@@ -380,7 +381,25 @@ export default function PhoneLogin(props: PhoneLoginProps) {
             </View>
           </Shadow>
         </View>
-      </Modal>
+      </Modal> */}
+      <ToastModal
+        showModal={showTimeAlert}
+        setShowModal={setShowTimeAlert}
+        svgxml={svgList.socialLogin.timeout}
+        text="인증시간이 만료되었습니다."
+        btnText="인증번호 재전송"
+        onBackdropPress={() => {
+          setShowTimeAlert(false);
+          clearInterval(timerRef.current);
+          setIsSent(false);
+        }}
+        onBtnPress={() => {
+          setIsSent(false);
+          setShowTimeAlert(false);
+          sendAuthNum();
+        }}
+        keyBoardHeight={keyBoardHeight}
+      />
     </View>
   );
 }

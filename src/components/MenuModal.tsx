@@ -8,7 +8,7 @@ type ModalProps = {
   children: React.ReactNode;
 };
 
-export default function MyModal(props: ModalProps) {
+export default function MenuModal(props: ModalProps) {
   const showModal = props.showModal;
   const setshowModal = props.setShowModal;
 
