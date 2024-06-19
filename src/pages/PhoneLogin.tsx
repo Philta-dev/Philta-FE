@@ -383,7 +383,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           </Shadow>
         </View>
       </Modal> */}
-      <ToastModal
+      {/* <ToastModal
         showModal={showTimeAlert}
         setShowModal={setShowTimeAlert}
         svgxml={svgList.socialLogin.timeout}
@@ -400,19 +400,21 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           sendAuthNum();
         }}
         keyBoardHeight={keyBoardHeight}
-      />
-      {/* <CustomToastScreen
-        showModal={showTimeAlert}
-        setShowModal={setShowTimeAlert}
-        svgxml={svgList.socialLogin.timeout}
-        text="인증시간이 만료되었습니다."
-        btnText="인증번호 재전송"
-        onBtnPress={() => {
-          setIsSent(false);
-          setShowTimeAlert(false);
-          sendAuthNum();
-        }}
       /> */}
+      {showTimeAlert && (
+        <CustomToastScreen
+          showModal={showTimeAlert}
+          setShowModal={setShowTimeAlert}
+          svgxml={svgList.socialLogin.timeout}
+          text="인증시간이 만료되었습니다."
+          btnText="인증번호 재전송"
+          onBtnPress={() => {
+            setIsSent(false);
+            setShowTimeAlert(false);
+            sendAuthNum();
+          }}
+        />
+      )}
     </View>
   );
 }
