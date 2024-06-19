@@ -166,6 +166,7 @@ export default function Typing(props: TypingProps) {
   const [verse, setVerse] = useState(0);
   const [version, setVersion] = useState('');
   const [bookmarked, setBookmarked] = useState(false);
+  const [completed_count, setCompletedCount] = useState(0);
   const [is_last_in_chapter, setIsLastInChapter] = useState(false);
   const [is_last_in_book, setIsLastInBook] = useState(false);
   const [current_location, setCurrentLocation] = useState('');
@@ -190,10 +191,29 @@ export default function Typing(props: TypingProps) {
         chapter_id: response.data.C,
         verse_number: response.data.V,
       });
-      setPrevVerse(response.data.previous_verse);
-      setNextVerse(response.data.next_verse);
+      if (response.data.is_first_in_chapter) {
+        setPrevVerse({
+          id: -1,
+          content: '',
+          chapter_id: -1,
+          verse_number: -1,
+        });
+      } else {
+        setPrevVerse(response.data.previous_verse);
+      }
+      if (response.data.is_last_in_chapter) {
+        setNextVerse({
+          id: -1,
+          content: '',
+          chapter_id: -1,
+          verse_number: -1,
+        });
+      } else {
+        setNextVerse(response.data.next_verse);
+      }
       setVersion(response.data.version);
       setBookmarked(response.data.bookmarked);
+      // setCompletedCount(response.data.completed_count);
       setCurrentLocation(response.data.current_location);
       setIsLastInBook(response.data.is_last_in_book);
       setIsLastInChapter(response.data.is_last_in_chapter);
@@ -294,22 +314,26 @@ export default function Typing(props: TypingProps) {
         <View
           style={[{justifyContent: 'center'}, !keyBoardStatus && {flex: 1}]}>
           <View style={styles.typingArea}>
-            <Pressable
-              style={styles.anotherVerseArea}
-              onPress={() => {
-                if (prevVerse) handlePointer(prevVerse?.id);
-              }}>
-              <Text style={styles.anotherVerseNum}>
-                {prevVerse?.verse_number}
-              </Text>
-              <Text
-                style={styles.anotherVerseContent}
-                numberOfLines={
-                  keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
-                }>
-                {prevVerse?.content}
-              </Text>
-            </Pressable>
+            {prevVerse && prevVerse.id != -1 ? (
+              <Pressable
+                style={styles.anotherVerseArea}
+                onPress={() => {
+                  if (prevVerse) handlePointer(prevVerse?.id);
+                }}>
+                <Text style={styles.anotherVerseNum}>
+                  {prevVerse?.verse_number}
+                </Text>
+                <Text
+                  style={styles.anotherVerseContent}
+                  numberOfLines={
+                    keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
+                  }>
+                  {prevVerse?.content}
+                </Text>
+              </Pressable>
+            ) : (
+              <View style={styles.anotherVerseArea} />
+            )}
             <Pressable
               style={styles.currentVerseArea}
               onPress={() => {
@@ -408,22 +432,26 @@ export default function Typing(props: TypingProps) {
                 </Text>
               </ScrollView>
             </Pressable>
-            <Pressable
-              style={styles.anotherVerseArea}
-              onPress={() => {
-                if (nextVerse) handlePointer(nextVerse?.id);
-              }}>
-              <Text style={styles.anotherVerseNum}>
-                {nextVerse?.verse_number}
-              </Text>
-              <Text
-                style={styles.anotherVerseContent}
-                numberOfLines={
-                  keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
-                }>
-                {nextVerse?.content}
-              </Text>
-            </Pressable>
+            {nextVerse && nextVerse.id != -1 ? (
+              <Pressable
+                style={styles.anotherVerseArea}
+                onPress={() => {
+                  if (nextVerse) handlePointer(nextVerse?.id);
+                }}>
+                <Text style={styles.anotherVerseNum}>
+                  {nextVerse?.verse_number}
+                </Text>
+                <Text
+                  style={styles.anotherVerseContent}
+                  numberOfLines={
+                    keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
+                  }>
+                  {nextVerse?.content}
+                </Text>
+              </Pressable>
+            ) : (
+              <View style={styles.anotherVerseArea} />
+            )}
           </View>
         </View>
         {keyBoardStatus && (
