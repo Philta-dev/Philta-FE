@@ -8,7 +8,6 @@ import {
   StatusBar,
   ScrollView,
   Platform,
-  Animated,
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {SvgXml} from 'react-native-svg';
@@ -27,8 +26,6 @@ import Config from 'react-native-config';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {useSelector} from 'react-redux';
 import FadingView from '../components/Fading';
-import ToastModal from '../components/ToastModal';
-import ToastScreen from '../components/ToastScreen';
 import CustomToastScreen from '../components/CustomToastScreen';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
@@ -370,10 +367,11 @@ export default function Typing(props: TypingProps) {
                   right: 0,
                   bottom: 0,
                 }}
-                editable={editable}
                 maxLength={givenText.length + 1}
                 caretHidden={true}
-                onChangeText={text => handleTextChange(text)}
+                onChangeText={text => {
+                  if (editable) handleTextChange(text);
+                }}
                 value={text}
                 ref={ref}
                 blurOnSubmit={false}

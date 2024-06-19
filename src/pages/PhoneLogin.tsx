@@ -7,21 +7,16 @@ import {
   TextInput,
   View,
   Text,
-  Alert,
   Platform,
 } from 'react-native';
 import Config from 'react-native-config';
-import {RootState, useAppDispatch} from '../store';
+import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {useSelector} from 'react-redux';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SignInNavParamList} from '../../AppInner';
-import Modal from 'react-native-modal';
-import {Shadow} from 'react-native-shadow-2';
-import ToastModal from '../components/ToastModal';
 import CustomToastScreen from '../components/CustomToastScreen';
 
 type PhoneLoginNavigationProp = NativeStackNavigationProp<
