@@ -124,6 +124,12 @@ export default function Typing(props: TypingProps) {
       setText(textEntered);
       return;
     }
+    if (textEntered === givenText) {
+      setText(textEntered);
+      setEditable(false);
+      complete();
+      return;
+    }
     if (
       textEntered.slice(0, textEntered.length - 2) ===
       givenText.slice(0, textEntered.length - 2)
@@ -157,6 +163,7 @@ export default function Typing(props: TypingProps) {
     }
   };
   const [givenText, setGivenText] = useState('');
+  const [editable, setEditable] = useState(true);
   const [givenVerse, setGivenVerse] = useState<verseContent>();
   const [prevVerse, setPrevVerse] = useState<verseContent>();
   const [nextVerse, setNextVerse] = useState<verseContent>();
@@ -166,6 +173,8 @@ export default function Typing(props: TypingProps) {
   const [verse, setVerse] = useState(0);
   const [version, setVersion] = useState('');
   const [bookmarked, setBookmarked] = useState(false);
+  const [completed_count, setCompletedCount] = useState(0);
+  const [progress_bar, setProgressBar] = useState(0);
   const [is_last_in_chapter, setIsLastInChapter] = useState(false);
   const [is_last_in_book, setIsLastInBook] = useState(false);
   const [current_location, setCurrentLocation] = useState('');
@@ -190,13 +199,35 @@ export default function Typing(props: TypingProps) {
         chapter_id: response.data.C,
         verse_number: response.data.V,
       });
-      setPrevVerse(response.data.previous_verse);
-      setNextVerse(response.data.next_verse);
+      if (response.data.previous_verse && response.data.is_first_in_chapter) {
+        setPrevVerse({
+          id: response.data.previous_verse.id,
+          content: '',
+          chapter_id: -1,
+          verse_number: -1,
+        });
+      } else {
+        setPrevVerse(response.data.previous_verse);
+      }
+      if (response.data.next_verse && response.data.is_last_in_chapter) {
+        setNextVerse({
+          id: response.data.next_verse.id,
+          content: '',
+          chapter_id: -1,
+          verse_number: -1,
+        });
+      } else {
+        setNextVerse(response.data.next_verse);
+      }
       setVersion(response.data.version);
       setBookmarked(response.data.bookmarked);
+      setCompletedCount(response.data.completed_count);
+      setProgressBar(response.data.progress_bar);
       setCurrentLocation(response.data.current_location);
       setIsLastInBook(response.data.is_last_in_book);
       setIsLastInChapter(response.data.is_last_in_chapter);
+      setEditable(true);
+      console.log('prevVerse', prevVerse);
       ref.current?.focus();
     } catch (e) {
       const errorResponse = (
@@ -212,6 +243,9 @@ export default function Typing(props: TypingProps) {
       });
       console.log(response.data);
       if (is_last_in_chapter || is_last_in_book) setShowToast(true);
+      else {
+        if (nextVerse) handlePointer(nextVerse?.id);
+      }
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -281,7 +315,7 @@ export default function Typing(props: TypingProps) {
           width={Dimensions.get('window').width - 1}
           progressColor={'#5656D6'}
           nonProgressColor={'#EBEBF5'}
-          progress={50}
+          progress={progress_bar}
           borderRadius={8}
         />
         <Pressable onPress={() => setShowModal(true)} style={styles.menuBtn}>
@@ -294,22 +328,28 @@ export default function Typing(props: TypingProps) {
         <View
           style={[{justifyContent: 'center'}, !keyBoardStatus && {flex: 1}]}>
           <View style={styles.typingArea}>
-            <Pressable
-              style={styles.anotherVerseArea}
-              onPress={() => {
-                if (prevVerse) handlePointer(prevVerse?.id);
-              }}>
-              <Text style={styles.anotherVerseNum}>
-                {prevVerse?.verse_number}
-              </Text>
-              <Text
-                style={styles.anotherVerseContent}
-                numberOfLines={
-                  keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
-                }>
-                {prevVerse?.content}
-              </Text>
-            </Pressable>
+            {prevVerse &&
+            prevVerse.chapter_id != -1 &&
+            prevVerse.id != undefined ? (
+              <Pressable
+                style={styles.anotherVerseArea}
+                onPress={() => {
+                  if (prevVerse) handlePointer(prevVerse?.id);
+                }}>
+                <Text style={styles.anotherVerseNum}>
+                  {prevVerse?.verse_number}
+                </Text>
+                <Text
+                  style={styles.anotherVerseContent}
+                  numberOfLines={
+                    keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
+                  }>
+                  {prevVerse?.content}
+                </Text>
+              </Pressable>
+            ) : (
+              <View style={styles.anotherVerseArea} />
+            )}
             <Pressable
               style={styles.currentVerseArea}
               onPress={() => {
@@ -330,6 +370,7 @@ export default function Typing(props: TypingProps) {
                   right: 0,
                   bottom: 0,
                 }}
+                editable={editable}
                 maxLength={givenText.length + 1}
                 caretHidden={true}
                 onChangeText={text => handleTextChange(text)}
@@ -408,22 +449,26 @@ export default function Typing(props: TypingProps) {
                 </Text>
               </ScrollView>
             </Pressable>
-            <Pressable
-              style={styles.anotherVerseArea}
-              onPress={() => {
-                if (nextVerse) handlePointer(nextVerse?.id);
-              }}>
-              <Text style={styles.anotherVerseNum}>
-                {nextVerse?.verse_number}
-              </Text>
-              <Text
-                style={styles.anotherVerseContent}
-                numberOfLines={
-                  keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
-                }>
-                {nextVerse?.content}
-              </Text>
-            </Pressable>
+            {nextVerse && nextVerse.chapter_id != -1 ? (
+              <Pressable
+                style={styles.anotherVerseArea}
+                onPress={() => {
+                  if (nextVerse) handlePointer(nextVerse?.id);
+                }}>
+                <Text style={styles.anotherVerseNum}>
+                  {nextVerse?.verse_number}
+                </Text>
+                <Text
+                  style={styles.anotherVerseContent}
+                  numberOfLines={
+                    keyBoardStatus ? 2 : windowHeight >= 680 ? 4 : 2
+                  }>
+                  {nextVerse?.content}
+                </Text>
+              </Pressable>
+            ) : (
+              <View style={styles.anotherVerseArea} />
+            )}
           </View>
         </View>
         {keyBoardStatus && (
@@ -631,6 +676,11 @@ export default function Typing(props: TypingProps) {
             is_last_in_book ? '다음 책으로 넘어가기' : '다음 장으로 넘어가기'
           }
           onBtnPress={() => {
+            setShowToast(false);
+            if (nextVerse) handlePointer(nextVerse?.id);
+          }}
+          time={2000}
+          onTimeEnd={() => {
             setShowToast(false);
             if (nextVerse) handlePointer(nextVerse?.id);
           }}
