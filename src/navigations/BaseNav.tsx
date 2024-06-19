@@ -133,7 +133,7 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 export default function BaseNav() {
   const dispatch = useAppDispatch();
   const [dropDown, setDropDown] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
   const getVersionData = async () => {
     try {
@@ -177,6 +177,7 @@ export default function BaseNav() {
     getVersionData();
   }, []);
   useEffect(() => {
+    if (selectedIndex === -1) return;
     selectVersion(selectedIndex);
   }, [selectedIndex]);
   return (
