@@ -26,7 +26,7 @@ import PhoneLogin from './src/pages/PhoneLogin';
 import Text from './src/components/Text';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import userSlice from './src/slices/user';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import useAxiosInterceptor from './src/hooks/useAxiosInterceptor';
 import Search from './src/pages/Search';
@@ -64,8 +64,9 @@ function AppInner() {
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const reissue = async () => {
     try {
+      // await EncryptedStorage.removeItem('refreshToken');
       const refreshToken = await EncryptedStorage.getItem('refreshToken');
-      console.log('before', refreshToken);
+      // console.log('before', refreshToken);
       if (!refreshToken) {
         dispatch(
           userSlice.actions.setToken({
@@ -86,15 +87,18 @@ function AppInner() {
         'refreshToken',
         response.data.refreshToken,
       );
-      console.log('after', response.data.refreshToken);
+      // console.log('after', response.data.refreshToken);
       console.log('Token 재발급(자동로그인)');
-      console.log('accessToken', response.data.accessToken);
+      // console.log('accessToken', response.data.accessToken);
     } catch (error) {
-      console.log('error');
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
     }
   };
   useEffect(() => {
-    reissue();
+    if (!isLoggedIn) reissue();
   }, [isLoggedIn]);
   return (
     <NavigationContainer>

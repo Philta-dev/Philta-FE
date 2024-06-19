@@ -69,11 +69,14 @@ export default function Favorite(props: FavProps) {
       if (reduxBook + 1 !== bookname) {
         setBookname(reduxBook + 1);
       }
-      setTimeout(() => {
-        bookRef.current?.scrollToIndex({index: reduxBook + 1, animated: true});
-      }, 500);
     }
   }, [reduxTestament, reduxBook]);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     bookRef.current?.scrollToIndex({index: bookname, animated: true});
+  //   }, 0);
+  // }, [bookRef, testament, bookname]);
 
   useEffect(() => {
     const blurListener = props.navigation.addListener('blur', () => {
@@ -104,6 +107,9 @@ export default function Favorite(props: FavProps) {
       ]);
       setBookList(['전체', ...response.data.books]);
       setFavData(response.data.favorites);
+      setTimeout(() => {
+        bookRef.current?.scrollToIndex({index: bookname, animated: true});
+      }, 0);
     } catch (error) {
       const errorResponse = (
         error as AxiosError<{message: string; statusCode: number}>

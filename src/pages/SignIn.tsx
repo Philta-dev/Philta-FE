@@ -24,6 +24,25 @@ export default function SignIn(props: SignInProps) {
   const navigation = props.navigation;
   const dispatch = useAppDispatch();
 
+  const loginInAdmin = async () => {
+    try {
+      const response = await axios.post(`${Config.API_URL}/auth/login`, {
+        socialType: 'admin',
+        adminId: 'admin',
+        adminPw: 'admin-philta',
+      });
+      dispatch(
+        userSlice.actions.setToken({accessToken: response.data.accessToken}),
+      );
+      await EncryptedStorage.setItem(
+        'refreshToken',
+        response.data.refreshToken,
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const LoginWithKakao = async () => {
     console.log('카카오 로그인');
     const token = await KakaoLogin.login();
@@ -110,7 +129,8 @@ export default function SignIn(props: SignInProps) {
     <View style={styles.entire}>
       <Pressable
         onPress={() =>
-          dispatch(userSlice.actions.setToken({accessToken: '1234'}))
+          // dispatch(userSlice.actions.setToken({accessToken: '1234'}))
+          loginInAdmin()
         }
         style={styles.title}>
         <Text style={styles.titleTxt}>필타</Text>

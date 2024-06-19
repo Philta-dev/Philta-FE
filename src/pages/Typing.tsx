@@ -173,7 +173,6 @@ export default function Typing(props: TypingProps) {
     const focusListener = props.navigation.addListener('focus', () => {
       getData();
     });
-    getData();
     return focusListener;
   }, [reduxVersion]);
   const getData = async () => {
@@ -363,7 +362,7 @@ export default function Typing(props: TypingProps) {
                   <Text
                     style={{
                       color: '#000000',
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: '400',
                       lineHeight: 30,
                       letterSpacing: -0.36,
@@ -374,7 +373,7 @@ export default function Typing(props: TypingProps) {
                   <Text
                     style={{
                       color: red ? 'red' : '#000000',
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: '400',
                       lineHeight: 30,
                       letterSpacing: -0.36,
@@ -385,10 +384,10 @@ export default function Typing(props: TypingProps) {
                   <Text
                     style={[
                       {
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: '100',
                         lineHeight: 30,
-                        letterSpacing: -0.36,
+                        letterSpacing: -5,
                         zIndex: 1,
                       },
                       cursor ? {color: 'transparent'} : {color: 'red'},
@@ -399,7 +398,7 @@ export default function Typing(props: TypingProps) {
                     style={{
                       // backgroundColor: 'pink',
                       color: '#9B9EA5',
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: '400',
                       lineHeight: 30,
                       letterSpacing: -0.36,
