@@ -124,6 +124,12 @@ export default function Typing(props: TypingProps) {
       setText(textEntered);
       return;
     }
+    if (textEntered === givenText) {
+      setText(textEntered);
+      setEditable(false);
+      complete();
+      return;
+    }
     if (
       textEntered.slice(0, textEntered.length - 2) ===
       givenText.slice(0, textEntered.length - 2)
@@ -157,6 +163,7 @@ export default function Typing(props: TypingProps) {
     }
   };
   const [givenText, setGivenText] = useState('');
+  const [editable, setEditable] = useState(true);
   const [givenVerse, setGivenVerse] = useState<verseContent>();
   const [prevVerse, setPrevVerse] = useState<verseContent>();
   const [nextVerse, setNextVerse] = useState<verseContent>();
@@ -191,9 +198,9 @@ export default function Typing(props: TypingProps) {
         chapter_id: response.data.C,
         verse_number: response.data.V,
       });
-      if (response.data.is_first_in_chapter) {
+      if (response.data.previous_verse && response.data.is_first_in_chapter) {
         setPrevVerse({
-          id: -1,
+          id: response.data.previous_verse.id,
           content: '',
           chapter_id: -1,
           verse_number: -1,
@@ -201,9 +208,9 @@ export default function Typing(props: TypingProps) {
       } else {
         setPrevVerse(response.data.previous_verse);
       }
-      if (response.data.is_last_in_chapter) {
+      if (response.data.next_verse && response.data.is_last_in_chapter) {
         setNextVerse({
-          id: -1,
+          id: response.data.next_verse.id,
           content: '',
           chapter_id: -1,
           verse_number: -1,
@@ -217,6 +224,8 @@ export default function Typing(props: TypingProps) {
       setCurrentLocation(response.data.current_location);
       setIsLastInBook(response.data.is_last_in_book);
       setIsLastInChapter(response.data.is_last_in_chapter);
+      setEditable(true);
+      console.log('prevVerse', prevVerse);
       ref.current?.focus();
     } catch (e) {
       const errorResponse = (
@@ -232,6 +241,9 @@ export default function Typing(props: TypingProps) {
       });
       console.log(response.data);
       if (is_last_in_chapter || is_last_in_book) setShowToast(true);
+      else {
+        if (nextVerse) handlePointer(nextVerse?.id);
+      }
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -314,7 +326,9 @@ export default function Typing(props: TypingProps) {
         <View
           style={[{justifyContent: 'center'}, !keyBoardStatus && {flex: 1}]}>
           <View style={styles.typingArea}>
-            {prevVerse && prevVerse.id != -1 ? (
+            {prevVerse &&
+            prevVerse.chapter_id != -1 &&
+            prevVerse.id != undefined ? (
               <Pressable
                 style={styles.anotherVerseArea}
                 onPress={() => {
@@ -354,6 +368,7 @@ export default function Typing(props: TypingProps) {
                   right: 0,
                   bottom: 0,
                 }}
+                editable={editable}
                 maxLength={givenText.length + 1}
                 caretHidden={true}
                 onChangeText={text => handleTextChange(text)}
@@ -432,7 +447,7 @@ export default function Typing(props: TypingProps) {
                 </Text>
               </ScrollView>
             </Pressable>
-            {nextVerse && nextVerse.id != -1 ? (
+            {nextVerse && nextVerse.chapter_id != -1 ? (
               <Pressable
                 style={styles.anotherVerseArea}
                 onPress={() => {
