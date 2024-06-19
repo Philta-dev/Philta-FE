@@ -174,6 +174,7 @@ export default function Typing(props: TypingProps) {
   const [version, setVersion] = useState('');
   const [bookmarked, setBookmarked] = useState(false);
   const [completed_count, setCompletedCount] = useState(0);
+  const [progress_bar, setProgressBar] = useState(0);
   const [is_last_in_chapter, setIsLastInChapter] = useState(false);
   const [is_last_in_book, setIsLastInBook] = useState(false);
   const [current_location, setCurrentLocation] = useState('');
@@ -220,7 +221,8 @@ export default function Typing(props: TypingProps) {
       }
       setVersion(response.data.version);
       setBookmarked(response.data.bookmarked);
-      // setCompletedCount(response.data.completed_count);
+      setCompletedCount(response.data.completed_count);
+      setProgressBar(response.data.progress_bar);
       setCurrentLocation(response.data.current_location);
       setIsLastInBook(response.data.is_last_in_book);
       setIsLastInChapter(response.data.is_last_in_chapter);
@@ -313,7 +315,7 @@ export default function Typing(props: TypingProps) {
           width={Dimensions.get('window').width - 1}
           progressColor={'#5656D6'}
           nonProgressColor={'#EBEBF5'}
-          progress={50}
+          progress={progress_bar}
           borderRadius={8}
         />
         <Pressable onPress={() => setShowModal(true)} style={styles.menuBtn}>
@@ -674,6 +676,11 @@ export default function Typing(props: TypingProps) {
             is_last_in_book ? '다음 책으로 넘어가기' : '다음 장으로 넘어가기'
           }
           onBtnPress={() => {
+            setShowToast(false);
+            if (nextVerse) handlePointer(nextVerse?.id);
+          }}
+          time={2000}
+          onTimeEnd={() => {
             setShowToast(false);
             if (nextVerse) handlePointer(nextVerse?.id);
           }}
