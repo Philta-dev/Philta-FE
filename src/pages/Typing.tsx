@@ -30,6 +30,8 @@ import FadingView from '../components/Fading';
 import CustomToastScreen from '../components/CustomToastScreen';
 import {Shadow} from 'react-native-shadow-2';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import * as KakaoLogin from '@react-native-seoul/kakao-login';
+import appleAuth from '@invertase/react-native-apple-authentication';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -184,6 +186,9 @@ export default function Typing(props: TypingProps) {
   const [is_last_in_chapter, setIsLastInChapter] = useState(false);
   const [is_last_in_book, setIsLastInBook] = useState(false);
   const [current_location, setCurrentLocation] = useState('');
+  const [next_location, setNextLocation] = useState('');
+  const [current_bookname, setCurrentBookname] = useState('');
+  const [socialType, setSocialType] = useState('');
   useEffect(() => {
     const focusListener = props.navigation.addListener('focus', () => {
       getData();
@@ -231,6 +236,9 @@ export default function Typing(props: TypingProps) {
       setCurrentLocation(response.data.current_location);
       setIsLastInBook(response.data.is_last_in_book);
       setIsLastInChapter(response.data.is_last_in_chapter);
+      setCurrentBookname(response.data.current_book_name);
+      setNextLocation(response.data.next_location);
+      setSocialType(response.data.socialType);
       getVersionData();
       setEditable(true);
       console.log('prevVerse', prevVerse);
@@ -326,6 +334,11 @@ export default function Typing(props: TypingProps) {
     try {
       const response = await axios.post(`${Config.API_URL}/auth/logout`);
       console.log(response.data);
+      if (socialType === 'kakao') {
+        await KakaoLogin.logout();
+      } else if (socialType == 'apple') {
+        appleAuth.Operation.LOGOUT;
+      }
       dispatch(userSlice.actions.setToken({accessToken: ''}));
       await EncryptedStorage.removeItem('refreshToken');
     } catch (e) {
@@ -335,6 +348,31 @@ export default function Typing(props: TypingProps) {
       console.log(errorResponse?.data);
     }
   };
+
+  const quit = async () => {
+    try {
+      const response = await axios.delete(`${Config.API_URL}/auth/quit`);
+      console.log(response.data);
+      if (socialType === 'kakao') {
+        await KakaoLogin.unlink();
+      }
+    } catch (error) {
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+    const unsubscriber = appleAuth.onCredentialRevoked(async () => {
+      quit();
+    });
+    return () => {
+      unsubscriber();
+    };
+  }, []);
 
   const handlePointer = async (id: number) => {
     try {
@@ -810,10 +848,12 @@ export default function Typing(props: TypingProps) {
           showModal={showToast}
           setShowModal={setShowToast}
           svgxml={svgList.modal.check}
-          text="모든 절 타이핑을 완료했습니다."
-          btnText={
-            is_last_in_book ? '다음 책으로 넘어가기' : '다음 장으로 넘어가기'
+          text={
+            is_last_in_book
+              ? current_bookname + ' 필타가 완료됐습니다'
+              : next_location + '으로 이동합니다.'
           }
+          btnText={'확인'}
           onBtnPress={() => {
             setShowToast(false);
             if (nextVerse) handlePointer(nextVerse?.id);
