@@ -30,7 +30,7 @@ export default function DropDownModal(props: DropDownModalProps) {
             startColor="rgba(0, 0, 0, 0.08)"
             endColor="rgba(0, 0, 0, 0)">
             <FlatList
-              style={{width: '100%', height: '100%'}}
+              style={{width: '100%', height: '100%', maxHeight: 200}}
               data={props.dropDownItems}
               renderItem={({item, index}) => (
                 <Pressable
