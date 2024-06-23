@@ -336,9 +336,10 @@ export default function Typing(props: TypingProps) {
       console.log(response.data);
       if (socialType === 'kakao') {
         await KakaoLogin.logout();
-      } else if (socialType == 'apple') {
-        appleAuth.Operation.LOGOUT;
       }
+      // else if (socialType == 'apple') {
+      //   appleAuth.Operation.LOGOUT;
+      // }
       dispatch(userSlice.actions.setToken({accessToken: ''}));
       await EncryptedStorage.removeItem('refreshToken');
     } catch (e) {

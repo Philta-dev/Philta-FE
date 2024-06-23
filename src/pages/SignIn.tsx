@@ -1,9 +1,9 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Pressable, StyleSheet, View, Text} from 'react-native';
+import {Pressable, StyleSheet, View, Text, Platform} from 'react-native';
 import Config from 'react-native-config';
 import {SignInNavParamList} from '../../AppInner';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -77,52 +77,70 @@ export default function SignIn(props: SignInProps) {
     }
   };
 
+  const quit = async () => {
+    try {
+      const response = await axios.delete(`${Config.API_URL}/auth/quit`);
+      console.log(response.data);
+    } catch (error) {
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+
   const LoginWithApple = async () => {
     console.log('애플 로그인');
     const applelAuthResponse = await appleAuth.performRequest({
       requestedOperation: appleAuth.Operation.LOGIN,
       requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      // nonceEnabled: false,
     });
     console.log(applelAuthResponse);
-    const {authorizationCode, fullName} = applelAuthResponse;
+    const {authorizationCode, fullName, user} = applelAuthResponse;
 
-    const familyName = fullName?.familyName;
-    const givenName = fullName?.givenName;
-    let name = '';
-    if (familyName !== null) {
-      name = name + familyName;
-    }
-    if (givenName !== null) {
-      name = name + givenName;
-    }
-    try {
-      console.log(authorizationCode);
-      console.log(name);
-      const response = await axios.post(`${Config.API_URL}/auth/login`, {
-        socialType: 'apple',
-        appleAccessToken: authorizationCode,
-      });
-      console.log(response.data);
-      if (response.data.isNew) {
-        dispatch(
-          userSlice.actions.setUser({
-            preAcc: response.data.accessToken,
-            preRef: response.data.refreshToken,
-          }),
-        );
+    const credentialState = await appleAuth.getCredentialStateForUser(user);
+    if (credentialState === appleAuth.State.REVOKED) {
+      console.log('revoked');
+      quit();
+      return;
+    } else if (credentialState === appleAuth.State.AUTHORIZED) {
+      try {
+        if (!authorizationCode) return;
+        console.log('auth', authorizationCode);
 
-        navigation.navigate('EnterName');
-      } else {
-        dispatch(
-          userSlice.actions.setToken({accessToken: response.data.accessToken}),
-        );
-        await EncryptedStorage.setItem(
-          'refreshToken',
-          response.data.refreshToken,
-        );
+        // console.log(name);
+        const response = await axios.post(`${Config.API_URL}/auth/login`, {
+          socialType: 'apple',
+          authCode: authorizationCode,
+        });
+        console.log(response.data);
+        if (response.data.isNew) {
+          dispatch(
+            userSlice.actions.setUser({
+              preAcc: response.data.accessToken,
+              preRef: response.data.refreshToken,
+            }),
+          );
+
+          navigation.navigate('EnterName');
+        } else {
+          dispatch(
+            userSlice.actions.setToken({
+              accessToken: response.data.accessToken,
+            }),
+          );
+          await EncryptedStorage.setItem(
+            'refreshToken',
+            response.data.refreshToken,
+          );
+        }
+      } catch (error) {
+        const errorResponse = (
+          error as AxiosError<{message: string; statusCode: number}>
+        ).response;
+        console.log(errorResponse?.data);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
   return (
@@ -144,12 +162,16 @@ export default function SignIn(props: SignInProps) {
             카카오로 시작하기
           </Text>
         </Pressable>
-        <Pressable style={[styles.btn, {backgroundColor: '#000000'}]}>
-          <SvgXml xml={svgList.socialLogin.apple} width={48} height={48} />
-          <Text style={[styles.btnTxt, {color: '#FFFFFF'}]}>
-            Apple로 시작하기
-          </Text>
-        </Pressable>
+        {Platform.OS == 'ios' && (
+          <Pressable
+            style={[styles.btn, {backgroundColor: '#000000'}]}
+            onPress={() => LoginWithApple()}>
+            <SvgXml xml={svgList.socialLogin.apple} width={48} height={48} />
+            <Text style={[styles.btnTxt, {color: '#FFFFFF'}]}>
+              Apple로 시작하기
+            </Text>
+          </Pressable>
+        )}
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4', padding: 12}]}
           onPress={() => {
