@@ -3,7 +3,7 @@ import {Pressable, StyleSheet, View, Text} from 'react-native';
 import Config from 'react-native-config';
 import {SignInNavParamList} from '../../AppInner';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -73,7 +73,10 @@ export default function SignIn(props: SignInProps) {
         );
       }
     } catch (error) {
-      console.log(error);
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
     }
   };
 
