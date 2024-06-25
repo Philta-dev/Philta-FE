@@ -286,10 +286,10 @@ export default function Indexing(props: IndexProps) {
       console.log(errorResponse?.data);
     }
   };
-
   return (
     <View style={{backgroundColor: 'white', paddingTop: 8, flex: 1}}>
-      <Text style={{marginVertical: 32, marginLeft: 24}}>
+      <Text
+        style={{marginVertical: windowHeight > 600 ? 20 : 32, marginLeft: 24}}>
         좌우로 스크롤하여 구절 선택
       </Text>
       <View>
@@ -467,7 +467,7 @@ export default function Indexing(props: IndexProps) {
           />
           <LinearGradient
             pointerEvents="none"
-            colors={['white', 'transparent', 'white']}
+            colors={['white', 'rgba(255, 255, 255,0)', 'white']}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             style={[styles.overlay]}
@@ -484,7 +484,15 @@ export default function Indexing(props: IndexProps) {
       <View style={styles.bottomView}>
         {/* <Text style={styles.indexingTxt}>{`
         ${book[bookFocusedIndex]} ${chapFocusedIndex}장 ${verseFocusedIndex}절`}</Text> */}
-        <Text style={styles.indexingTxt}>{fullname}</Text>
+        <Text
+          style={[
+            styles.indexingTxt,
+            {
+              marginTop: windowHeight > 600 ? 18 : 24,
+            },
+          ]}>
+          {fullname}
+        </Text>
         <Pressable
           style={styles.confirmBtn}
           onPress={() => {
@@ -536,7 +544,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   indexingTxt: {
-    marginTop: 24,
     color: 'black',
     fontSize: 16,
     fontWeight: '400',
