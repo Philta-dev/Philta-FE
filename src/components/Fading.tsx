@@ -1,4 +1,4 @@
-import {Animated, StyleSheet, View} from 'react-native';
+import {Animated, Platform, StyleSheet, View} from 'react-native';
 import {useState, useEffect, ReactNode} from 'react';
 
 type props = {
@@ -16,6 +16,17 @@ export default function FadingView({time}: props) {
     }).start();
   }, [fadeAnim]);
 
+  const styles = StyleSheet.create({
+    fadingContainer: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      zIndex: 10,
+      backgroundColor: 'white',
+    },
+  });
   return (
     <Animated.View
       style={{
@@ -24,15 +35,3 @@ export default function FadingView({time}: props) {
       }}></Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  fadingContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    backgroundColor: 'white',
-  },
-});

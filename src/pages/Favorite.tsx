@@ -45,6 +45,7 @@ export default function Favorite(props: FavProps) {
     // },
   ]);
   const [deleteBookmark, setDeleteBookmark] = useState(-1);
+  const [none, setNone] = useState(-1);
   const bookRef = useRef<FlatList>(null);
 
   const reduxTestament = useSelector(
@@ -106,6 +107,7 @@ export default function Favorite(props: FavProps) {
         response.data.new_testament_name,
       ]);
       setBookList(['전체', ...response.data.books]);
+      setNone(-1);
       setFavData(response.data.favorites);
       setTimeout(() => {
         bookRef.current?.scrollToIndex({index: bookname, animated: true});
@@ -130,17 +132,19 @@ export default function Favorite(props: FavProps) {
       console.log(errorResponse?.data);
     }
   };
-  const logout = async () => {
+  const unbookmark = async (id: number) => {
     try {
-      const response = await axios.post(`${Config.API_URL}/auth/logout`);
-      await EncryptedStorage.removeItem('refreshToken');
-      dispatch(
-        userSlice.actions.setToken({
-          accessToken: '',
-        }),
-      );
-    } catch (error) {
-      console.log(error);
+      const response = await axios.delete(`${Config.API_URL}/favorite/delete`, {
+        data: {verseId: id},
+      });
+      console.log(response.data);
+
+      getData();
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
     }
   };
   return (
@@ -251,42 +255,46 @@ export default function Favorite(props: FavProps) {
         ) : (
           <FlatList
             data={favData}
-            renderItem={({item, index}) => (
-              <Pressable
-                style={styles.favItem}
-                onPress={() => {
-                  handlePointer(item.id);
-                  props.navigation.navigate('Typing');
-                }}>
+            renderItem={({item, index}) =>
+              none == index ? null : (
                 <Pressable
-                  style={styles.bookmarkIcon}
+                  style={styles.favItem}
                   onPress={() => {
-                    console.log('unbookmark');
-                    setDeleteBookmark(index);
-                    setTimeout(() => {
-                      setDeleteBookmark(-1);
-                    }, 1000);
+                    handlePointer(item.id);
+                    props.navigation.navigate('Typing');
                   }}>
-                  <SvgXml
-                    xml={
-                      deleteBookmark == index
-                        ? svgList.typing.bookmarkEmpty
-                        : svgList.typing.bookmarkBlue
-                    }
-                    width={16}
-                    height={16}
-                  />
-                </Pressable>
-                <View style={styles.favContent}>
-                  <Text style={styles.favReference}>{item.reference}</Text>
-                  <View style={styles.favText}>
-                    {item.text.split('').map((txt, i) => (
-                      <Text key={`${index}-${i}`}>{txt}</Text>
-                    ))}
+                  <Pressable
+                    style={styles.bookmarkIcon}
+                    onPress={() => {
+                      setDeleteBookmark(index);
+                      setTimeout(() => {
+                        unbookmark(item.id);
+                        setNone(index);
+                        setDeleteBookmark(-1);
+                      }, 1500);
+                    }}>
+                    <SvgXml
+                      xml={
+                        deleteBookmark == index
+                          ? svgList.typing.bookmarkEmpty
+                          : svgList.typing.bookmarkBlue
+                      }
+                      width={16}
+                      height={16}
+                      style={{marginTop: 3}}
+                    />
+                  </Pressable>
+                  <View style={styles.favContent}>
+                    <Text style={styles.favReference}>{item.reference}</Text>
+                    <View style={styles.favText}>
+                      {item.text.split('').map((txt, i) => (
+                        <Text key={`${index}-${i}`}>{txt}</Text>
+                      ))}
+                    </View>
                   </View>
-                </View>
-              </Pressable>
-            )}
+                </Pressable>
+              )
+            }
             keyExtractor={item => `${item.id}`}
           />
         )}
@@ -368,7 +376,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   favReference: {
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 24,
     letterSpacing: -0.28,
     color: '#000000',

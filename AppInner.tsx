@@ -64,7 +64,7 @@ function AppInner() {
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const reissue = async () => {
     try {
-      // await EncryptedStorage.removeItem('refreshToken');
+      await EncryptedStorage.removeItem('refreshToken');
       const refreshToken = await EncryptedStorage.getItem('refreshToken');
       // console.log('before', refreshToken);
       if (!refreshToken) {
