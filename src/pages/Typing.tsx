@@ -332,6 +332,7 @@ export default function Typing(props: TypingProps) {
   };
   const logout = async () => {
     try {
+      setShowModal(false);
       const response = await axios.post(`${Config.API_URL}/auth/logout`);
       console.log(response.data);
       if (socialType === 'kakao') {
@@ -340,8 +341,8 @@ export default function Typing(props: TypingProps) {
       // else if (socialType == 'apple') {
       //   appleAuth.Operation.LOGOUT;
       // }
-      dispatch(userSlice.actions.setToken({accessToken: ''}));
       await EncryptedStorage.removeItem('refreshToken');
+      dispatch(userSlice.actions.setToken({accessToken: ''}));
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -353,6 +354,7 @@ export default function Typing(props: TypingProps) {
   const quit = async () => {
     console.log('quit');
     try {
+      setShowModal(false);
       const response = await axios.delete(`${Config.API_URL}/auth/quit`);
       console.log(response.data);
       if (socialType === 'kakao') {
