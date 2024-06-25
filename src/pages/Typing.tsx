@@ -360,8 +360,8 @@ export default function Typing(props: TypingProps) {
       if (socialType === 'kakao') {
         await KakaoLogin.unlink();
       }
-      dispatch(userSlice.actions.setToken({accessToken: ''}));
       await EncryptedStorage.removeItem('refreshToken');
+      dispatch(userSlice.actions.setToken({accessToken: ''}));
     } catch (error) {
       const errorResponse = (
         error as AxiosError<{message: string; statusCode: number}>
