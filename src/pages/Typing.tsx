@@ -9,8 +9,11 @@ import {
   ScrollView,
   Platform,
   FlatList,
+  Animated,
+  Easing,
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {LinearGradient} from 'react-native-linear-gradient';
 import {SvgXml} from 'react-native-svg';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../navigations/BaseNav';
@@ -57,6 +60,8 @@ export default function Typing(props: TypingProps) {
   const [status, setStatus] = useState('');
   const fadingTime = 200;
   const [red, setRed] = useState(false);
+  const [pageMove, setPageMove] = useState(false);
+  const pageX = useRef(new Animated.Value(0)).current;
 
   const [text, setText] = useState('');
   const [cursor, setCursor] = useState(false);
@@ -68,11 +73,30 @@ export default function Typing(props: TypingProps) {
   const [showToast, setShowToast] = useState(false);
   const [versionDropdown, setVersionDropdown] = useState(false);
   const windowHeight = Dimensions.get('window').height;
+  const windowWidth = Dimensions.get('window').width;
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
   const [versionModalWidth, setVersionModalWidth] = useState(0);
   const [versionModalLeft, setVersionModalLeft] = useState(0);
   const dispatch = useAppDispatch();
   const reduxVersion = useSelector((state: RootState) => state.user.version);
+
+  useEffect(() => {
+    if (!pageMove) {
+      Animated.timing(pageX, {
+        toValue: windowWidth,
+        duration: 0,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(pageX, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }).start(() => {
+        setPageMove(false); // 애니메이션이 끝나면 pageMove를 false로 설정
+      });
+    }
+  }, [pageMove]);
 
   useEffect(() => {
     props.navigation.setOptions({
@@ -865,15 +889,45 @@ export default function Typing(props: TypingProps) {
           }
           btnText={'확인'}
           onBtnPress={() => {
+            setPageMove(true);
             setShowToast(false);
             if (nextVerse) handlePointer(nextVerse?.id);
           }}
           time={2000}
           onTimeEnd={() => {
+            setPageMove(true);
             setShowToast(false);
             if (nextVerse) handlePointer(nextVerse?.id);
           }}
         />
+      )}
+      {pageMove && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: 'white',
+          }}>
+          <Animated.View
+            style={{
+              width: 10,
+              height: windowHeight,
+              // backgroundColor: 'gray',
+              zIndex: 1000,
+              transform: [{translateX: pageX}],
+            }}>
+            <LinearGradient
+              // pointerEvents="none"
+              colors={['gray', 'rgba(255, 255, 255,0)']}
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              style={[styles.overlay]}
+            />
+          </Animated.View>
+        </View>
       )}
     </View>
   );
@@ -1032,5 +1086,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.32,
     color: 'black',
     marginVertical: 8,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
   },
 });
