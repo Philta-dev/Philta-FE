@@ -351,12 +351,15 @@ export default function Typing(props: TypingProps) {
   };
 
   const quit = async () => {
+    console.log('quit');
     try {
       const response = await axios.delete(`${Config.API_URL}/auth/quit`);
       console.log(response.data);
       if (socialType === 'kakao') {
         await KakaoLogin.unlink();
       }
+      dispatch(userSlice.actions.setToken({accessToken: ''}));
+      await EncryptedStorage.removeItem('refreshToken');
     } catch (error) {
       const errorResponse = (
         error as AxiosError<{message: string; statusCode: number}>
@@ -777,7 +780,11 @@ export default function Typing(props: TypingProps) {
               }}>
               <Text style={styles.modalBottomBtnTxt}>로그아웃</Text>
             </Pressable>
-            <Pressable style={styles.modalBottomBtn}>
+            <Pressable
+              style={styles.modalBottomBtn}
+              onPress={() => {
+                quit();
+              }}>
               <Text style={[styles.modalBottomBtnTxt, {color: '#EBEBF599'}]}>
                 회원탈퇴
               </Text>
