@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
   Text,
+  Platform,
 } from 'react-native';
 import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
@@ -34,10 +35,12 @@ export default function EnterName(props: EnterNameProps) {
   const nameRef = useRef<TextInput>(null);
 
   useEffect(() => {
-    const keyBoardShowListener = Keyboard.addListener('keyboardDidShow', () => {
+    const keyBoardShowListener = Keyboard.addListener('keyboardDidShow', e => {
+      setKeyBoardHeight(e.endCoordinates.height);
       setKeyBoardStatus(true);
     });
     const keyBoardHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyBoardHeight(0);
       setKeyBoardStatus(false);
       nameRef.current?.blur();
     });
@@ -51,6 +54,7 @@ export default function EnterName(props: EnterNameProps) {
   const dispatch = useAppDispatch();
   const accessToken = useSelector((state: RootState) => state.user.preAcc);
   const refreshToken = useSelector((state: RootState) => state.user.preRef);
+  const [keyBoardHeight, setKeyBoardHeight] = useState(0);
   const enterName = async () => {
     console.log(accessToken);
     try {
@@ -73,7 +77,13 @@ export default function EnterName(props: EnterNameProps) {
     <View
       style={[
         styles.entire,
-        keyBoardStatus ? {paddingBottom: 40} : {paddingBottom: 80},
+        Platform.OS === 'ios'
+          ? keyBoardStatus
+            ? {paddingBottom: 40 + keyBoardHeight}
+            : {paddingBottom: 80 + keyBoardHeight}
+          : keyBoardStatus
+          ? {paddingBottom: 50}
+          : {paddingBottom: 80},
       ]}>
       <View>
         <Pressable
@@ -82,7 +92,7 @@ export default function EnterName(props: EnterNameProps) {
           <SvgXml xml={svgList.backBtn} width={24} height={24} />
         </Pressable>
         <Text style={styles.titleTxt}>
-          {'이름을 입력하면\n 회원가입이 완료됩니다.'}
+          {'이름을 입력하면\n회원가입이 완료됩니다.'}
         </Text>
         <TextInput
           placeholder="이름"
@@ -122,7 +132,7 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 20,
     fontWeight: '600',
-    fontFamily: 'Eulyoo1945-SemiBold',
+    // fontFamily: 'Eulyoo1945-SemiBold',
     marginVertical: 24,
   },
   input: {

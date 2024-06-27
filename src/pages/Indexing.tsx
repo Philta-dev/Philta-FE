@@ -1,6 +1,7 @@
 import HorizontalPicker from '@vseslav/react-native-horizontal-picker';
 import React, {SetStateAction, useEffect, useRef, useState} from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   NativeScrollEvent,
@@ -56,6 +57,7 @@ export default function Indexing(props: IndexProps) {
   const [verseId, setVerseId] = useState(0);
   const windowHeight = useWindowDimensions().height;
   let itemHeight = (windowHeight / 2 - 48) / 4;
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (reduxTestament == -1) {
@@ -251,6 +253,7 @@ export default function Indexing(props: IndexProps) {
       setVerseWord(response.data.verse);
       setFullname(response.data.full_name);
       setVerseId(response.data.verseId);
+      setLoading(false);
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -321,7 +324,10 @@ export default function Indexing(props: IndexProps) {
             horizontal
             showsHorizontalScrollIndicator={false}
             snapToInterval={buttonWidth}
-            decelerationRate="fast"
+            decelerationRate={'fast'}
+            onScrollBeginDrag={() => {
+              setLoading(true);
+            }}
             onMomentumScrollEnd={e =>
               handleScroll(e, {
                 type: 'testament',
@@ -362,6 +368,9 @@ export default function Indexing(props: IndexProps) {
             showsHorizontalScrollIndicator={false}
             snapToInterval={buttonWidth}
             decelerationRate="fast"
+            onScrollBeginDrag={() => {
+              setLoading(true);
+            }}
             onMomentumScrollEnd={e =>
               handleScroll(e, {
                 type: 'book',
@@ -405,6 +414,9 @@ export default function Indexing(props: IndexProps) {
             )}
             keyExtractor={(item, index) => index.toString()}
             horizontal
+            onScrollBeginDrag={() => {
+              setLoading(true);
+            }}
             showsHorizontalScrollIndicator={false}
             snapToInterval={buttonSmallWidth}
             decelerationRate="fast"
@@ -453,6 +465,9 @@ export default function Indexing(props: IndexProps) {
             showsHorizontalScrollIndicator={false}
             snapToInterval={buttonSmallWidth}
             decelerationRate="fast"
+            onScrollBeginDrag={() => {
+              setLoading(true);
+            }}
             onMomentumScrollEnd={e =>
               handleScroll(e, {
                 type: 'verse',
@@ -498,7 +513,24 @@ export default function Indexing(props: IndexProps) {
           onPress={() => {
             handlePointer();
           }}>
-          <Text style={styles.confirmBtnTxt}>완료</Text>
+          <Text
+            style={[styles.confirmBtnTxt, loading && {color: 'transparent'}]}>
+            완료
+          </Text>
+          {loading && (
+            <View
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator size="small" color="#ffffff" />
+            </View>
+          )}
         </Pressable>
       </View>
     </View>
@@ -558,6 +590,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 12,
+    position: 'relative',
   },
   confirmBtnTxt: {
     color: 'white',

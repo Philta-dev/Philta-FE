@@ -913,7 +913,7 @@ export default function Typing(props: TypingProps) {
           }}>
           <Animated.View
             style={{
-              width: 10,
+              width: 8,
               height: windowHeight,
               // backgroundColor: 'gray',
               zIndex: 1000,
@@ -1000,6 +1000,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 20,
     letterSpacing: -0.12,
+    marginTop: 1,
   },
   anotherVerseContent: {
     color: '#D6D6D6',
@@ -1029,6 +1030,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 20,
     width: 20,
+    marginTop: 1,
   },
   currentVerseContent: {
     // height: 200,
