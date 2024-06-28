@@ -1,4 +1,3 @@
-import HorizontalPicker from '@vseslav/react-native-horizontal-picker';
 import React, {SetStateAction, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
@@ -55,6 +54,7 @@ export default function Indexing(props: IndexProps) {
   const [chapWord, setChapWord] = useState('');
   const [verseWord, setVerseWord] = useState('');
   const [verseId, setVerseId] = useState(0);
+  const [moving, setMoving] = useState(false);
   const windowHeight = useWindowDimensions().height;
   let itemHeight = (windowHeight / 2 - 48) / 4;
   const [loading, setLoading] = useState(false);
@@ -170,6 +170,7 @@ export default function Indexing(props: IndexProps) {
         });
       }
     }
+    setMoving(false);
   };
 
   const handleScroll = (
@@ -188,13 +189,20 @@ export default function Indexing(props: IndexProps) {
   ) => {
     const offsetX = e.nativeEvent.contentOffset.x;
     let direction =
-      offsetX > chapFocusedIndex * buttonSmallWidth + 20 ? 'right' : 'left';
+      type == 'chap' || type == 'verse'
+        ? offsetX > selectedIndex * buttonSmallWidth + 20
+          ? 'right'
+          : 'left'
+        : offsetX > selectedIndex * buttonWidth
+        ? 'right'
+        : 'left';
     const index =
       type == 'testament' || type == 'book'
         ? Math.round(offsetX / buttonWidth)
         : direction == 'right'
         ? Math.round((offsetX - 40) / buttonSmallWidth)
         : Math.round((offsetX - 20) / buttonSmallWidth);
+    setMoving(true);
     if (index !== selectedIndex) {
       setSelectedIndex(index);
       if (type == 'testament') {
@@ -225,6 +233,7 @@ export default function Indexing(props: IndexProps) {
 
   const getData = async () => {
     try {
+      // setMoving(false);
       console.log('redux', reduxTestament, reduxBook, reduxChap, reduxVerse);
       console.log(
         't',
@@ -254,6 +263,7 @@ export default function Indexing(props: IndexProps) {
       setFullname(response.data.full_name);
       setVerseId(response.data.verseId);
       setLoading(false);
+      // setMoving(false);
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -323,7 +333,8 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            snapToInterval={buttonWidth}
+            scrollEnabled={!moving}
+            // snapToInterval={buttonWidth}
             decelerationRate={'fast'}
             onScrollBeginDrag={() => {
               setLoading(true);
@@ -366,7 +377,8 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            snapToInterval={buttonWidth}
+            scrollEnabled={!moving}
+            // snapToInterval={buttonWidth}
             decelerationRate="fast"
             onScrollBeginDrag={() => {
               setLoading(true);
@@ -418,7 +430,8 @@ export default function Indexing(props: IndexProps) {
               setLoading(true);
             }}
             showsHorizontalScrollIndicator={false}
-            snapToInterval={buttonSmallWidth}
+            scrollEnabled={!moving}
+            // snapToInterval={buttonSmallWidth}
             decelerationRate="fast"
             onMomentumScrollEnd={e =>
               handleScroll(e, {
@@ -463,7 +476,8 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            snapToInterval={buttonSmallWidth}
+            // snapToInterval={buttonSmallWidth}
+            scrollEnabled={!moving}
             decelerationRate="fast"
             onScrollBeginDrag={() => {
               setLoading(true);
@@ -509,6 +523,7 @@ export default function Indexing(props: IndexProps) {
           {fullname}
         </Text>
         <Pressable
+          disabled={loading}
           style={styles.confirmBtn}
           onPress={() => {
             handlePointer();

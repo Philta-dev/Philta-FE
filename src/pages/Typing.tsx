@@ -539,29 +539,44 @@ export default function Typing(props: TypingProps) {
                   // keyBoardStatus && {maxHeight: 170},
                 ]}
                 ref={scrollRef}>
-                <Text style={{flexWrap: 'wrap'}}>
-                  <Text
-                    style={{
-                      color: '#000000',
-                      fontSize: 20,
-                      fontWeight: '400',
-                      lineHeight: 30,
-                      letterSpacing: -0.36,
-                      zIndex: 1,
-                    }}>
-                    {text.length >= 2 && text.slice(0, text.length - 2)}
-                  </Text>
-                  <Text
-                    style={{
-                      color: red ? 'red' : '#000000',
-                      fontSize: 20,
-                      fontWeight: '400',
-                      lineHeight: 30,
-                      letterSpacing: -0.36,
-                      zIndex: 1,
-                    }}>
-                    {text.slice(text.length - 2, text.length)}
-                  </Text>
+                <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                  {text.length >= 2 &&
+                    Array.from(text.slice(0, text.length - 2)).map(
+                      (char, index) => {
+                        return (
+                          <Text
+                            key={'after' + index}
+                            style={{
+                              color: '#000000',
+                              fontSize: 20,
+                              fontWeight: '400',
+                              lineHeight: 30,
+                              letterSpacing: -0.36,
+                              zIndex: 1,
+                            }}>
+                            {char}
+                          </Text>
+                        );
+                      },
+                    )}
+                  {Array.from(text.slice(text.length - 2, text.length)).map(
+                    (char, index) => {
+                      return (
+                        <Text
+                          key={'ing' + index}
+                          style={{
+                            color: red ? 'red' : '#000000',
+                            fontSize: 20,
+                            fontWeight: '400',
+                            lineHeight: 30,
+                            letterSpacing: -0.36,
+                            zIndex: 1,
+                          }}>
+                          {char}
+                        </Text>
+                      );
+                    },
+                  )}
                   <Text
                     style={[
                       {
@@ -575,18 +590,25 @@ export default function Typing(props: TypingProps) {
                     ]}>
                     |
                   </Text>
-                  <Text
-                    style={{
-                      // backgroundColor: 'pink',
-                      color: '#9B9EA5',
-                      fontSize: 20,
-                      fontWeight: '400',
-                      lineHeight: 30,
-                      letterSpacing: -0.36,
-                    }}>
-                    {givenText.slice(text.length)}
-                  </Text>
-                </Text>
+
+                  {Array.from(givenText.slice(text.length)).map(
+                    (char, index) => {
+                      return (
+                        <Text
+                          key={'before' + index}
+                          style={{
+                            color: '#9B9EA5',
+                            fontSize: 20,
+                            fontWeight: '400',
+                            lineHeight: 30,
+                            letterSpacing: -0.36,
+                          }}>
+                          {char}
+                        </Text>
+                      );
+                    },
+                  )}
+                </View>
               </ScrollView>
             </Pressable>
             {nextVerse && nextVerse.chapter_id != -1 ? (
