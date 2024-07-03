@@ -31,6 +31,7 @@ import Config from 'react-native-config';
 import useAxiosInterceptor from './src/hooks/useAxiosInterceptor';
 import Search from './src/pages/Search';
 import BaseNav from './src/navigations/BaseNav';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -62,6 +63,7 @@ function AppInner() {
     (state: RootState) => !!state.user.accessToken,
   );
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
+  const internetState = useNetInfo();
   const reissue = async () => {
     try {
       // await EncryptedStorage.removeItem('refreshToken');
@@ -100,7 +102,28 @@ function AppInner() {
   useEffect(() => {
     if (!isLoggedIn) reissue();
   }, [isLoggedIn]);
-  return (
+  return !internetState.isConnected ? (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <SvgXml xml={svgList.noInternet} width={48} height={48} />
+      <Text
+        style={{
+          marginTop: 32,
+          color: 'black',
+          fontSize: 16,
+          fontWeight: '400',
+          lineHeight: 25,
+          textAlign: 'center',
+        }}>
+        {'인터넷 연결 없음.\n네트워크를 확인해주세요.'}
+      </Text>
+    </View>
+  ) : (
     <NavigationContainer>
       {isLoggedIn ? (
         <Safe color="#ffffff">

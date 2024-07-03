@@ -175,7 +175,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           onPress={() => props.navigation.goBack()}>
           <SvgXml xml={svgList.backBtn} width={24} height={24} />
         </Pressable>
-        <Text style={styles.titleTxt}>회원가입</Text>
+        <Text style={styles.titleTxt}>회원가입/로그인</Text>
         <TextInput
           placeholder="이름"
           style={[

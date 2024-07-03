@@ -160,29 +160,21 @@ export default function SignIn(props: SignInProps) {
         <Pressable
           style={[styles.btn, {backgroundColor: '#FEE500'}]}
           onPress={() => LoginWithKakao()}>
-          <SvgXml xml={svgList.socialLogin.kakao} width={48} height={48} />
-          <Text style={[styles.btnTxt, {color: '#191919'}]}>
-            카카오로 시작하기
-          </Text>
+          <SvgXml xml={svgList.socialLogin.kakao} />
         </Pressable>
         {Platform.OS == 'ios' && (
           <Pressable
             style={[styles.btn, {backgroundColor: '#000000'}]}
             onPress={() => LoginWithApple()}>
-            <SvgXml xml={svgList.socialLogin.apple} width={48} height={48} />
-            <Text style={[styles.btnTxt, {color: '#FFFFFF'}]}>
-              Apple로 시작하기
-            </Text>
+            <SvgXml xml={svgList.socialLogin.apple} />
           </Pressable>
         )}
         <Pressable
-          style={[styles.btn, {backgroundColor: '#F4F4F4', padding: 12}]}
+          style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
           onPress={() => {
             navigation.navigate('PhoneLogin');
           }}>
-          <Text style={[styles.btnTxt, {color: '#48484A'}]}>
-            핸드폰 번호로 시작하기
-          </Text>
+          <SvgXml xml={svgList.socialLogin.phone} />
         </Pressable>
       </View>
     </View>
@@ -216,16 +208,12 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: '100%',
-    // padding: 12,
+    padding: 8,
     marginBottom: 16,
     backgroundColor: '#FEE500',
     borderRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-  },
-  btnTxt: {
-    fontSize: 15,
-    fontWeight: '700',
   },
 });

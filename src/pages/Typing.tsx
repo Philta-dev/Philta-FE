@@ -35,6 +35,7 @@ import {Shadow} from 'react-native-shadow-2';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import Modal from 'react-native-modal';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -70,6 +71,7 @@ export default function Typing(props: TypingProps) {
   const scrollRef = useRef<ScrollView>(null);
   const flatlistRef = useRef<FlatList>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showQuitModal, setShowQuitModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [versionDropdown, setVersionDropdown] = useState(false);
   const windowHeight = Dimensions.get('window').height;
@@ -831,13 +833,103 @@ export default function Typing(props: TypingProps) {
             <Pressable
               style={styles.modalBottomBtn}
               onPress={() => {
-                quit();
+                setShowQuitModal(true);
+                // quit();
               }}>
               <Text style={[styles.modalBottomBtnTxt, {color: '#EBEBF599'}]}>
                 회원탈퇴
               </Text>
             </Pressable>
           </View>
+          <Modal
+            isVisible={showQuitModal}
+            backdropOpacity={0.4}
+            onBackdropPress={() => setShowQuitModal(false)}
+            onBackButtonPress={() => setShowQuitModal(false)}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'row',
+              paddingHorizontal: 24,
+            }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 20,
+                backgroundColor: 'white',
+                borderRadius: 8,
+              }}>
+              <Text
+                style={{
+                  marginVertical: 8,
+                  color: 'black',
+                  fontFamily: 'Eulyoo1945-SemiBold',
+                  fontSize: 18,
+                  fontWeight: '600',
+                }}>
+                회원탈퇴
+              </Text>
+              <Text
+                style={{
+                  color: 'black',
+                  fontSize: 16,
+                  marginBottom: 16,
+                  fontWeight: '400',
+                }}>
+                정말 탈퇴하시겠어요?
+              </Text>
+              <View style={{flexDirection: 'row'}}>
+                <Pressable
+                  onPress={() => {
+                    setShowQuitModal(false);
+                    quit();
+                  }}
+                  style={{
+                    flex: 1,
+                    borderRadius: 4,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingVertical: 15,
+                    // paddingHorizontal: 48,
+                    backgroundColor: '#FF3B30',
+                  }}>
+                  <Text
+                    style={{
+                      color: '#FFFFFF',
+                      fontSize: 16,
+                      fontWeight: '600',
+                      fontFamily: 'Eulyoo1945-SemiBold',
+                    }}>
+                    탈퇴
+                  </Text>
+                </Pressable>
+                <View style={{width: 15}} />
+                <Pressable
+                  onPress={() => setShowQuitModal(false)}
+                  style={{
+                    flex: 1,
+                    borderRadius: 4,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingVertical: 15,
+                    // paddingHorizontal: 48,
+                    backgroundColor: '#C6C6C8',
+                  }}>
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontSize: 16,
+                      fontWeight: '600',
+                      fontFamily: 'Eulyoo1945-SemiBold',
+                    }}>
+                    취소
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </Modal>
         </MenuModal>
         {/* <ToastModal
           showModal={showToast}
