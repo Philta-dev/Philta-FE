@@ -164,13 +164,13 @@ export default function SignIn(props: SignInProps) {
           onPress={() => LoginWithKakao()}>
           <SvgXml xml={svgList.socialLogin.kakao} />
         </Pressable>
-        {/* {Platform.OS == 'ios' && ( */}
-        <Pressable
-          style={[styles.btn, {backgroundColor: 'pink'}]}
-          onPress={() => LoginWithApple()}>
-          <SvgXml xml={svgList.socialLogin.apple} width={160} height={32} />
-        </Pressable>
-        {/* )} */}
+        {Platform.OS == 'ios' && (
+          <Pressable
+            style={[styles.btn, {backgroundColor: '#000000'}]}
+            onPress={() => LoginWithApple()}>
+            <SvgXml xml={svgList.socialLogin.apple} width={160} height={32} />
+          </Pressable>
+        )}
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
           onPress={() => {
