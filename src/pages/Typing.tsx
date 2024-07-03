@@ -592,7 +592,8 @@ export default function Typing(props: TypingProps) {
                     ]}>
                     |
                   </Text>
-
+                  {/* flatlist로 해보거나 const textArray = [...Array.from(text), ...Array.from(givenText.slice(text.length))];
+이거로 해보거나 시도해보자 */}
                   {Array.from(givenText.slice(text.length)).map(
                     (char, index) => {
                       return (

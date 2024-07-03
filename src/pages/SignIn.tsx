@@ -7,7 +7,9 @@ import axios, {AxiosError} from 'axios';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import appleAuth from '@invertase/react-native-apple-authentication';
+import appleAuth, {
+  AppleButton,
+} from '@invertase/react-native-apple-authentication';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 
@@ -162,13 +164,13 @@ export default function SignIn(props: SignInProps) {
           onPress={() => LoginWithKakao()}>
           <SvgXml xml={svgList.socialLogin.kakao} />
         </Pressable>
-        {Platform.OS == 'ios' && (
-          <Pressable
-            style={[styles.btn, {backgroundColor: '#000000'}]}
-            onPress={() => LoginWithApple()}>
-            <SvgXml xml={svgList.socialLogin.apple} />
-          </Pressable>
-        )}
+        {/* {Platform.OS == 'ios' && ( */}
+        <Pressable
+          style={[styles.btn, {backgroundColor: 'pink'}]}
+          onPress={() => LoginWithApple()}>
+          <SvgXml xml={svgList.socialLogin.apple} width={160} height={32} />
+        </Pressable>
+        {/* )} */}
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
           onPress={() => {

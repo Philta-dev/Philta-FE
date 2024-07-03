@@ -103,50 +103,58 @@ export default function Indexing(props: IndexProps) {
   const [chap, setChap] = useState(Array.from({length: 10}, (_, i) => i + 1));
   const [verse, setVerse] = useState(Array.from({length: 10}, (_, i) => i + 1));
   const [fullname, setFullname] = useState('');
-  useEffect(() => {
-    setTimeout(() => {
-      scrollToIndex(
-        'testament',
-        testamentFocusedIndex,
-        testament,
-        scrollRef1,
-        setTestamentFocusedIndex,
-      );
-    }, 0);
-  }, [testament, testamentFocusedIndex]);
-  useEffect(() => {
-    setTimeout(() => {
-      scrollToIndex(
-        'book',
-        bookFocusedIndex,
-        book,
-        scrollRef2,
-        setBookFocusedIndex,
-      );
-    }, 0);
-  }, [book, bookFocusedIndex]);
-  useEffect(() => {
-    setTimeout(() => {
-      scrollToIndex(
-        'chap',
-        chapFocusedIndex,
-        chap,
-        scrollRef3,
-        setChapFocusedIndex,
-      );
-    }, 0);
-  }, [chap, chapFocusedIndex]);
-  useEffect(() => {
-    setTimeout(() => {
-      scrollToIndex(
-        'verse',
-        verseFocusedIndex,
-        verse,
-        scrollRef4,
-        setVerseFocusedIndex,
-      );
-    }, 0);
-  }, [verse, verseFocusedIndex]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     scrollToIndex(
+  //       'testament',
+  //       testamentFocusedIndex,
+  //       testament,
+  //       scrollRef1,
+  //       setTestamentFocusedIndex,
+  //     );
+  //   }, 0);
+  // }, [testament, testamentFocusedIndex]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     scrollToIndex(
+  //       'book',
+  //       bookFocusedIndex,
+  //       book,
+  //       scrollRef2,
+  //       setBookFocusedIndex,
+  //     );
+  //   }, 0);
+  // }, [book, bookFocusedIndex]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     scrollToIndex(
+  //       'chap',
+  //       chapFocusedIndex,
+  //       chap,
+  //       scrollRef3,
+  //       setChapFocusedIndex,
+  //     );
+  //   }, 0);
+  // }, [chap, chapFocusedIndex]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     scrollToIndex(
+  //       'verse',
+  //       verseFocusedIndex,
+  //       verse,
+  //       scrollRef4,
+  //       setVerseFocusedIndex,
+  //     );
+  //   }, 0);
+  // }, [verse, verseFocusedIndex]);
+  // useEffect(() => {
+  //   if (moving) {
+  //     setTimeout(() => {
+  //       setMoving(false);
+  //       console.log('moving false');
+  //     }, 500);
+  //   }
+  // }, [moving]);
 
   const scrollToIndex = (
     type: string,
@@ -170,7 +178,7 @@ export default function Indexing(props: IndexProps) {
         });
       }
     }
-    setMoving(false);
+    // setMoving(false);
   };
 
   const handleScroll = (
@@ -187,6 +195,7 @@ export default function Indexing(props: IndexProps) {
       setSelectedIndex: React.Dispatch<SetStateAction<number>>;
     },
   ) => {
+    // setMoving(true);
     const offsetX = e.nativeEvent.contentOffset.x;
     let direction =
       type == 'chap' || type == 'verse'
@@ -202,7 +211,13 @@ export default function Indexing(props: IndexProps) {
         : direction == 'right'
         ? Math.round((offsetX - 40) / buttonSmallWidth)
         : Math.round((offsetX - 20) / buttonSmallWidth);
-    setMoving(true);
+    console.log('offsetX', offsetX);
+    console.log(buttonSmallWidth * index);
+    // scrollref 받아서 이만큼씩 이동, focused인덱스 바뀌면 스크롤하는 거 없애고 바낄때 offset으로 스크롤하는 걸로 추가하든지
+    scrollRef3.current?.scrollToOffset({
+      animated: true,
+      offset: buttonSmallWidth * index + 20,
+    });
     if (index !== selectedIndex) {
       setSelectedIndex(index);
       if (type == 'testament') {
@@ -333,8 +348,8 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            scrollEnabled={!moving}
-            // snapToInterval={buttonWidth}
+            // scrollEnabled={!moving}
+            snapToInterval={buttonWidth}
             decelerationRate={'fast'}
             onScrollBeginDrag={() => {
               setLoading(true);
@@ -377,8 +392,8 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            scrollEnabled={!moving}
-            // snapToInterval={buttonWidth}
+            // scrollEnabled={!moving}
+            snapToInterval={buttonWidth}
             decelerationRate="fast"
             onScrollBeginDrag={() => {
               setLoading(true);
@@ -430,7 +445,7 @@ export default function Indexing(props: IndexProps) {
               setLoading(true);
             }}
             showsHorizontalScrollIndicator={false}
-            scrollEnabled={!moving}
+            // scrollEnabled={!moving}
             // snapToInterval={buttonSmallWidth}
             decelerationRate="fast"
             onMomentumScrollEnd={e =>
@@ -477,7 +492,7 @@ export default function Indexing(props: IndexProps) {
             horizontal
             showsHorizontalScrollIndicator={false}
             // snapToInterval={buttonSmallWidth}
-            scrollEnabled={!moving}
+            // scrollEnabled={!moving}
             decelerationRate="fast"
             onScrollBeginDrag={() => {
               setLoading(true);
