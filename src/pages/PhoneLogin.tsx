@@ -35,7 +35,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
   const [isAuthRefFocused, setIsAuthRefFocused] = useState(false);
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
 
-  const TIME_AUTH = 80;
+  const TIME_AUTH = 180;
   const [time, setTime] = useState(TIME_AUTH);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -45,6 +45,8 @@ export default function PhoneLogin(props: PhoneLoginProps) {
   const [isVerified, setIsVerified] = useState('yet');
   const [showTimeAlert, setShowTimeAlert] = useState(false);
   const [phoneToken, setPhoneToken] = useState('');
+  const [changeBtnMsg, setChangeBtnMsg] = useState('');
+
   const timerRef = useRef<any>(null);
   const nameRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
@@ -122,6 +124,9 @@ export default function PhoneLogin(props: PhoneLoginProps) {
       setIsVerified('true');
       clearInterval(timerRef.current);
       setPhoneToken(response.data.phoneNumberToken);
+      if (!response.data.isNew) {
+        setChangeBtnMsg('로그인');
+      }
     } catch (error: any) {
       const errorResponse = error.response;
       console.log('cannot confirm', errorResponse);
@@ -153,6 +158,8 @@ export default function PhoneLogin(props: PhoneLoginProps) {
     } catch (error: any) {
       const errorResponse = error.response;
       console.log('cannot login', errorResponse);
+      // setChangeBtnMsg('expired');
+      setShowTimeAlert(true);
     }
   };
 
@@ -267,6 +274,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
                 onPress={() => {
                   console.log('send auth num');
                   if (authNum.length == 6) checkAuthNum();
+                  setChangeBtnMsg('');
                 }}
                 style={[
                   styles.authBtn,
@@ -326,7 +334,9 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         {!isSent ? (
           <Text style={styles.btnTxt}>인증번호 받기</Text>
         ) : (
-          <Text style={styles.btnTxt}>로그인/가입하기</Text>
+          <Text style={styles.btnTxt}>
+            {changeBtnMsg === '' ? '가입하기' : '로그인'}
+          </Text>
         )}
       </Pressable>
       {/* <Modal
@@ -409,9 +419,12 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           btnText="인증번호 재전송"
           onBtnPress={() => {
             setIsSent(false);
+            setIsVerified('yet');
             setShowTimeAlert(false);
+            clearInterval(timerRef.current);
             sendAuthNum();
             setAuthNum('');
+            setChangeBtnMsg('');
           }}
         />
       )}
