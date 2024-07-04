@@ -678,7 +678,9 @@ export default function Typing(props: TypingProps) {
                     verse: verse,
                   }),
                 );
-                props.navigation.navigate('Indexing');
+                setTimeout(() => {
+                  props.navigation.navigate('Indexing');
+                }, 100);
               }}>
               <Text>{current_location}</Text>
             </Pressable>
@@ -1004,15 +1006,21 @@ export default function Typing(props: TypingProps) {
           }
           btnText={'확인'}
           onBtnPress={() => {
-            setPageMove(true);
-            setShowToast(false);
-            if (nextVerse) handlePointer(nextVerse?.id);
+            if (nextVerse) {
+              setPageMove(true);
+              setShowToast(false);
+
+              handlePointer(nextVerse?.id);
+            }
           }}
           time={2000}
           onTimeEnd={() => {
-            setPageMove(true);
-            setShowToast(false);
-            if (nextVerse) handlePointer(nextVerse?.id);
+            if (nextVerse) {
+              setPageMove(true);
+              setShowToast(false);
+
+              handlePointer(nextVerse?.id);
+            }
           }}
         />
       )}

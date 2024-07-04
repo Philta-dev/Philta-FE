@@ -17,8 +17,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useSelector} from 'react-redux';
 import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
-import {SvgXml} from 'react-native-svg';
-import {svgList} from '../assets/svgList';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 
@@ -54,96 +52,10 @@ export default function Indexing(props: IndexProps) {
   const [chapWord, setChapWord] = useState('');
   const [verseWord, setVerseWord] = useState('');
   const [verseId, setVerseId] = useState(0);
-  const [moving, setMoving] = useState(false);
   const windowHeight = useWindowDimensions().height;
   let itemHeight = (windowHeight / 2 - 48) / 4;
   const [loading, setLoading] = useState(false);
-  const [redux, setRedux] = useState(false);
 
-  useEffect(() => {
-    if (reduxTestament == -1) {
-      setTestamentFocusedIndex(0);
-      scrollToIndex(
-        'testament',
-        0,
-        testament,
-        scrollRef1,
-        setTestamentFocusedIndex,
-      );
-      setBookFocusedIndex(0);
-      scrollToIndex('book', 0, book, scrollRef2, setBookFocusedIndex);
-      setChapFocusedIndex(0);
-      scrollToIndex('chap', 0, chap, scrollRef3, setChapFocusedIndex);
-      setVerseFocusedIndex(0);
-      scrollToIndex('verse', 0, verse, scrollRef4, setVerseFocusedIndex);
-    } else {
-      setRedux(true);
-      if (reduxTestament !== testamentFocusedIndex) {
-        setTestamentFocusedIndex(reduxTestament);
-      }
-      if (reduxBook !== bookFocusedIndex) {
-        setBookFocusedIndex(reduxBook);
-      }
-      if (reduxChap !== chapFocusedIndex) {
-        setChapFocusedIndex(reduxChap);
-      }
-      if (reduxVerse !== verseFocusedIndex) {
-        setVerseFocusedIndex(reduxVerse);
-      }
-      // scrollToIndex(
-      //   'testament',
-      //   reduxTestament,
-      //   testament,
-      //   scrollRef1,
-      //   setTestamentFocusedIndex,
-      // );
-      // scrollToIndex('book', reduxBook, book, scrollRef2, setBookFocusedIndex);
-      // scrollToIndex('chap', reduxChap, chap, scrollRef3, setChapFocusedIndex);
-      // scrollToIndex(
-      //   'verse',
-      //   reduxVerse,
-      //   verse,
-      //   scrollRef4,
-      //   setVerseFocusedIndex,
-      // );
-      // dispatch(
-      //   userSlice.actions.setIndex({
-      //     testament: -1,
-      //     book: -1,
-      //     chapter: -1,
-      //     verse: -1,
-      //   }),
-      // );
-    }
-  }, [reduxTestament, reduxBook, reduxChap, reduxVerse]);
-
-  useEffect(() => {
-    const blurListener = props.navigation.addListener('blur', () => {
-      setTestamentFocusedIndex(0);
-      scrollToIndex(
-        'testament',
-        0,
-        testament,
-        scrollRef1,
-        setTestamentFocusedIndex,
-      );
-      setBookFocusedIndex(0);
-      scrollToIndex('book', 0, book, scrollRef2, setBookFocusedIndex);
-      setChapFocusedIndex(0);
-      scrollToIndex('chap', 0, chap, scrollRef3, setChapFocusedIndex);
-      setVerseFocusedIndex(0);
-      scrollToIndex('verse', 0, verse, scrollRef4, setVerseFocusedIndex);
-      dispatch(
-        userSlice.actions.setIndex({
-          testament: -1,
-          book: -1,
-          chapter: -1,
-          verse: -1,
-        }),
-      );
-    });
-    return blurListener;
-  }, []);
   const [testament, setTestament] = useState(['구약', '신약']);
   const [book, setBook] = useState(['창', '출', '레', '민', '신']);
   const [chap, setChap] = useState(Array.from({length: 10}, (_, i) => i + 1));
@@ -179,21 +91,63 @@ export default function Indexing(props: IndexProps) {
     // setMoving(false);
   };
 
+  const scrollToTestament = (index: number, data: string[]) => {
+    if (index >= 0 && index < data.length) {
+      setTimeout(() => {
+        scrollRef1.current?.scrollToOffset({
+          animated: true,
+          offset: index * buttonWidth,
+        });
+      }, 0);
+    }
+  };
+  const scrollToBook = (index: number, data: string[]) => {
+    if (index >= 0 && index < data.length) {
+      setTimeout(() => {
+        scrollRef2.current?.scrollToOffset({
+          animated: true,
+          offset: index * buttonWidth,
+        });
+      }, 0);
+    }
+  };
+  const scrollToChap = (index: number, data: number[]) => {
+    if (index >= 0 && index < data.length) {
+      setTimeout(() => {
+        scrollRef3.current?.scrollToOffset({
+          animated: true,
+          offset: index * buttonSmallWidth + 20,
+        });
+      }, 0);
+    }
+  };
+  const scrollToVerse = (index: number, data: number[]) => {
+    if (index >= 0 && index < data.length) {
+      setTimeout(() => {
+        scrollRef4.current?.scrollToOffset({
+          animated: true,
+          offset: index * buttonSmallWidth + 20,
+        });
+      }, 0);
+    }
+  };
+
   const handleScroll = (
     e: NativeSyntheticEvent<NativeScrollEvent>,
     {
+      ref,
       type,
       datalen,
       selectedIndex,
       setSelectedIndex,
     }: {
+      ref: React.RefObject<FlatList>;
       type: string;
       datalen: number;
       selectedIndex: number;
       setSelectedIndex: React.Dispatch<SetStateAction<number>>;
     },
   ) => {
-    // setMoving(true);
     const offsetX = e.nativeEvent.contentOffset.x;
     let direction =
       type == 'chap' || type == 'verse'
@@ -211,46 +165,88 @@ export default function Indexing(props: IndexProps) {
         : Math.round((offsetX - 20) / buttonSmallWidth);
     console.log('offsetX', offsetX);
     console.log(buttonSmallWidth * index);
-    // scrollref 받아서 이만큼씩 이동, focused인덱스 바뀌면 스크롤하는 거 없애고 바낄때 offset으로 스크롤하는 걸로 추가하든지
     if (index !== selectedIndex) {
-      setSelectedIndex(index);
-
       if (type == 'testament') {
-        scrollToIndex(
-          'testament',
-          index,
-          testament,
-          scrollRef1,
-          setTestamentFocusedIndex,
-        );
+        scrollToTestament(index, testament);
+        scrollToBook(0, book);
+        scrollToChap(0, chap);
+        scrollToVerse(0, verse);
         setBookFocusedIndex(0);
-        scrollToIndex('book', 0, book, scrollRef2, setBookFocusedIndex);
         setChapFocusedIndex(0);
-        scrollToIndex('chap', 0, chap, scrollRef3, setChapFocusedIndex);
         setVerseFocusedIndex(0);
-        scrollToIndex('verse', 0, verse, scrollRef4, setVerseFocusedIndex);
       } else if (type == 'book') {
-        scrollToIndex('book', index, book, scrollRef2, setBookFocusedIndex);
+        scrollToBook(index, book);
         setChapFocusedIndex(0);
-        scrollToIndex('chap', 0, chap, scrollRef3, setChapFocusedIndex);
+        scrollToChap(0, chap);
         setVerseFocusedIndex(0);
-        scrollToIndex('verse', 0, verse, scrollRef4, setVerseFocusedIndex);
+        scrollToVerse(0, verse);
       } else if (type == 'chap') {
-        scrollToIndex('chap', index, chap, scrollRef3, setChapFocusedIndex);
+        scrollToChap(index, chap);
         setVerseFocusedIndex(0);
-        scrollToIndex('verse', 0, verse, scrollRef4, setVerseFocusedIndex);
+        scrollToVerse(0, verse);
       } else {
-        scrollToIndex('verse', index, verse, scrollRef4, setVerseFocusedIndex);
+        scrollToVerse(index, verse);
       }
-      if (index >= datalen) {
-        setSelectedIndex(datalen - 1);
+      setSelectedIndex(index);
+    } else {
+      if (
+        (type == 'chap' || type == 'verse') &&
+        offsetX > (datalen - 1) * buttonSmallWidth + 20
+      ) {
+        console.log('overflow', type, index, datalen - 1);
+        ref.current?.scrollToOffset({
+          animated: true,
+          offset: index * buttonSmallWidth + 20,
+        });
       }
+      setLoading(false);
     }
   };
 
   useEffect(() => {
+    const focusListener = props.navigation.addListener('focus', () => {
+      setLoading(true);
+      setTimeout(() => getData(), 0);
+    });
+    const blurListener = props.navigation.addListener('blur', () => {
+      setTestamentFocusedIndex(0);
+      // scrollToIndex(
+      //   'testament',
+      //   0,
+      //   testament,
+      //   scrollRef1,
+      //   setTestamentFocusedIndex,
+      // );
+      scrollToTestament(0, testament);
+      setBookFocusedIndex(0);
+      // scrollToIndex('book', 0, book, scrollRef2, setBookFocusedIndex);
+      scrollToBook(0, book);
+      setChapFocusedIndex(0);
+      // scrollToIndex('chap', 0, chap, scrollRef3, setChapFocusedIndex);
+      scrollToChap(0, chap);
+      setVerseFocusedIndex(0);
+      // scrollToIndex('verse', 0, verse, scrollRef4, setVerseFocusedIndex);
+      scrollToVerse(0, verse);
+    });
+    return () => {
+      focusListener();
+      blurListener();
+    };
+  }, [
+    reduxTestament,
+    reduxBook,
+    reduxChap,
+    reduxVerse,
+    testamentFocusedIndex,
+    bookFocusedIndex,
+    chapFocusedIndex,
+    verseFocusedIndex,
+    version,
+  ]);
+
+  useEffect(() => {
     setLoading(true);
-    setTimeout(() => getData(), 300);
+    setTimeout(() => getData(), 0);
   }, [
     testamentFocusedIndex,
     bookFocusedIndex,
@@ -261,23 +257,16 @@ export default function Indexing(props: IndexProps) {
 
   const getData = async () => {
     try {
-      // setMoving(false);
-      console.log('redux', reduxTestament, reduxBook, reduxChap, reduxVerse);
-      console.log(
-        't',
-        testamentFocusedIndex,
-        'b',
-        bookFocusedIndex,
-        'c',
-        chapFocusedIndex,
-        'v',
-        verseFocusedIndex,
-      );
-
       const response = await axios.get(
-        `${Config.API_URL}/index/baseinfo?T=${testamentFocusedIndex + 1}&B=${
-          bookFocusedIndex + 1
-        }&C=${chapFocusedIndex + 1}&V=${verseFocusedIndex + 1}`,
+        reduxTestament !== -1
+          ? `${Config.API_URL}/index/baseinfo?T=${reduxTestament + 1}&B=${
+              reduxBook + 1
+            }&C=${reduxChap + 1}&V=${reduxVerse + 1}`
+          : `${Config.API_URL}/index/baseinfo?T=${
+              testamentFocusedIndex + 1
+            }&B=${bookFocusedIndex + 1}&C=${chapFocusedIndex + 1}&V=${
+              verseFocusedIndex + 1
+            }`,
       );
       console.log(response.data);
       setTestament([
@@ -291,53 +280,40 @@ export default function Indexing(props: IndexProps) {
       setVerseWord(response.data.verse);
       setFullname(response.data.full_name);
       setVerseId(response.data.verseId);
-      if (redux) {
-        if (scrollRef1.current.offsetX !== reduxTestament * buttonWidth) {
-          scrollToIndex(
-            'testament',
-            reduxTestament,
-            testament,
-            scrollRef1,
-            setTestamentFocusedIndex,
-          );
-        }
-        if (scrollRef2.current.offsetX !== reduxBook * buttonWidth) {
-          scrollToIndex(
-            'book',
-            reduxBook,
-            book,
-            scrollRef2,
-            setBookFocusedIndex,
-          );
-        }
-        if (scrollRef3.current.offsetX !== reduxChap * buttonSmallWidth) {
-          scrollToIndex(
-            'chap',
-            reduxChap,
-            chap,
-            scrollRef3,
-            setChapFocusedIndex,
-          );
-        }
-        if (scrollRef4.current.offsetX !== reduxVerse * buttonSmallWidth) {
-          scrollToIndex(
-            'verse',
-            reduxVerse,
-            verse,
-            scrollRef4,
-            setVerseFocusedIndex,
-          );
-        }
-        setRedux(false);
+      if (reduxTestament !== -1) {
+        setTestamentFocusedIndex(reduxTestament);
+        setBookFocusedIndex(reduxBook);
+        setChapFocusedIndex(reduxChap);
+        setVerseFocusedIndex(reduxVerse);
       }
-      setLoading(false);
-      // setMoving(false);
+      checkRedux(response.data.books);
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
       ).response;
       console.log(errorResponse?.data);
     }
+  };
+
+  const checkRedux = (books: string[]) => {
+    console.log('redux', reduxTestament, reduxBook, reduxChap, reduxVerse);
+    if (reduxTestament !== -1) {
+      setTimeout(() => {
+        scrollToTestament(reduxTestament, testament);
+        scrollToBook(reduxBook, books);
+        scrollToChap(reduxChap, chap);
+        scrollToVerse(reduxVerse, verse);
+      }, 0);
+      dispatch(
+        userSlice.actions.setIndex({
+          testament: -1,
+          book: -1,
+          chapter: -1,
+          verse: -1,
+        }),
+      );
+    }
+    setLoading(false);
   };
 
   const handlePointer = async () => {
@@ -347,18 +323,6 @@ export default function Indexing(props: IndexProps) {
         verseId: verseId,
       });
       console.log(response.data);
-      // setTestamentFocusedIndex(0);
-      // setBookFocusedIndex(0);
-      // setChapFocusedIndex(0);
-      // setVerseFocusedIndex(0);
-      // dispatch(
-      //   userSlice.actions.setIndex({
-      //     testament: 0,
-      //     book: 0,
-      //     chapter: 0,
-      //     verse: 0,
-      //   }),
-      // );
       props.navigation.navigate('Typing');
     } catch (e) {
       const errorResponse = (
@@ -382,37 +346,13 @@ export default function Indexing(props: IndexProps) {
               <Pressable
                 onPress={() => {
                   setTestamentFocusedIndex(index);
-                  scrollToIndex(
-                    'testament',
-                    index,
-                    testament,
-                    scrollRef1,
-                    setTestamentFocusedIndex,
-                  );
+                  scrollToTestament(index, testament);
                   setBookFocusedIndex(0);
-                  scrollToIndex(
-                    'book',
-                    0,
-                    book,
-                    scrollRef2,
-                    setBookFocusedIndex,
-                  );
+                  scrollToBook(0, book);
                   setChapFocusedIndex(0);
-                  scrollToIndex(
-                    'chap',
-                    0,
-                    chap,
-                    scrollRef3,
-                    setChapFocusedIndex,
-                  );
+                  scrollToChap(0, chap);
                   setVerseFocusedIndex(0);
-                  scrollToIndex(
-                    'verse',
-                    0,
-                    verse,
-                    scrollRef4,
-                    setVerseFocusedIndex,
-                  );
+                  scrollToVerse(0, verse);
                 }}
                 style={[styles.item, {height: itemHeight}]}>
                 <Text
@@ -429,7 +369,6 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            // scrollEnabled={!moving}
             snapToInterval={buttonWidth}
             decelerationRate={'fast'}
             onScrollBeginDrag={() => {
@@ -437,6 +376,7 @@ export default function Indexing(props: IndexProps) {
             }}
             onMomentumScrollEnd={e =>
               handleScroll(e, {
+                ref: scrollRef1,
                 type: 'testament',
                 datalen: testament.length,
                 selectedIndex: testamentFocusedIndex,
@@ -451,36 +391,15 @@ export default function Indexing(props: IndexProps) {
           <FlatList
             ref={scrollRef2}
             data={book}
-            onScrollToIndexFailed={info => {
-              console.log('scrolltoindex failed', info);
-            }}
             renderItem={({item, index}) => (
               <Pressable
                 onPress={() => {
                   setBookFocusedIndex(index);
-                  scrollToIndex(
-                    'book',
-                    index,
-                    book,
-                    scrollRef2,
-                    setBookFocusedIndex,
-                  );
+                  scrollToBook(index, book);
                   setChapFocusedIndex(0);
-                  scrollToIndex(
-                    'chap',
-                    0,
-                    chap,
-                    scrollRef3,
-                    setChapFocusedIndex,
-                  );
+                  scrollToChap(0, chap);
                   setVerseFocusedIndex(0);
-                  scrollToIndex(
-                    'verse',
-                    0,
-                    verse,
-                    scrollRef4,
-                    setVerseFocusedIndex,
-                  );
+                  scrollToVerse(0, verse);
                 }}
                 style={[styles.item, {height: itemHeight}]}>
                 <Text
@@ -497,7 +416,6 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            // scrollEnabled={!moving}
             snapToInterval={buttonWidth}
             decelerationRate="fast"
             onScrollBeginDrag={() => {
@@ -505,6 +423,7 @@ export default function Indexing(props: IndexProps) {
             }}
             onMomentumScrollEnd={e =>
               handleScroll(e, {
+                ref: scrollRef2,
                 type: 'book',
                 datalen: book.length,
                 selectedIndex: bookFocusedIndex,
@@ -519,25 +438,16 @@ export default function Indexing(props: IndexProps) {
           <FlatList
             ref={scrollRef3}
             data={chap}
+            onLayout={() => {
+              scrollRef3.current?.scrollToOffset({offset: 20, animated: false});
+            }}
             renderItem={({item, index}) => (
               <Pressable
                 onPress={() => {
                   setChapFocusedIndex(index);
-                  scrollToIndex(
-                    'chap',
-                    index,
-                    chap,
-                    scrollRef3,
-                    setChapFocusedIndex,
-                  );
+                  scrollToChap(index, chap);
                   setVerseFocusedIndex(0);
-                  scrollToIndex(
-                    'verse',
-                    0,
-                    verse,
-                    scrollRef4,
-                    setVerseFocusedIndex,
-                  );
+                  scrollToVerse(0, verse);
                 }}
                 style={[
                   styles.item,
@@ -564,11 +474,10 @@ export default function Indexing(props: IndexProps) {
               setLoading(true);
             }}
             showsHorizontalScrollIndicator={false}
-            // scrollEnabled={!moving}
-            // snapToInterval={buttonSmallWidth}
             decelerationRate="fast"
             onMomentumScrollEnd={e =>
               handleScroll(e, {
+                ref: scrollRef3,
                 type: 'chap',
                 datalen: chap.length,
                 selectedIndex: chapFocusedIndex,
@@ -583,17 +492,14 @@ export default function Indexing(props: IndexProps) {
           <FlatList
             ref={scrollRef4}
             data={verse}
+            onLayout={() => {
+              scrollRef4.current?.scrollToOffset({offset: 20, animated: false});
+            }}
             renderItem={({item, index}) => (
               <Pressable
                 onPress={() => {
                   setVerseFocusedIndex(index);
-                  scrollToIndex(
-                    'verse',
-                    index,
-                    verse,
-                    scrollRef4,
-                    setVerseFocusedIndex,
-                  );
+                  scrollToVerse(index, verse);
                 }}
                 style={[
                   styles.item,
@@ -617,14 +523,13 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            // snapToInterval={buttonSmallWidth}
-            // scrollEnabled={!moving}
             decelerationRate="fast"
             onScrollBeginDrag={() => {
               setLoading(true);
             }}
             onMomentumScrollEnd={e =>
               handleScroll(e, {
+                ref: scrollRef4,
                 type: 'verse',
                 datalen: verse.length,
                 selectedIndex: verseFocusedIndex,
