@@ -35,7 +35,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
   const [isAuthRefFocused, setIsAuthRefFocused] = useState(false);
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
 
-  const TIME_AUTH = 180;
+  const TIME_AUTH = 80;
   const [time, setTime] = useState(TIME_AUTH);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -57,6 +57,9 @@ export default function PhoneLogin(props: PhoneLoginProps) {
       timerRef.current = setInterval(() => {
         setTime(prev => prev - 1);
       }, 1000);
+    } else {
+      clearInterval(timerRef.current);
+      setTime(TIME_AUTH);
     }
   }, [isSent]);
 
@@ -64,6 +67,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
     if (time <= 0) {
       // setIsSent(false);
       setTime(TIME_AUTH);
+      clearInterval(timerRef.current);
       setShowTimeAlert(true);
     }
   }, [time]);
@@ -115,7 +119,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         },
       );
       console.log(response.data);
-      setIsVerified('false');
+      setIsVerified('true');
       clearInterval(timerRef.current);
       setPhoneToken(response.data.phoneNumberToken);
     } catch (error: any) {
@@ -266,7 +270,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
                 }}
                 style={[
                   styles.authBtn,
-                  isVerified == 'yet' && authNum.length == 6
+                  isVerified == 'yet' && authNum.length == 6 && !showTimeAlert
                     ? {backgroundColor: '#5856D6'}
                     : {backgroundColor: '#989BA2F7'},
                 ]}>
@@ -299,7 +303,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           !isValidPhoneNum(phone) ||
           name.length == 0 ||
           time <= 0 ||
-          (isSent && !isVerified)
+          (isSent && !(isVerified == 'true'))
         }
         onPress={() => {
           if (isSent) {
@@ -322,7 +326,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         {!isSent ? (
           <Text style={styles.btnTxt}>인증번호 받기</Text>
         ) : (
-          <Text style={styles.btnTxt}>가입하기</Text>
+          <Text style={styles.btnTxt}>로그인/가입하기</Text>
         )}
       </Pressable>
       {/* <Modal
@@ -407,6 +411,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
             setIsSent(false);
             setShowTimeAlert(false);
             sendAuthNum();
+            setAuthNum('');
           }}
         />
       )}
