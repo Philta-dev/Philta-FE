@@ -215,6 +215,10 @@ export default function Typing(props: TypingProps) {
   const [next_location, setNextLocation] = useState('');
   const [current_bookname, setCurrentBookname] = useState('');
   const [socialType, setSocialType] = useState('');
+
+  const [textArray, setTextArray] = useState<Array<string>>([]);
+  const [textArrayING, setTextArrayING] = useState<Array<string>>([]);
+  const [textArrayAfter, setTextArrayAfter] = useState<Array<string>>([]);
   useEffect(() => {
     const focusListener = props.navigation.addListener('focus', () => {
       getData();
@@ -230,6 +234,16 @@ export default function Typing(props: TypingProps) {
       setChapter(response.data.C - 1);
       setVerse(response.data.V - 1);
       setGivenText(response.data.current_verse.content);
+      setTextArray(
+        Array.from(
+          response.data.current_verse.content.slice(
+            0,
+            response.data.current_verse.content.length,
+          ),
+        ),
+      );
+      // setTextArrayING(Array.from(response.data.current_verse.content.slice(0, response.data.current_verse.content.length)));
+      // setTextArrayAfter(Array.from(response.data.current_verse.content.slice(0, response.data.current_verse.content.length)));
       setGivenVerse({
         id: response.data.current_verse.id,
         content: response.data.current_verse.content,
@@ -543,24 +557,22 @@ export default function Typing(props: TypingProps) {
                 ref={scrollRef}>
                 <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                   {text.length >= 2 &&
-                    Array.from(text.slice(0, text.length - 2)).map(
-                      (char, index) => {
-                        return (
-                          <Text
-                            key={'after' + index}
-                            style={{
-                              color: '#000000',
-                              fontSize: 20,
-                              fontWeight: '400',
-                              lineHeight: 30,
-                              letterSpacing: -0.36,
-                              zIndex: 1,
-                            }}>
-                            {char}
-                          </Text>
-                        );
-                      },
-                    )}
+                    textArray.slice(0, text.length - 2).map((char, index) => {
+                      return (
+                        <Text
+                          key={'after' + index}
+                          style={{
+                            color: '#000000',
+                            fontSize: 20,
+                            fontWeight: '400',
+                            lineHeight: 30,
+                            letterSpacing: -0.36,
+                            zIndex: 1,
+                          }}>
+                          {char}
+                        </Text>
+                      );
+                    })}
                   {Array.from(text.slice(text.length - 2, text.length)).map(
                     (char, index) => {
                       return (
@@ -592,25 +604,21 @@ export default function Typing(props: TypingProps) {
                     ]}>
                     |
                   </Text>
-                  {/* flatlist로 해보거나 const textArray = [...Array.from(text), ...Array.from(givenText.slice(text.length))];
-이거로 해보거나 시도해보자 */}
-                  {Array.from(givenText.slice(text.length)).map(
-                    (char, index) => {
-                      return (
-                        <Text
-                          key={'before' + index}
-                          style={{
-                            color: '#9B9EA5',
-                            fontSize: 20,
-                            fontWeight: '400',
-                            lineHeight: 30,
-                            letterSpacing: -0.36,
-                          }}>
-                          {char}
-                        </Text>
-                      );
-                    },
-                  )}
+                  {textArray.slice(text.length).map((char, index) => {
+                    return (
+                      <Text
+                        key={'before' + index}
+                        style={{
+                          color: '#9B9EA5',
+                          fontSize: 20,
+                          fontWeight: '400',
+                          lineHeight: 30,
+                          letterSpacing: -0.36,
+                        }}>
+                        {char}
+                      </Text>
+                    );
+                  })}
                 </View>
               </ScrollView>
             </Pressable>
