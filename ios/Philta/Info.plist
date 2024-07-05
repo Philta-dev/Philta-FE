@@ -55,7 +55,7 @@
 			<key>philta-env.eba-a9c2m9zr.ap-northeast-2.elasticbeanstalk.com</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
+				<false/>
 			</dict>
 		</dict>
 	</dict>

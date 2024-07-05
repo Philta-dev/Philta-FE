@@ -45,6 +45,8 @@ export default function PhoneLogin(props: PhoneLoginProps) {
   const [isVerified, setIsVerified] = useState('yet');
   const [showTimeAlert, setShowTimeAlert] = useState(false);
   const [phoneToken, setPhoneToken] = useState('');
+  const [changeBtnMsg, setChangeBtnMsg] = useState('');
+
   const timerRef = useRef<any>(null);
   const nameRef = useRef<TextInput>(null);
   const phoneRef = useRef<TextInput>(null);
@@ -57,6 +59,9 @@ export default function PhoneLogin(props: PhoneLoginProps) {
       timerRef.current = setInterval(() => {
         setTime(prev => prev - 1);
       }, 1000);
+    } else {
+      clearInterval(timerRef.current);
+      setTime(TIME_AUTH);
     }
   }, [isSent]);
 
@@ -64,6 +69,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
     if (time <= 0) {
       // setIsSent(false);
       setTime(TIME_AUTH);
+      clearInterval(timerRef.current);
       setShowTimeAlert(true);
     }
   }, [time]);
@@ -115,9 +121,12 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         },
       );
       console.log(response.data);
-      setIsVerified('false');
+      setIsVerified('true');
       clearInterval(timerRef.current);
       setPhoneToken(response.data.phoneNumberToken);
+      if (!response.data.isNew) {
+        setChangeBtnMsg('로그인');
+      }
     } catch (error: any) {
       const errorResponse = error.response;
       console.log('cannot confirm', errorResponse);
@@ -149,6 +158,8 @@ export default function PhoneLogin(props: PhoneLoginProps) {
     } catch (error: any) {
       const errorResponse = error.response;
       console.log('cannot login', errorResponse);
+      // setChangeBtnMsg('expired');
+      setShowTimeAlert(true);
     }
   };
 
@@ -263,10 +274,11 @@ export default function PhoneLogin(props: PhoneLoginProps) {
                 onPress={() => {
                   console.log('send auth num');
                   if (authNum.length == 6) checkAuthNum();
+                  setChangeBtnMsg('');
                 }}
                 style={[
                   styles.authBtn,
-                  isVerified == 'yet' && authNum.length == 6
+                  isVerified == 'yet' && authNum.length == 6 && !showTimeAlert
                     ? {backgroundColor: '#5856D6'}
                     : {backgroundColor: '#989BA2F7'},
                 ]}>
@@ -299,7 +311,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           !isValidPhoneNum(phone) ||
           name.length == 0 ||
           time <= 0 ||
-          (isSent && !isVerified)
+          (isSent && !(isVerified == 'true'))
         }
         onPress={() => {
           if (isSent) {
@@ -322,7 +334,9 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         {!isSent ? (
           <Text style={styles.btnTxt}>인증번호 받기</Text>
         ) : (
-          <Text style={styles.btnTxt}>가입하기</Text>
+          <Text style={styles.btnTxt}>
+            {changeBtnMsg === '' ? '가입하기' : '로그인'}
+          </Text>
         )}
       </Pressable>
       {/* <Modal
@@ -405,8 +419,12 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           btnText="인증번호 재전송"
           onBtnPress={() => {
             setIsSent(false);
+            setIsVerified('yet');
             setShowTimeAlert(false);
+            clearInterval(timerRef.current);
             sendAuthNum();
+            setAuthNum('');
+            setChangeBtnMsg('');
           }}
         />
       )}

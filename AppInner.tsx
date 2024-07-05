@@ -63,7 +63,6 @@ function AppInner() {
     (state: RootState) => !!state.user.accessToken,
   );
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
-  const internetState = useNetInfo();
   const reissue = async () => {
     try {
       // await EncryptedStorage.removeItem('refreshToken');
@@ -102,7 +101,16 @@ function AppInner() {
   useEffect(() => {
     if (!isLoggedIn) reissue();
   }, [isLoggedIn]);
-  return !internetState.isConnected ? (
+  const internetState = useNetInfo();
+  const [loadingPage, setLoadingPage] = useState(false);
+  useEffect(() => {
+    if (internetState.isConnected) {
+      setLoadingPage(false);
+    } else {
+      setLoadingPage(true);
+    }
+  }, [internetState.isConnected]);
+  return loadingPage ? (
     <View
       style={{
         flex: 1,
