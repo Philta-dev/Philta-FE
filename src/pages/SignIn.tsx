@@ -12,6 +12,8 @@ import appleAuth, {
 } from '@invertase/react-native-apple-authentication';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
+import * as amplitude from '@amplitude/analytics-react-native';
+import {useEffect} from 'react';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -23,6 +25,12 @@ type SignInProps = {
 };
 
 export default function SignIn(props: SignInProps) {
+  useEffect(() => {
+    // amplitude.init('b01b91f7c3a5f75eb206266eb608d80e');
+    // amplitude.init('b01b91f7c3a5f75eb206266eb608d80e');
+    // console.log(amplitude.track);
+  }, []);
+
   const navigation = props.navigation;
   const dispatch = useAppDispatch();
 
@@ -173,7 +181,12 @@ export default function SignIn(props: SignInProps) {
         )}
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
-          onPress={() => {
+          onPress={async () => {
+            amplitude.init('b01b91f7c3a5f75eb206266eb608d80e', 'user');
+            // const result = await amplitude.track('login_page_view').promise;
+            // console.log(result);
+            // amplitude.track('phone_login_click');
+
             navigation.navigate('PhoneLogin');
           }}>
           <SvgXml xml={svgList.socialLogin.phone} />
