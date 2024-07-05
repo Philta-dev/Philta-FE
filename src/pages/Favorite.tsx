@@ -36,7 +36,7 @@ export default function Favorite(props: FavProps) {
   const [testament, setTestament] = useState(0);
   const [bookname, setBookname] = useState(0);
   const [testamentList, setTestamentList] = useState<string[]>([]);
-  const [bookList, setBookList] = useState<string[]>([]);
+  const [bookList, setBookList] = useState<string[]>(Array(39).fill(''));
   const [favData, setFavData] = useState<favItem[]>([
     // {
     //   id: 13,
@@ -106,6 +106,9 @@ export default function Favorite(props: FavProps) {
         response.data.old_testament_name,
         response.data.new_testament_name,
       ]);
+      if (testament == 0) {
+        setBookList(Array(39).fill(''));
+      }
       setBookList(['전체', ...response.data.books]);
       setNone(-1);
       setFavData(response.data.favorites);
