@@ -18,7 +18,8 @@ import {svgList} from '../assets/svgList';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SignInNavParamList} from '../../AppInner';
 import CustomToastScreen from '../components/CustomToastScreen';
-import {Types, init, track} from '@amplitude/analytics-react-native';
+import * as amplitude from '@amplitude/analytics-react-native';
+// import {Amplitude, Identify} from '@amplitude/react-native';
 
 type PhoneLoginNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -322,9 +323,10 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           // } else {
           //   sendAuthNum();
           // }
-
-          init('b01b91f7c3a5f75eb206266eb608d80e', 'user');
-          track('phone_login_click');
+          // init('b01b91f7c3a5f75eb206266eb608d80e', 'user');
+          amplitude.track('phone_login_click', {
+            logLevel: amplitude.Types.LogLevel.Debug,
+          });
           // const a = amplitude.createInstance();
           // a.track('phone_login_click');
           // console.log(a);
