@@ -18,8 +18,6 @@ import {svgList} from '../assets/svgList';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {SignInNavParamList} from '../../AppInner';
 import CustomToastScreen from '../components/CustomToastScreen';
-import * as amplitude from '@amplitude/analytics-react-native';
-// import {Amplitude, Identify} from '@amplitude/react-native';
 
 type PhoneLoginNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -309,27 +307,20 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         {phoneToken && <Text>{phoneToken}</Text>}
       </View>
       <Pressable
-        // disabled={
-        //   !isValidPhoneNum(phone) ||
-        //   name.length == 0 ||
-        //   time <= 0 ||
-        //   (isSent && !(isVerified == 'true'))
-        // }
+        disabled={
+          !isValidPhoneNum(phone) ||
+          name.length == 0 ||
+          time <= 0 ||
+          (isSent && !(isVerified == 'true'))
+        }
         onPress={() => {
-          // if (isSent) {
-          //   if (isVerified === 'true') {
-          //     login();
-          //   } else checkAuthNum();
-          // } else {
-          //   sendAuthNum();
-          // }
-          // init('b01b91f7c3a5f75eb206266eb608d80e', 'user');
-          amplitude.track('phone_login_click', {
-            logLevel: amplitude.Types.LogLevel.Debug,
-          });
-          // const a = amplitude.createInstance();
-          // a.track('phone_login_click');
-          // console.log(a);
+          if (isSent) {
+            if (isVerified === 'true') {
+              login();
+            } else checkAuthNum();
+          } else {
+            sendAuthNum();
+          }
         }}
         style={[
           styles.enterBtn,

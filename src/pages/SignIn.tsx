@@ -7,13 +7,10 @@ import axios, {AxiosError} from 'axios';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import appleAuth, {
-  AppleButton,
-} from '@invertase/react-native-apple-authentication';
+import appleAuth from '@invertase/react-native-apple-authentication';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 import * as amplitude from '@amplitude/analytics-react-native';
-// import {Amplitude, Identify} from '@amplitude/react-native';
 import {useEffect} from 'react';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
@@ -185,21 +182,14 @@ export default function SignIn(props: SignInProps) {
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
           onPress={async () => {
-            // amplitude.init('b01b91f7c3a5f75eb206266eb608d80e', 'user'
-            amplitude.init(
-              'b01b91f7c3a5f75eb206266eb608d80e',
-              'user@user.com',
-              {
-                logLevel: amplitude.Types.LogLevel.Debug,
-                serverUrl: 'https://api.amplitude.com',
-                serverZone: 'EU',
-              },
-            );
-
+            amplitude.init('b01b91f7c3a5f75eb206266eb608d80e', 'user@android', {
+              logLevel: amplitude.Types.LogLevel.Debug,
+              serverUrl: 'https://api2.amplitude.com/2/httpapi',
+            });
+            amplitude.track('BUTTON_CLICKED');
             // ampInstance.logEvent('BUTTON_CLICKED');
             // const result = await amplitude.track('login_page_view').promise;
             // console.log(result);
-            amplitude.track('BUTTON_CLICKED');
 
             // navigation.navigate('PhoneLogin');
           }}>
