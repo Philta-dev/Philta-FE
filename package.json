@@ -35,7 +35,7 @@
     "react-native-shadow-2": "^7.1.0",
     "react-native-svg": "^15.3.0",
     "react-redux": "^9.1.2",
-    "ws": "^8.18.0"
+    "ws": "^6.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
