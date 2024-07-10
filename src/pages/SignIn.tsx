@@ -7,12 +7,9 @@ import axios, {AxiosError} from 'axios';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import appleAuth, {
-  AppleButton,
-} from '@invertase/react-native-apple-authentication';
+import appleAuth from '@invertase/react-native-apple-authentication';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
-import {Mixpanel} from 'mixpanel-react-native';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -175,15 +172,7 @@ export default function SignIn(props: SignInProps) {
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
           onPress={() => {
-            // navigation.navigate('PhoneLogin');
-            const trackAutomaticEvents = false;
-            const mixpanel = new Mixpanel(
-              'cbf27b2d16749824f68e49a4937b8afe',
-              trackAutomaticEvents,
-            );
-            mixpanel.init();
-            mixpanel.setLoggingEnabled(true);
-            mixpanel.track('BTN_CLICKED_ios');
+            navigation.navigate('PhoneLogin');
           }}>
           <SvgXml xml={svgList.socialLogin.phone} />
         </Pressable>
