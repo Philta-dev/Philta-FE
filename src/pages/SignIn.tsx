@@ -10,6 +10,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
+import {Ex} from '../components/animations';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -176,6 +177,7 @@ export default function SignIn(props: SignInProps) {
           }}>
           <SvgXml xml={svgList.socialLogin.phone} />
         </Pressable>
+        <Ex />
       </View>
     </View>
   );
