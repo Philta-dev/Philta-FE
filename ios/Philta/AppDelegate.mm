@@ -1,9 +1,14 @@
 #import "AppDelegate.h"
+#import "RNBootSplash.h"
 
 #import <React/RCTBundleURLProvider.h>
 #import <RNKakaoLogins.h>
 
 @implementation AppDelegate
+
+- (void)customizeRootView:(RCTRootView *)rootView {
+  [RNBootSplash initWithStoryboard:@"BootSplash" rootView:rootView]; // ⬅️ initialize the splash screen
+}
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
