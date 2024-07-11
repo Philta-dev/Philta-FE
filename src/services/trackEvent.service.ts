@@ -1,13 +1,13 @@
 import {Mixpanel} from 'mixpanel-react-native';
 import Config from 'react-native-config';
+import {getLocales} from 'react-native-localize';
 
+// initialize Mixpanel sdk
 const trackAutomaticEvents = false;
 const mixpanel = new Mixpanel(
   `${Config.MIXPANEL_API_KEY}`,
   trackAutomaticEvents,
 );
-
-import {getLocales} from 'react-native-localize';
 
 const getCurrentDeviceLanguage = () => {
   const locales = getLocales();
@@ -19,15 +19,15 @@ export function setTrackUser() {
   mixpanel.setLoggingEnabled(true);
 
   mixpanel.identify('USER_ID');
-
   mixpanel.getPeople().set('language', getCurrentDeviceLanguage());
-  mixpanel.getPeople().set('$email', 'jane.doe@example.com');
   mixpanel.getPeople().set('plan', 'Premium');
 
   mixpanel.track('App Launched');
 }
 
-export function resetTrackUser() {}
+export function resetTrackUser() {
+  mixpanel.reset();
+}
 
 export function trackEvent(eventName: string, eventProps?: any) {
   mixpanel.track(eventName, eventProps);
