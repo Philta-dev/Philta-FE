@@ -32,6 +32,7 @@ import useAxiosInterceptor from './src/hooks/useAxiosInterceptor';
 import Search from './src/pages/Search';
 import BaseNav from './src/navigations/BaseNav';
 import {useNetInfo} from '@react-native-community/netinfo';
+import {getLocales} from 'react-native-localize';
 
 export type SignInNavParamList = {
   SignIn: undefined;
