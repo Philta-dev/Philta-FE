@@ -15,6 +15,7 @@ import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
+import {trackEvent} from '../services/trackEvent.service';
 
 export type RootTabParamList = {
   Typing: undefined;
@@ -132,6 +133,7 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 
 export default function BaseNav() {
   const dispatch = useAppDispatch();
+  const [first, setFirst] = useState(true);
   const [dropDown, setDropDown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
@@ -140,6 +142,7 @@ export default function BaseNav() {
       const response = await axios.get(`${Config.API_URL}/index/version`);
       console.log(response.data);
       setDropDownItems(response.data.versions);
+      setFirst(false);
       setSelectedIndex(
         response.data.versions.indexOf(response.data.current_version),
       );
@@ -178,6 +181,13 @@ export default function BaseNav() {
   }, []);
   useEffect(() => {
     if (selectedIndex === -1) return;
+    if (!first) {
+      setFirst(true);
+      return;
+    }
+    trackEvent('Version Changed', {
+      version: dropDownItems[selectedIndex],
+    });
     selectVersion(selectedIndex);
   }, [selectedIndex]);
   return (
