@@ -32,7 +32,8 @@ import useAxiosInterceptor from './src/hooks/useAxiosInterceptor';
 import Search from './src/pages/Search';
 import BaseNav from './src/navigations/BaseNav';
 import {useNetInfo} from '@react-native-community/netinfo';
-import {getLocales} from 'react-native-localize';
+import BootSplash from 'react-native-bootsplash';
+import {Ex} from './src/components/animations';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -100,6 +101,17 @@ function AppInner() {
     }
   };
   useEffect(() => {
+    const init = async () => {};
+    init().finally(async () => {
+      setShowCustomSplash(true);
+      await BootSplash.hide({fade: true});
+      setTimeout(() => {
+        setShowCustomSplash(false);
+      }, 3000);
+    });
+  }, []);
+  const [showCustomSplash, setShowCustomSplash] = useState(false);
+  useEffect(() => {
     if (!isLoggedIn) reissue();
   }, [isLoggedIn]);
   const internetState = useNetInfo();
@@ -111,7 +123,17 @@ function AppInner() {
       setLoadingPage(true);
     }
   }, [internetState.isConnected]);
-  return loadingPage ? (
+  return showCustomSplash ? (
+    <View
+      style={{
+        backgroundColor: 'white',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      <Ex />
+    </View>
+  ) : loadingPage ? (
     <View
       style={{
         flex: 1,

@@ -17,6 +17,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		D58A5EB60EBE4E94A95EF6B2 /* Eulyoo1945-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */; };
 		E4B4B5FCD4634EC5B03ADCE3 /* Eulyoo1945-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 347301D1BB4F48A3A19AA229 /* Eulyoo1945-SemiBold.otf */; };
+		98A74FC6AFFA48BD9F238088 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DE709DD299034D90AE35B1B3 /* Eulyoo1945-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Eulyoo1945-Regular.otf"; path = "../src/assets/fonts/Eulyoo1945-Regular.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "Philta/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */,
+				23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */,
 			);
 			name = Philta;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 				67597B7EF9D998CADD76D187 /* PrivacyInfo.xcprivacy in Resources */,
 				D58A5EB60EBE4E94A95EF6B2 /* Eulyoo1945-Regular.otf in Resources */,
 				E4B4B5FCD4634EC5B03ADCE3 /* Eulyoo1945-SemiBold.otf in Resources */,
+				98A74FC6AFFA48BD9F238088 /* BootSplash.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
