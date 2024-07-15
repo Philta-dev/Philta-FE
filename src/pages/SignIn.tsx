@@ -177,7 +177,6 @@ export default function SignIn(props: SignInProps) {
           }}>
           <SvgXml xml={svgList.socialLogin.phone} />
         </Pressable>
-        <Ex />
       </View>
     </View>
   );
