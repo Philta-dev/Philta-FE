@@ -36,6 +36,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import Modal from 'react-native-modal';
+import {resetTrackUser, trackEvent} from '../services/trackEvent.service';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -81,6 +82,13 @@ export default function Typing(props: TypingProps) {
   const [versionModalLeft, setVersionModalLeft] = useState(0);
   const dispatch = useAppDispatch();
   const reduxVersion = useSelector((state: RootState) => state.user.version);
+
+  useEffect(() => {
+    const focusListener = props.navigation.addListener('focus', () => {
+      trackEvent('Screen Viewed - Typing');
+    });
+    return focusListener;
+  }, []);
 
   useEffect(() => {
     if (!pageMove) {
@@ -130,6 +138,7 @@ export default function Typing(props: TypingProps) {
       setVersionDropdown(false);
       console.log('keyboard dismiss');
       ref.current?.blur();
+      trackEvent('Keyboard Dismissed');
       setKeyBoardStatus(false);
     });
     const KeyboardShow = Keyboard.addListener('keyboardDidShow', e => {
@@ -161,6 +170,9 @@ export default function Typing(props: TypingProps) {
       setText(textEntered);
       setEditable(false);
       complete();
+      trackEvent('Complete Verse', {
+        verseId: givenVerse?.id,
+      });
       return;
     }
     if (
@@ -187,6 +199,9 @@ export default function Typing(props: TypingProps) {
       ) {
         console.log('done');
         complete();
+        trackEvent('Complete Verse', {
+          verseId: givenVerse?.id,
+        });
         // if (nextVerse) handlePointer(nextVerse?.id);
       }
     } else {
@@ -381,6 +396,7 @@ export default function Typing(props: TypingProps) {
       // else if (socialType == 'apple') {
       //   appleAuth.Operation.LOGOUT;
       // }
+      resetTrackUser();
       await EncryptedStorage.removeItem('refreshToken');
       dispatch(userSlice.actions.setToken({accessToken: ''}));
     } catch (e) {
@@ -400,6 +416,7 @@ export default function Typing(props: TypingProps) {
       if (socialType === 'kakao') {
         await KakaoLogin.unlink();
       }
+      resetTrackUser();
       await EncryptedStorage.removeItem('refreshToken');
       dispatch(userSlice.actions.setToken({accessToken: ''}));
     } catch (error) {
@@ -984,6 +1001,9 @@ export default function Typing(props: TypingProps) {
                   style={styles.item}
                   onPress={e => {
                     e.stopPropagation();
+                    trackEvent('Version Changed', {
+                      version: item,
+                    });
                     selectVersion(item);
                   }}>
                   {item == version ? (

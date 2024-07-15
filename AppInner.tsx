@@ -34,6 +34,7 @@ import BaseNav from './src/navigations/BaseNav';
 import {useNetInfo} from '@react-native-community/netinfo';
 import BootSplash from 'react-native-bootsplash';
 import {Ex} from './src/components/animations';
+import {setTrackUser} from './src/services/trackEvent.service';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -113,6 +114,7 @@ function AppInner() {
   const [showCustomSplash, setShowCustomSplash] = useState(false);
   useEffect(() => {
     if (!isLoggedIn) reissue();
+    else userInfo();
   }, [isLoggedIn]);
   const internetState = useNetInfo();
   const [loadingPage, setLoadingPage] = useState(false);
@@ -123,6 +125,14 @@ function AppInner() {
       setLoadingPage(true);
     }
   }, [internetState.isConnected]);
+
+  const userInfo = async () => {
+    try {
+      const response = await axios.get(`${Config.API_URL}/auth/mixpanel`);
+      console.log(response.data);
+      setTrackUser(response.data.id, response.data.name);
+    } catch (error) {}
+  };
   return showCustomSplash ? (
     <View
       style={{

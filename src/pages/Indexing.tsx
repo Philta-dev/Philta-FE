@@ -19,6 +19,7 @@ import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
+import {trackEvent} from '../services/trackEvent.service';
 
 const buttonWidth = 80;
 const buttonSmallWidth = 40;
@@ -206,6 +207,7 @@ export default function Indexing(props: IndexProps) {
   useEffect(() => {
     const focusListener = props.navigation.addListener('focus', () => {
       setLoading(true);
+      trackEvent('Sreen Viewed - Indexing');
       setTimeout(() => getData(), 0);
     });
     const blurListener = props.navigation.addListener('blur', () => {

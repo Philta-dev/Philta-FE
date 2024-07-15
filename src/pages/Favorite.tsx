@@ -18,6 +18,7 @@ import Config from 'react-native-config';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 import {useSelector} from 'react-redux';
+import {trackEvent} from '../services/trackEvent.service';
 
 type FavScreenNavigationProp = NativeStackNavigationProp<
   NavParamList,
@@ -88,6 +89,7 @@ export default function Favorite(props: FavProps) {
   }, []);
   useEffect(() => {
     const focusListener = props.navigation.addListener('focus', () => {
+      trackEvent('Sreen Viewed - Favorite');
       getData();
     });
     return focusListener;
@@ -263,6 +265,10 @@ export default function Favorite(props: FavProps) {
                 <Pressable
                   style={styles.favItem}
                   onPress={() => {
+                    trackEvent('Favorite - Clicked', {
+                      verseId: item.id,
+                      reference: item.reference,
+                    });
                     handlePointer(item.id);
                     props.navigation.navigate('Typing');
                   }}>
