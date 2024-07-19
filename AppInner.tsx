@@ -33,7 +33,7 @@ import Search from './src/pages/Search';
 import BaseNav from './src/navigations/BaseNav';
 import {useNetInfo} from '@react-native-community/netinfo';
 import BootSplash from 'react-native-bootsplash';
-import {Ex} from './src/components/animations';
+import {Splash} from './src/components/animations';
 import {setTrackUser} from './src/services/trackEvent.service';
 
 export type SignInNavParamList = {
@@ -141,7 +141,7 @@ function AppInner() {
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-      <Ex />
+      <Splash />
     </View>
   ) : loadingPage ? (
     <View

@@ -893,7 +893,7 @@ export default function Typing(props: TypingProps) {
                 style={{
                   marginVertical: 8,
                   color: 'black',
-                  fontFamily: 'Eulyoo1945-SemiBold',
+                  fontFamily: 'KoPubWorld Batang_Pro Bold',
                   fontSize: 18,
                   fontWeight: '600',
                 }}>
@@ -928,7 +928,7 @@ export default function Typing(props: TypingProps) {
                       color: '#FFFFFF',
                       fontSize: 16,
                       fontWeight: '600',
-                      fontFamily: 'Eulyoo1945-SemiBold',
+                      fontFamily: 'KoPubWorld Batang_Pro Bold',
                     }}>
                     탈퇴
                   </Text>
@@ -950,7 +950,7 @@ export default function Typing(props: TypingProps) {
                       color: 'black',
                       fontSize: 16,
                       fontWeight: '600',
-                      fontFamily: 'Eulyoo1945-SemiBold',
+                      fontFamily: 'KoPubWorld Batang_Pro Bold',
                     }}>
                     취소
                   </Text>
@@ -1117,7 +1117,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 21,
     letterSpacing: -0.32,
-    fontFamily: 'Eulyoo1945-SemiBold',
+    fontFamily: 'KoPubWorld Batang_Pro Bold',
   },
   modalBottomView: {
     position: 'absolute',
@@ -1136,7 +1136,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 21,
     letterSpacing: -0.32,
-    fontFamily: 'Eulyoo1945-SemiBold',
+    fontFamily: 'KoPubWorld Batang_Pro Bold',
   },
   typingArea: {
     paddingHorizontal: 40,

@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 20,
     fontWeight: '600',
-    // fontFamily: 'Eulyoo1945-SemiBold',
+    // fontFamily: 'KoPubWorld Batang_Pro Bold',
     marginVertical: 24,
   },
   input: {
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'Eulyoo1945-SemiBold',
+    fontFamily: 'KoPubWorld Batang_Pro Bold',
     textAlign: 'center',
     color: 'white',
   },

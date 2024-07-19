@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   headerTitleTxt: {
     fontSize: 18,
     fontWeight: '600',
-    fontFamily: 'Eulyoo1945-SemiBold',
+    fontFamily: 'KoPubWorld Batang_Pro Bold',
     lineHeight: 21,
     letterSpacing: -0.32,
   },

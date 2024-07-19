@@ -177,7 +177,6 @@ export default function SignIn(props: SignInProps) {
           }}>
           <SvgXml xml={svgList.socialLogin.phone} />
         </Pressable>
-        <Ex />
       </View>
     </View>
   );
@@ -198,7 +197,7 @@ const styles = StyleSheet.create({
   },
   titleTxt: {
     fontSize: 16,
-    fontFamily: 'Eulyoo1945-SemiBold',
+    fontFamily: 'KoPubWorld Batang_Pro Bold',
     fontWeight: '600',
     color: '#000000',
   },
