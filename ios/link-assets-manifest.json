@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/KoPubWorld Batang_Pro Bold.otf",
+      "sha1": "9c891e9bd8486a689e43a80fa9f1b409be7a7963"
+    },
+    {
+      "path": "src/assets/fonts/KoPubWorld Batang_Pro Light.otf",
+      "sha1": "db9241ce0531aca96fb46b1aa4fa8862807411dd"
+    },
+    {
+      "path": "src/assets/fonts/KoPubWorld Batang_Pro Medium.otf",
+      "sha1": "f605f090b65a819e316cb5faae92b17b33f1b3f0"
+    },
+    {
+      "path": "src/assets/fonts/KoPubWorld Dotum_Pro Bold.otf",
+      "sha1": "ad94cb30ef251d0d67adaa8f2b0ea05f66272321"
+    },
+    {
+      "path": "src/assets/fonts/KoPubWorld Dotum_Pro Light.otf",
+      "sha1": "d7d843d98da9f51a9984d44aa525e724bf7ca9c6"
+    },
+    {
+      "path": "src/assets/fonts/KoPubWorld Dotum_Pro Medium.otf",
+      "sha1": "b811aecbcbb8a7e53df4022e2f49efeaf812e13c"
+    }
+  ]
+}
