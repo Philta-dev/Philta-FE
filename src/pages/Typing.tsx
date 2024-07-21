@@ -37,6 +37,7 @@ import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import Modal from 'react-native-modal';
 import {resetTrackUser, trackEvent} from '../services/trackEvent.service';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -392,6 +393,8 @@ export default function Typing(props: TypingProps) {
       console.log(response.data);
       if (socialType === 'kakao') {
         await KakaoLogin.logout();
+      } else if (socialType == 'google') {
+        await GoogleSignin.signOut();
       }
       // else if (socialType == 'apple') {
       //   appleAuth.Operation.LOGOUT;
@@ -415,6 +418,8 @@ export default function Typing(props: TypingProps) {
       console.log(response.data);
       if (socialType === 'kakao') {
         await KakaoLogin.unlink();
+      } else if (socialType === 'google') {
+        await GoogleSignin.revokeAccess();
       }
       resetTrackUser();
       await EncryptedStorage.removeItem('refreshToken');
