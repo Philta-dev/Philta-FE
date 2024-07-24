@@ -10,7 +10,6 @@ import {
   Platform,
   FlatList,
   Animated,
-  Easing,
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {LinearGradient} from 'react-native-linear-gradient';
@@ -86,10 +85,11 @@ export default function Typing(props: TypingProps) {
 
   useEffect(() => {
     const focusListener = props.navigation.addListener('focus', () => {
+      getData();
       trackEvent('Screen Viewed - Typing');
     });
     return focusListener;
-  }, []);
+  }, [reduxVersion]);
 
   useEffect(() => {
     if (!pageMove) {
@@ -113,19 +113,7 @@ export default function Typing(props: TypingProps) {
     props.navigation.setOptions({
       headerShown: false,
     });
-  }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      const timer = setTimeout(() => {
-        ref.current?.focus();
-      }, 100);
-
-      return () => clearTimeout(timer);
-    }, []),
-  );
-
-  useEffect(() => {
     const interval = setInterval(() => {
       setCursor(prevValue => !prevValue);
     }, 500);
@@ -138,13 +126,11 @@ export default function Typing(props: TypingProps) {
       setKeyBoardHeight(0);
       setVersionDropdown(false);
       console.log('keyboard dismiss');
-      ref.current?.blur();
       trackEvent('Keyboard Dismissed');
       setKeyBoardStatus(false);
     });
     const KeyboardShow = Keyboard.addListener('keyboardDidShow', e => {
       setKeyBoardHeight(e.endCoordinates.height);
-      ref.current?.focus();
       setKeyBoardStatus(true);
     });
     const blurListener = props.navigation.addListener('blur', () => {
@@ -235,12 +221,7 @@ export default function Typing(props: TypingProps) {
   const [textArray, setTextArray] = useState<Array<string>>([]);
   const [textArrayING, setTextArrayING] = useState<Array<string>>([]);
   const [textArrayAfter, setTextArrayAfter] = useState<Array<string>>([]);
-  useEffect(() => {
-    const focusListener = props.navigation.addListener('focus', () => {
-      getData();
-    });
-    return focusListener;
-  }, [reduxVersion]);
+
   const getData = async () => {
     try {
       const response = await axios.get(`${Config.API_URL}/typing/baseinfo`);
@@ -617,12 +598,12 @@ export default function Typing(props: TypingProps) {
                     style={[
                       {
                         fontSize: 20,
-                        fontWeight: '100',
-                        lineHeight: 30,
-                        letterSpacing: -5,
+                        fontWeight: '600',
+                        lineHeight: Platform.OS == 'ios' ? 27 : 30,
+                        letterSpacing: Platform.OS == 'ios' ? -1 : -8,
                         zIndex: 1,
                       },
-                      cursor ? {color: 'transparent'} : {color: 'red'},
+                      cursor ? {color: 'transparent'} : {color: '#5856D6'},
                     ]}>
                     |
                   </Text>
@@ -764,10 +745,6 @@ export default function Typing(props: TypingProps) {
                   setPressedButton('keyboard');
                   setPressedButton('');
                   ref.current?.blur();
-                  setKeyBoardStatus(false);
-                } else {
-                  ref.current?.focus();
-                  setKeyBoardStatus(true);
                 }
               }}>
               {pressedButton == 'keyboard' ? (
@@ -990,7 +967,8 @@ export default function Typing(props: TypingProps) {
         <View
           style={[
             styles.modalContainer,
-            {left: versionModalLeft - (102 - versionModalWidth) / 2},
+            {left: versionModalLeft - (102 - versionModalWidth) / 2 - 8},
+            Platform.OS == 'ios' && {bottom: keyBoardHeight + 60},
           ]}>
           <Shadow
             distance={6}

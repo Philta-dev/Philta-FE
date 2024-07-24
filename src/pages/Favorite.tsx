@@ -327,6 +327,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 25,
+    paddingBottom: 88,
   },
   topTabbarView: {
     flexDirection: 'row',
