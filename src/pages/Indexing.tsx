@@ -609,7 +609,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     color: 'black',
-    fontFamily: 'KoPubWorld Batang_Pro Bold',
+    fontFamily: 'KoPubWorldBatangPB',
     fontWeight: '600',
     lineHeight: 25,
     letterSpacing: -0.32,
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'KoPubWorld Batang_Pro Bold',
+    fontFamily: 'KoPubWorldBatangPB',
     lineHeight: 24,
     letterSpacing: -0.32,
   },

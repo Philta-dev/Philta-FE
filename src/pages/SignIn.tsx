@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   titleTxt: {
     fontSize: 16,
-    fontFamily: 'KoPubWorld Batang_Pro Bold',
+    fontFamily: 'KoPubWorldBatangPB',
     fontWeight: '600',
     color: '#000000',
   },

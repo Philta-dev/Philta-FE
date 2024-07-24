@@ -108,7 +108,7 @@ function AppInner() {
       await BootSplash.hide({fade: true});
       setTimeout(() => {
         setShowCustomSplash(false);
-      }, 3000);
+      }, 2200);
     });
   }, []);
   const [showCustomSplash, setShowCustomSplash] = useState(false);
@@ -140,6 +140,8 @@ function AppInner() {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingTop: 5,
+        paddingRight: 8,
       }}>
       <Splash />
     </View>

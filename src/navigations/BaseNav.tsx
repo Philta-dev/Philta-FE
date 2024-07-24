@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   headerTitleTxt: {
     fontSize: 18,
     fontWeight: '600',
-    fontFamily: 'KoPubWorld Batang_Pro Bold',
+    fontFamily: 'KoPubWorldBatangPB',
     letterSpacing: -0.32,
   },
   headerRight: {
