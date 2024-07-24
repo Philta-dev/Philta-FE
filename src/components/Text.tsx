@@ -9,10 +9,7 @@ export interface TextPropsCustom extends TextProps {
 const Text: React.FC<TextPropsCustom> = ({children, style, ...props}) => {
   return (
     <RNText
-      style={[
-        {color: 'black', fontFamily: 'KoPubWorld Batang_Pro Light'},
-        style,
-      ]}
+      style={[{color: 'black', fontFamily: 'KoPubWorldBatangPL'}, style]}
       {...props}>
       {children}
     </RNText>
