@@ -166,7 +166,7 @@ export default function Favorite(props: FavProps) {
             style={[
               styles.topTabbarButtonTxt,
               testament == 0 && {
-                fontFamily: 'KoPubWorld Batang_Pro Bold',
+                fontFamily: 'KoPubWorldBatangPB',
                 color: '#000000',
               },
             ]}>
@@ -185,7 +185,7 @@ export default function Favorite(props: FavProps) {
             style={[
               styles.topTabbarButtonTxt,
               testament == 1 && {
-                fontFamily: 'KoPubWorld Batang_Pro Bold',
+                fontFamily: 'KoPubWorldBatangPB',
                 color: '#000000',
               },
             ]}>
@@ -204,7 +204,7 @@ export default function Favorite(props: FavProps) {
             style={[
               styles.topTabbarButtonTxt,
               testament == 2 && {
-                fontFamily: 'KoPubWorld Batang_Pro Bold',
+                fontFamily: 'KoPubWorldBatangPB',
                 color: '#000000',
               },
             ]}>
@@ -242,7 +242,7 @@ export default function Favorite(props: FavProps) {
                     styles.topTabbarHorizontalItemTxt,
                     index == bookname && {
                       color: '#FCFCFE',
-                      fontFamily: 'KoPubWorld Batang_Pro Bold',
+                      fontFamily: 'KoPubWorldBatangPB',
                     },
                   ]}>
                   {item}
@@ -327,6 +327,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 25,
+    paddingBottom: 88,
   },
   topTabbarView: {
     flexDirection: 'row',
@@ -390,7 +391,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     color: '#000000',
     fontWeight: '600',
-    fontFamily: 'KoPubWorld Batang_Pro Bold',
+    fontFamily: 'KoPubWorldBatangPB',
     marginBottom: 10,
   },
   favText: {

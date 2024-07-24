@@ -133,7 +133,6 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 
 export default function BaseNav() {
   const dispatch = useAppDispatch();
-  const [first, setFirst] = useState(true);
   const [dropDown, setDropDown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
@@ -142,7 +141,6 @@ export default function BaseNav() {
       const response = await axios.get(`${Config.API_URL}/index/version`);
       console.log(response.data);
       setDropDownItems(response.data.versions);
-      setFirst(false);
       setSelectedIndex(
         response.data.versions.indexOf(response.data.current_version),
       );
@@ -181,10 +179,7 @@ export default function BaseNav() {
   }, []);
   useEffect(() => {
     if (selectedIndex === -1) return;
-    if (!first) {
-      setFirst(true);
-      return;
-    }
+    if (!dropDown) return;
     trackEvent('Version Changed', {
       version: dropDownItems[selectedIndex],
     });
@@ -309,8 +304,7 @@ const styles = StyleSheet.create({
   headerTitleTxt: {
     fontSize: 18,
     fontWeight: '600',
-    fontFamily: 'KoPubWorld Batang_Pro Bold',
-    lineHeight: 21,
+    fontFamily: 'KoPubWorldBatangPB',
     letterSpacing: -0.32,
   },
   headerRight: {

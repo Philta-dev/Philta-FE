@@ -81,8 +81,8 @@ android {
         applicationId "com.philta"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2407202
-        versionName "1.0.0"
+        versionCode 2407251
+        versionName "1.0.1"
         resValue "string", "build_config_package", "com.philta"
 
     }

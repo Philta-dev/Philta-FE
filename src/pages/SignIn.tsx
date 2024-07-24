@@ -10,7 +10,9 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
-import {Ex} from '../components/animations';
+import {Ex, Splash} from '../components/animations';
+import {useEffect} from 'react';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -24,25 +26,6 @@ type SignInProps = {
 export default function SignIn(props: SignInProps) {
   const navigation = props.navigation;
   const dispatch = useAppDispatch();
-
-  const loginInAdmin = async () => {
-    try {
-      const response = await axios.post(`${Config.API_URL}/auth/login`, {
-        socialType: 'admin',
-        adminId: 'admin',
-        adminPw: 'admin-philta',
-      });
-      dispatch(
-        userSlice.actions.setToken({accessToken: response.data.accessToken}),
-      );
-      await EncryptedStorage.setItem(
-        'refreshToken',
-        response.data.refreshToken,
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const LoginWithKakao = async () => {
     console.log('카카오 로그인');
@@ -147,15 +130,77 @@ export default function SignIn(props: SignInProps) {
       }
     }
   };
+
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      console.log(Config.GOOGLE_IOS_CLIENT_ID);
+      console.log(Config.GOOGLE_CLIENT_ID);
+      GoogleSignin.configure({
+        iosClientId: Config.GOOGLE_IOS_CLIENT_ID,
+        webClientId: Config.GOOGLE_CLIENT_ID,
+        offlineAccess: true,
+      });
+    } else {
+      GoogleSignin.configure({
+        webClientId: Config.GOOGLE_CLIENT_ID,
+        offlineAccess: true,
+      });
+    }
+  }, []);
+  const LoginWithGoogle = async () => {
+    console.log('구글 로그인');
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const res = await fetch('https://www.googleapis.com/oauth2/v3/token', {
+        method: 'POST',
+        body: JSON.stringify({
+          code: userInfo.serverAuthCode,
+          clientId: Config.GOOGLE_CLIENT_ID,
+          clientSecret: Config.GOOGLE_CLIENT_SECRET,
+          grant_type: 'authorization_code',
+        }),
+      });
+      const data = await res.json();
+      const response = await axios.post(`${Config.API_URL}/auth/login`, {
+        socialType: 'google',
+        googleAccessToken: data.access_token,
+      });
+      console.log(response.data);
+      if (response.data.isNew) {
+        dispatch(
+          userSlice.actions.setUser({
+            preAcc: response.data.accessToken,
+            preRef: response.data.refreshToken,
+          }),
+        );
+
+        navigation.navigate('EnterName');
+      } else {
+        dispatch(
+          userSlice.actions.setToken({
+            accessToken: response.data.accessToken,
+          }),
+        );
+        await EncryptedStorage.setItem(
+          'refreshToken',
+          response.data.refreshToken,
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.entire}>
       <Pressable
-        onPress={() =>
-          // dispatch(userSlice.actions.setToken({accessToken: '1234'}))
-          loginInAdmin()
-        }
+        // onPress={() =>
+        //   dispatch(userSlice.actions.setToken({accessToken: '1234'}))
+        //   loginInAdmin()
+        // }
         style={styles.title}>
-        <Text style={styles.titleTxt}>필타</Text>
+        <Splash loop={true} />
       </Pressable>
       <View style={styles.btnView}>
         <Pressable
@@ -170,6 +215,19 @@ export default function SignIn(props: SignInProps) {
             <SvgXml xml={svgList.socialLogin.apple} width={160} height={32} />
           </Pressable>
         )}
+        <Pressable
+          style={[
+            styles.btn,
+            {
+              backgroundColor: 'white',
+              borderRadius: 7,
+              borderWidth: 1,
+              borderColor: '#DEDEDE',
+            },
+          ]}
+          onPress={() => LoginWithGoogle()}>
+          <SvgXml xml={svgList.socialLogin.google} />
+        </Pressable>
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
           onPress={() => {
@@ -197,7 +255,7 @@ const styles = StyleSheet.create({
   },
   titleTxt: {
     fontSize: 16,
-    fontFamily: 'KoPubWorld Batang_Pro Bold',
+    fontFamily: 'KoPubWorldBatangPB',
     fontWeight: '600',
     color: '#000000',
   },

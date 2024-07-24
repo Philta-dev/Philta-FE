@@ -38,7 +38,7 @@ export default function Search(props: SearchProps) {
   const ref = useRef<TextInput>(null);
   useEffect(() => {
     ref.current?.setNativeProps({
-      style: {fontFamily: 'KoPubWorld Batang_Pro Light'},
+      style: {fontFamily: 'KoPubWorldBatangPL'},
     });
     ref.current?.focus();
   });
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'KoPubWorld Batang_Pro Bold',
+    fontFamily: 'KoPubWorldBatangPB',
     lineHeight: 32,
     letterSpacing: -0.32,
   },
