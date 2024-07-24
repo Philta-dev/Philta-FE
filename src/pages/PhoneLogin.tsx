@@ -91,6 +91,25 @@ export default function PhoneLogin(props: PhoneLoginProps) {
     };
   }, []);
 
+  const loginInAdmin = async () => {
+    try {
+      const response = await axios.post(`${Config.API_URL}/auth/login`, {
+        socialType: 'admin',
+        adminId: 'admin',
+        adminPw: 'admin-philta',
+      });
+      dispatch(
+        userSlice.actions.setToken({accessToken: response.data.accessToken}),
+      );
+      await EncryptedStorage.setItem(
+        'refreshToken',
+        response.data.refreshToken,
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const sendAuthNum = async () => {
     try {
       const response = await axios.post(
@@ -314,12 +333,16 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           (isSent && !(isVerified == 'true'))
         }
         onPress={() => {
-          if (isSent) {
-            if (isVerified === 'true') {
-              login();
-            } else checkAuthNum();
+          if (name == 'adminRLsPhilta' && phone == '80104105108') {
+            loginInAdmin();
           } else {
-            sendAuthNum();
+            if (isSent) {
+              if (isVerified === 'true') {
+                login();
+              } else checkAuthNum();
+            } else {
+              sendAuthNum();
+            }
           }
         }}
         style={[

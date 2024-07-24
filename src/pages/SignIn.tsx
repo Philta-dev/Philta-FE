@@ -10,7 +10,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
-import {Ex} from '../components/animations';
+import {Ex, Splash} from '../components/animations';
 import {useEffect} from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
@@ -26,25 +26,6 @@ type SignInProps = {
 export default function SignIn(props: SignInProps) {
   const navigation = props.navigation;
   const dispatch = useAppDispatch();
-
-  const loginInAdmin = async () => {
-    try {
-      const response = await axios.post(`${Config.API_URL}/auth/login`, {
-        socialType: 'admin',
-        adminId: 'admin',
-        adminPw: 'admin-philta',
-      });
-      dispatch(
-        userSlice.actions.setToken({accessToken: response.data.accessToken}),
-      );
-      await EncryptedStorage.setItem(
-        'refreshToken',
-        response.data.refreshToken,
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const LoginWithKakao = async () => {
     console.log('카카오 로그인');
@@ -214,12 +195,12 @@ export default function SignIn(props: SignInProps) {
   return (
     <View style={styles.entire}>
       <Pressable
-        onPress={() =>
-          // dispatch(userSlice.actions.setToken({accessToken: '1234'}))
-          loginInAdmin()
-        }
+        // onPress={() =>
+        //   dispatch(userSlice.actions.setToken({accessToken: '1234'}))
+        //   loginInAdmin()
+        // }
         style={styles.title}>
-        <Text style={styles.titleTxt}>필타</Text>
+        <Splash loop={true} />
       </Pressable>
       <View style={styles.btnView}>
         <Pressable
@@ -235,10 +216,17 @@ export default function SignIn(props: SignInProps) {
           </Pressable>
         )}
         <Pressable
-          style={[styles.btn, {backgroundColor: '#FEE500'}]}
+          style={[
+            styles.btn,
+            {
+              backgroundColor: 'white',
+              borderRadius: 7,
+              borderWidth: 1,
+              borderColor: '#DEDEDE',
+            },
+          ]}
           onPress={() => LoginWithGoogle()}>
-          {/* <SvgXml xml={svgList.socialLogin.kakao} /> */}
-          <Text>google</Text>
+          <SvgXml xml={svgList.socialLogin.google} />
         </Pressable>
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
