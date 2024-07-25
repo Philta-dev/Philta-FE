@@ -16,6 +16,7 @@ import Config from 'react-native-config';
 import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import {trackEvent} from '../services/trackEvent.service';
+import TextBold from '../components/TextBold';
 
 export type RootTabParamList = {
   Typing: undefined;
@@ -199,7 +200,7 @@ export default function BaseNav() {
               <View style={styles.header}>
                 <View style={styles.headerLeft} />
                 <View style={styles.headerCenter}>
-                  <Text style={styles.headerTitleTxt}>전체 성경</Text>
+                  <TextBold style={styles.headerTitleTxt}>전체 성경</TextBold>
                 </View>
                 <View style={styles.headerRight}>
                   <Pressable
@@ -229,7 +230,7 @@ export default function BaseNav() {
               <View style={styles.header}>
                 <View style={styles.headerLeft} />
                 <View style={styles.headerCenter}>
-                  <Text style={styles.headerTitleTxt}>북마크</Text>
+                  <TextBold style={styles.headerTitleTxt}>북마크</TextBold>
                 </View>
                 <View style={styles.headerRight}>
                   <Pressable
@@ -304,7 +305,6 @@ const styles = StyleSheet.create({
   headerTitleTxt: {
     fontSize: 18,
     fontWeight: '600',
-    fontFamily: 'KoPubWorldBatangPB',
     letterSpacing: -0.32,
   },
   headerRight: {

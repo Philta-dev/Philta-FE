@@ -19,6 +19,7 @@ import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 import {useSelector} from 'react-redux';
 import {trackEvent} from '../services/trackEvent.service';
+import TextBold from '../components/TextBold';
 
 type FavScreenNavigationProp = NativeStackNavigationProp<
   NavParamList,
@@ -294,7 +295,9 @@ export default function Favorite(props: FavProps) {
                     />
                   </Pressable>
                   <View style={styles.favContent}>
-                    <Text style={styles.favReference}>{item.reference}</Text>
+                    <TextBold style={styles.favReference}>
+                      {item.reference}
+                    </TextBold>
                     <View style={styles.favText}>
                       {item.text.split('').map((txt, i) => (
                         <Text key={`${index}-${i}`}>{txt}</Text>
@@ -353,7 +356,7 @@ const styles = StyleSheet.create({
   },
   topTabbarButtonTxt: {
     fontSize: 18,
-    lineHeight: 21,
+    // lineHeight: 21,
     letterSpacing: -0.32,
     color: '#3C3C4399',
   },
@@ -369,7 +372,7 @@ const styles = StyleSheet.create({
   },
   topTabbarHorizontalItemTxt: {
     fontSize: 16,
-    lineHeight: 22,
+    // lineHeight: 22,
     letterSpacing: -0.32,
     color: '#000000',
   },
@@ -391,7 +394,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.28,
     color: '#000000',
     fontWeight: '600',
-    fontFamily: 'KoPubWorldBatangPB',
     marginBottom: 10,
   },
   favText: {

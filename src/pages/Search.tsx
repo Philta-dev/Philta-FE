@@ -9,6 +9,7 @@ import {svgList} from '../assets/svgList';
 import {useEffect, useRef, useState} from 'react';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
+import TextBold from '../components/TextBold';
 
 type SearchScreenNavigationProp = NativeStackNavigationProp<
   NavParamList,
@@ -123,9 +124,11 @@ export default function Search(props: SearchProps) {
               <Text style={styles.searchedBoldTxt}>{item.name}</Text> */}
                 {item.name.split('').map((txt, i) =>
                   txt.toLocaleLowerCase() == search.toLocaleLowerCase() ? (
-                    <Text style={styles.searchedBoldTxt} key={`${index}-${i}`}>
+                    <TextBold
+                      style={styles.searchedBoldTxt}
+                      key={`${index}-${i}`}>
                       {txt}
-                    </Text>
+                    </TextBold>
                   ) : (
                     <Text style={styles.searchedTxt} key={`${index}-${i}`}>
                       {txt}
@@ -201,7 +204,6 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'KoPubWorldBatangPB',
     lineHeight: 32,
     letterSpacing: -0.32,
   },

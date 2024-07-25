@@ -3,7 +3,7 @@ import React from 'react';
 import {Text as RNText, TextProps} from 'react-native';
 
 export interface TextPropsCustom extends TextProps {
-  children: React.ReactNode;
+  children: React.ReactNode | React.ReactNode[] | string;
 }
 
 const Text: React.FC<TextPropsCustom> = ({children, style, ...props}) => {

@@ -12,16 +12,12 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2812FEAF72E34A8492621F30 /* KoPubWorld Dotum_Pro Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2A7FE93E413D4CEAA02AD323 /* KoPubWorld Dotum_Pro Bold.otf */; };
-		3F0295311B2543C68847D1B3 /* KoPubWorld Batang_Pro Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = A10603F2208F4E208436C64F /* KoPubWorld Batang_Pro Light.otf */; };
 		67597B7EF9D998CADD76D187 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */; };
-		75E2E19E8A384E8F8BCD820A /* KoPubWorld Batang_Pro Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = F2401064F3244B338B584335 /* KoPubWorld Batang_Pro Bold.otf */; };
 		7699B88040F8A987B510C191 /* libPods-Philta-PhiltaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Philta-PhiltaTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		8FBE8A077BC64C9AB8430647 /* KoPubWorld Batang_Pro Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 699F30FE29B54536B150F188 /* KoPubWorld Batang_Pro Medium.otf */; };
 		98A74FC6AFFA48BD9F238088 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */; };
-		9D35F41A740043CB95923E97 /* KoPubWorld Dotum_Pro Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = D92478A322884D04A0F4D5BD /* KoPubWorld Dotum_Pro Light.otf */; };
-		A5C44C529B5841DFB2AC8590 /* KoPubWorld Dotum_Pro Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF1742C64C8B44A99D2AA041 /* KoPubWorld Dotum_Pro Medium.otf */; };
+		98ADB4BB08704FB5B94B6A0E /* KoPubWorldBatangPB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */; };
+		7E67B2948F644C348F8019A2 /* KoPubWorldBatangPL.otf in Resources */ = {isa = PBXBuildFile; fileRef = 25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,21 +43,17 @@
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-Philta-PhiltaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Philta-PhiltaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = Philta/BootSplash.storyboard; sourceTree = "<group>"; };
-		2A7FE93E413D4CEAA02AD323 /* KoPubWorld Dotum_Pro Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "KoPubWorld Dotum_Pro Bold.otf"; path = "../src/assets/fonts/KoPubWorld Dotum_Pro Bold.otf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Philta.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta.debug.xcconfig"; path = "Target Support Files/Pods-Philta/Pods-Philta.debug.xcconfig"; sourceTree = "<group>"; };
 		52CAA55A2C25A7E3001E43AD /* Philta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Philta.entitlements; path = Philta/Philta.entitlements; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Philta.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta.release.xcconfig"; path = "Target Support Files/Pods-Philta/Pods-Philta.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Philta-PhiltaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta-PhiltaTests.debug.xcconfig"; path = "Target Support Files/Pods-Philta-PhiltaTests/Pods-Philta-PhiltaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-Philta.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Philta.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		699F30FE29B54536B150F188 /* KoPubWorld Batang_Pro Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "KoPubWorld Batang_Pro Medium.otf"; path = "../src/assets/fonts/KoPubWorld Batang_Pro Medium.otf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Philta/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Philta-PhiltaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta-PhiltaTests.release.xcconfig"; path = "Target Support Files/Pods-Philta-PhiltaTests/Pods-Philta-PhiltaTests.release.xcconfig"; sourceTree = "<group>"; };
-		A10603F2208F4E208436C64F /* KoPubWorld Batang_Pro Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "KoPubWorld Batang_Pro Light.otf"; path = "../src/assets/fonts/KoPubWorld Batang_Pro Light.otf"; sourceTree = "<group>"; };
 		B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		BF1742C64C8B44A99D2AA041 /* KoPubWorld Dotum_Pro Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "KoPubWorld Dotum_Pro Medium.otf"; path = "../src/assets/fonts/KoPubWorld Dotum_Pro Medium.otf"; sourceTree = "<group>"; };
-		D92478A322884D04A0F4D5BD /* KoPubWorld Dotum_Pro Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "KoPubWorld Dotum_Pro Light.otf"; path = "../src/assets/fonts/KoPubWorld Dotum_Pro Light.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F2401064F3244B338B584335 /* KoPubWorld Batang_Pro Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "KoPubWorld Batang_Pro Bold.otf"; path = "../src/assets/fonts/KoPubWorld Batang_Pro Bold.otf"; sourceTree = "<group>"; };
+		1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */ = {isa = PBXFileReference; name = "KoPubWorldBatangPB.otf"; path = "../src/assets/fonts/KoPubWorldBatangPB.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */ = {isa = PBXFileReference; name = "KoPubWorldBatangPL.otf"; path = "../src/assets/fonts/KoPubWorldBatangPL.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,12 +123,8 @@
 		41C7CE6C7D5740B29A4F721B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F2401064F3244B338B584335 /* KoPubWorld Batang_Pro Bold.otf */,
-				A10603F2208F4E208436C64F /* KoPubWorld Batang_Pro Light.otf */,
-				699F30FE29B54536B150F188 /* KoPubWorld Batang_Pro Medium.otf */,
-				2A7FE93E413D4CEAA02AD323 /* KoPubWorld Dotum_Pro Bold.otf */,
-				D92478A322884D04A0F4D5BD /* KoPubWorld Dotum_Pro Light.otf */,
-				BF1742C64C8B44A99D2AA041 /* KoPubWorld Dotum_Pro Medium.otf */,
+				1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */,
+				25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -281,12 +269,8 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				67597B7EF9D998CADD76D187 /* PrivacyInfo.xcprivacy in Resources */,
 				98A74FC6AFFA48BD9F238088 /* BootSplash.storyboard in Resources */,
-				75E2E19E8A384E8F8BCD820A /* KoPubWorld Batang_Pro Bold.otf in Resources */,
-				3F0295311B2543C68847D1B3 /* KoPubWorld Batang_Pro Light.otf in Resources */,
-				8FBE8A077BC64C9AB8430647 /* KoPubWorld Batang_Pro Medium.otf in Resources */,
-				2812FEAF72E34A8492621F30 /* KoPubWorld Dotum_Pro Bold.otf in Resources */,
-				9D35F41A740043CB95923E97 /* KoPubWorld Dotum_Pro Light.otf in Resources */,
-				A5C44C529B5841DFB2AC8590 /* KoPubWorld Dotum_Pro Medium.otf in Resources */,
+				98ADB4BB08704FB5B94B6A0E /* KoPubWorldBatangPB.otf in Resources */,
+				7E67B2948F644C348F8019A2 /* KoPubWorldBatangPL.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -510,7 +494,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Philta/Philta.entitlements;
-				CURRENT_PROJECT_VERSION = 2407251;
+				CURRENT_PROJECT_VERSION = 2407252;
 				DEVELOPMENT_TEAM = 52BCNB2X3L;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Philta/Info.plist;
@@ -539,7 +523,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Philta/Philta.entitlements;
-				CURRENT_PROJECT_VERSION = 2407251;
+				CURRENT_PROJECT_VERSION = 2407252;
 				DEVELOPMENT_TEAM = 52BCNB2X3L;
 				INFOPLIST_FILE = Philta/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

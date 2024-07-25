@@ -194,14 +194,9 @@ export default function SignIn(props: SignInProps) {
 
   return (
     <View style={styles.entire}>
-      <Pressable
-        // onPress={() =>
-        //   dispatch(userSlice.actions.setToken({accessToken: '1234'}))
-        //   loginInAdmin()
-        // }
-        style={styles.title}>
+      <View style={styles.title}>
         <Splash loop={true} />
-      </Pressable>
+      </View>
       <View style={styles.btnView}>
         <Pressable
           style={[styles.btn, {backgroundColor: '#FEE500'}]}
@@ -252,12 +247,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 50,
-  },
-  titleTxt: {
-    fontSize: 16,
-    fontFamily: 'KoPubWorldBatangPB',
-    fontWeight: '600',
-    color: '#000000',
   },
   btnView: {
     flex: 3,

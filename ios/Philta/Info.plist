@@ -66,12 +66,8 @@
 	<string/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>KoPubWorld Batang_Pro Bold.otf</string>
-		<string>KoPubWorld Batang_Pro Light.otf</string>
-		<string>KoPubWorld Batang_Pro Medium.otf</string>
-		<string>KoPubWorld Dotum_Pro Bold.otf</string>
-		<string>KoPubWorld Dotum_Pro Light.otf</string>
-		<string>KoPubWorld Dotum_Pro Medium.otf</string>
+		<string>KoPubWorldBatangPB.otf</string>
+		<string>KoPubWorldBatangPL.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash</string>

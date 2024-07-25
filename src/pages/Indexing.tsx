@@ -20,6 +20,7 @@ import userSlice from '../slices/user';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import {trackEvent} from '../services/trackEvent.service';
+import TextBold from '../components/TextBold';
 
 const buttonWidth = 80;
 const buttonSmallWidth = 40;
@@ -357,7 +358,7 @@ export default function Indexing(props: IndexProps) {
                   scrollToVerse(0, verse);
                 }}
                 style={[styles.item, {height: itemHeight}]}>
-                <Text
+                <TextBold
                   style={[
                     styles.itemText,
                     index === testamentFocusedIndex
@@ -365,7 +366,7 @@ export default function Indexing(props: IndexProps) {
                       : {fontSize: 17},
                   ]}>
                   {item}
-                </Text>
+                </TextBold>
               </Pressable>
             )}
             keyExtractor={(item, index) => index.toString()}
@@ -404,7 +405,7 @@ export default function Indexing(props: IndexProps) {
                   scrollToVerse(0, verse);
                 }}
                 style={[styles.item, {height: itemHeight}]}>
-                <Text
+                <TextBold
                   style={[
                     styles.itemText,
                     index === bookFocusedIndex
@@ -412,7 +413,7 @@ export default function Indexing(props: IndexProps) {
                       : {fontSize: 17},
                   ]}>
                   {item}
-                </Text>
+                </TextBold>
               </Pressable>
             )}
             keyExtractor={(item, index) => index.toString()}
@@ -456,7 +457,7 @@ export default function Indexing(props: IndexProps) {
                   chapFocusedIndex !== index && {width: buttonSmallWidth},
                   {height: itemHeight},
                 ]}>
-                <Text
+                <TextBold
                   style={[
                     styles.itemText,
                     index === chapFocusedIndex
@@ -467,7 +468,7 @@ export default function Indexing(props: IndexProps) {
                   {index === chapFocusedIndex
                     ? chapWord.replace('#', item.toString())
                     : item}
-                </Text>
+                </TextBold>
               </Pressable>
             )}
             keyExtractor={(item, index) => index.toString()}
@@ -508,7 +509,7 @@ export default function Indexing(props: IndexProps) {
                   verseFocusedIndex !== index && {width: buttonSmallWidth},
                   {height: itemHeight},
                 ]}>
-                <Text
+                <TextBold
                   style={[
                     styles.itemText,
                     index === verseFocusedIndex
@@ -519,7 +520,7 @@ export default function Indexing(props: IndexProps) {
                   {index === verseFocusedIndex
                     ? verseWord.replace('#', item.toString())
                     : item}
-                </Text>
+                </TextBold>
               </Pressable>
             )}
             keyExtractor={(item, index) => index.toString()}
@@ -576,10 +577,10 @@ export default function Indexing(props: IndexProps) {
           onPress={() => {
             handlePointer();
           }}>
-          <Text
+          <TextBold
             style={[styles.confirmBtnTxt, loading && {color: 'transparent'}]}>
             완료
-          </Text>
+          </TextBold>
           {loading && (
             <View
               style={{
@@ -609,7 +610,6 @@ const styles = StyleSheet.create({
   },
   itemText: {
     color: 'black',
-    fontFamily: 'KoPubWorldBatangPB',
     fontWeight: '600',
     lineHeight: 25,
     letterSpacing: -0.32,
@@ -659,7 +659,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'KoPubWorldBatangPB',
     lineHeight: 24,
     letterSpacing: -0.32,
   },

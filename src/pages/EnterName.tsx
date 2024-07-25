@@ -19,6 +19,7 @@ import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
 import {SignInNavParamList} from '../../AppInner';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import TextBold from '../components/TextBold';
 
 type EnterNameNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -112,7 +113,7 @@ export default function EnterName(props: EnterNameProps) {
           styles.submitBtn,
           name ? {backgroundColor: '#5856D6'} : {backgroundColor: '#9B9EA5'},
         ]}>
-        <Text style={styles.btnTxt}>완료</Text>
+        <TextBold style={styles.btnTxt}>완료</TextBold>
       </Pressable>
     </View>
   );
@@ -159,7 +160,6 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'KoPubWorldBatangPB',
     textAlign: 'center',
     color: 'white',
   },

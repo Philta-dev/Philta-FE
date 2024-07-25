@@ -37,6 +37,7 @@ import appleAuth from '@invertase/react-native-apple-authentication';
 import Modal from 'react-native-modal';
 import {resetTrackUser, trackEvent} from '../services/trackEvent.service';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import TextBold from '../components/TextBold';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
@@ -787,9 +788,9 @@ export default function Typing(props: TypingProps) {
                 height={20}
               />
             </View>
-            <Text style={[styles.modalBtnTxt, {color: '#EBEBF599'}]}>
+            <TextBold style={[styles.modalBtnTxt, {color: '#EBEBF599'}]}>
               구절 타이핑
-            </Text>
+            </TextBold>
           </Pressable>
           <Pressable
             onPress={() => {
@@ -812,7 +813,7 @@ export default function Typing(props: TypingProps) {
                 height={40}
               />
             </View>
-            <Text style={styles.modalBtnTxt}>전체 성경</Text>
+            <TextBold style={styles.modalBtnTxt}>전체 성경</TextBold>
           </Pressable>
           <Pressable
             onPress={() => {
@@ -827,18 +828,18 @@ export default function Typing(props: TypingProps) {
                 height={40}
               />
             </View>
-            <Text style={styles.modalBtnTxt}>북마크</Text>
+            <TextBold style={styles.modalBtnTxt}>북마크</TextBold>
           </Pressable>
           <View style={styles.modalBottomView}>
             <Pressable style={styles.modalBottomBtn}>
-              <Text style={styles.modalBottomBtnTxt}>문의하기</Text>
+              <TextBold style={styles.modalBottomBtnTxt}>문의하기</TextBold>
             </Pressable>
             <Pressable
               style={styles.modalBottomBtn}
               onPress={() => {
                 logout();
               }}>
-              <Text style={styles.modalBottomBtnTxt}>로그아웃</Text>
+              <TextBold style={styles.modalBottomBtnTxt}>로그아웃</TextBold>
             </Pressable>
             <Pressable
               style={styles.modalBottomBtn}
@@ -846,9 +847,10 @@ export default function Typing(props: TypingProps) {
                 setShowQuitModal(true);
                 // quit();
               }}>
-              <Text style={[styles.modalBottomBtnTxt, {color: '#EBEBF599'}]}>
+              <TextBold
+                style={[styles.modalBottomBtnTxt, {color: '#EBEBF599'}]}>
                 회원탈퇴
-              </Text>
+              </TextBold>
             </Pressable>
           </View>
           <Modal
@@ -871,16 +873,15 @@ export default function Typing(props: TypingProps) {
                 backgroundColor: 'white',
                 borderRadius: 8,
               }}>
-              <Text
+              <TextBold
                 style={{
                   marginVertical: 8,
                   color: 'black',
-                  fontFamily: 'KoPubWorldBatangPB',
                   fontSize: 18,
                   fontWeight: '600',
                 }}>
                 회원탈퇴
-              </Text>
+              </TextBold>
               <Text
                 style={{
                   color: 'black',
@@ -905,15 +906,14 @@ export default function Typing(props: TypingProps) {
                     // paddingHorizontal: 48,
                     backgroundColor: '#FF3B30',
                   }}>
-                  <Text
+                  <TextBold
                     style={{
                       color: '#FFFFFF',
                       fontSize: 16,
                       fontWeight: '600',
-                      fontFamily: 'KoPubWorldBatangPB',
                     }}>
                     탈퇴
-                  </Text>
+                  </TextBold>
                 </Pressable>
                 <View style={{width: 15}} />
                 <Pressable
@@ -927,15 +927,14 @@ export default function Typing(props: TypingProps) {
                     // paddingHorizontal: 48,
                     backgroundColor: '#C6C6C8',
                   }}>
-                  <Text
+                  <TextBold
                     style={{
                       color: 'black',
                       fontSize: 16,
                       fontWeight: '600',
-                      fontFamily: 'KoPubWorldBatangPB',
                     }}>
                     취소
-                  </Text>
+                  </TextBold>
                 </Pressable>
               </View>
             </View>
@@ -1100,7 +1099,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 21,
     letterSpacing: -0.32,
-    fontFamily: 'KoPubWorldBatangPB',
   },
   modalBottomView: {
     position: 'absolute',
@@ -1119,7 +1117,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 21,
     letterSpacing: -0.32,
-    fontFamily: 'KoPubWorldBatangPB',
   },
   typingArea: {
     paddingHorizontal: 40,
