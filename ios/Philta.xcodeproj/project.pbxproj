@@ -14,10 +14,10 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		67597B7EF9D998CADD76D187 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */; };
 		7699B88040F8A987B510C191 /* libPods-Philta-PhiltaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Philta-PhiltaTests.a */; };
+		7E67B2948F644C348F8019A2 /* KoPubWorldBatangPL.otf in Resources */ = {isa = PBXBuildFile; fileRef = 25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		98A74FC6AFFA48BD9F238088 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */; };
 		98ADB4BB08704FB5B94B6A0E /* KoPubWorldBatangPB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */; };
-		7E67B2948F644C348F8019A2 /* KoPubWorldBatangPL.otf in Resources */ = {isa = PBXBuildFile; fileRef = 25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,7 +42,9 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Philta/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-Philta-PhiltaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Philta-PhiltaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = KoPubWorldBatangPB.otf; path = ../src/assets/fonts/KoPubWorldBatangPB.otf; sourceTree = "<group>"; };
 		23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = Philta/BootSplash.storyboard; sourceTree = "<group>"; };
+		25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = KoPubWorldBatangPL.otf; path = ../src/assets/fonts/KoPubWorldBatangPL.otf; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Philta.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta.debug.xcconfig"; path = "Target Support Files/Pods-Philta/Pods-Philta.debug.xcconfig"; sourceTree = "<group>"; };
 		52CAA55A2C25A7E3001E43AD /* Philta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Philta.entitlements; path = Philta/Philta.entitlements; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Philta.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta.release.xcconfig"; path = "Target Support Files/Pods-Philta/Pods-Philta.release.xcconfig"; sourceTree = "<group>"; };
@@ -52,8 +54,6 @@
 		89C6BE57DB24E9ADA2F236DE /* Pods-Philta-PhiltaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta-PhiltaTests.release.xcconfig"; path = "Target Support Files/Pods-Philta-PhiltaTests/Pods-Philta-PhiltaTests.release.xcconfig"; sourceTree = "<group>"; };
 		B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */ = {isa = PBXFileReference; name = "KoPubWorldBatangPB.otf"; path = "../src/assets/fonts/KoPubWorldBatangPB.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */ = {isa = PBXFileReference; name = "KoPubWorldBatangPL.otf"; path = "../src/assets/fonts/KoPubWorldBatangPL.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -494,7 +494,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Philta/Philta.entitlements;
-				CURRENT_PROJECT_VERSION = 2407252;
+				CURRENT_PROJECT_VERSION = 2407311;
 				DEVELOPMENT_TEAM = 52BCNB2X3L;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Philta/Info.plist;
@@ -502,7 +502,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -523,14 +523,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Philta/Philta.entitlements;
-				CURRENT_PROJECT_VERSION = 2407252;
+				CURRENT_PROJECT_VERSION = 2407311;
 				DEVELOPMENT_TEAM = 52BCNB2X3L;
 				INFOPLIST_FILE = Philta/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
