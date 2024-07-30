@@ -200,6 +200,11 @@ export default function Indexing(props: IndexProps) {
           animated: true,
           offset: index * buttonSmallWidth + 20,
         });
+      } else if (type == 'chap' || type == 'verse') {
+        ref.current?.scrollToOffset({
+          animated: true,
+          offset: index * buttonSmallWidth + 20,
+        });
       }
       setLoading(false);
     }
@@ -478,6 +483,17 @@ export default function Indexing(props: IndexProps) {
             }}
             showsHorizontalScrollIndicator={false}
             decelerationRate="fast"
+            onScrollEndDrag={e => {
+              if (e.nativeEvent.velocity?.x === 0 && loading) {
+                handleScroll(e, {
+                  ref: scrollRef3,
+                  type: 'chap',
+                  datalen: chap.length,
+                  selectedIndex: chapFocusedIndex,
+                  setSelectedIndex: setChapFocusedIndex,
+                });
+              }
+            }}
             onMomentumScrollEnd={e =>
               handleScroll(e, {
                 ref: scrollRef3,
@@ -530,6 +546,17 @@ export default function Indexing(props: IndexProps) {
             onScrollBeginDrag={() => {
               setLoading(true);
             }}
+            onScrollEndDrag={e => {
+              if (e.nativeEvent.velocity?.x === 0 && loading) {
+                handleScroll(e, {
+                  ref: scrollRef4,
+                  type: 'verse',
+                  datalen: verse.length,
+                  selectedIndex: verseFocusedIndex,
+                  setSelectedIndex: setVerseFocusedIndex,
+                });
+              }
+            }}
             onMomentumScrollEnd={e =>
               handleScroll(e, {
                 ref: scrollRef4,
@@ -566,7 +593,7 @@ export default function Indexing(props: IndexProps) {
           style={[
             styles.indexingTxt,
             {
-              marginTop: windowHeight > 600 ? 18 : 24,
+              marginTop: windowHeight > 600 ? 10 : 24,
             },
           ]}>
           {fullname}

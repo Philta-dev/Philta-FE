@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {LinearGradient} from 'react-native-linear-gradient';
-import {SvgXml} from 'react-native-svg';
+import Svg, {Line, SvgXml} from 'react-native-svg';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../navigations/BaseNav';
 import MenuModal from '../components/MenuModal';
@@ -595,19 +595,29 @@ export default function Typing(props: TypingProps) {
                       );
                     },
                   )}
-                  <Text
+                  {/* <Text
                     style={[
                       {
                         fontSize: 20,
                         fontWeight: '600',
-                        lineHeight: Platform.OS == 'ios' ? 27 : 30,
-                        letterSpacing: Platform.OS == 'ios' ? -1 : -8,
+                        lineHeight: Platform.OS == 'ios' ? 0 : 30,
+                        letterSpacing: Platform.OS == 'ios' ? -10 : -8,
                         zIndex: 1,
                       },
                       cursor ? {color: 'transparent'} : {color: '#5856D6'},
                     ]}>
                     |
-                  </Text>
+                  </Text> */}
+                  <Svg height={25} width={2}>
+                    <Line
+                      x1={0}
+                      x2={0}
+                      y1={5}
+                      y2={24}
+                      strokeWidth={4}
+                      stroke={cursor ? 'transparent' : '#5856D6'}
+                    />
+                  </Svg>
                   {textArray.slice(text.length).map((char, index) => {
                     return (
                       <Text
