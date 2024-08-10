@@ -94,6 +94,7 @@ export default function Indexing(props: IndexProps) {
   };
 
   const scrollToTestament = (index: number, data: string[]) => {
+    console.log('scrollToTestament');
     if (index >= 0 && index < data.length) {
       setTimeout(() => {
         scrollRef1.current?.scrollToOffset({
@@ -104,6 +105,7 @@ export default function Indexing(props: IndexProps) {
     }
   };
   const scrollToBook = (index: number, data: string[]) => {
+    console.log('scrollToBook');
     if (index >= 0 && index < data.length) {
       setTimeout(() => {
         scrollRef2.current?.scrollToOffset({
@@ -114,21 +116,23 @@ export default function Indexing(props: IndexProps) {
     }
   };
   const scrollToChap = (index: number, data: number[]) => {
+    console.log('scrollToChap');
     if (index >= 0 && index < data.length) {
       setTimeout(() => {
         scrollRef3.current?.scrollToOffset({
           animated: true,
-          offset: index * buttonSmallWidth + 20,
+          offset: index * buttonWidth,
         });
       }, 0);
     }
   };
   const scrollToVerse = (index: number, data: number[]) => {
+    console.log('scrollToVerse');
     if (index >= 0 && index < data.length) {
       setTimeout(() => {
         scrollRef4.current?.scrollToOffset({
           animated: true,
-          offset: index * buttonSmallWidth + 20,
+          offset: index * buttonWidth,
         });
       }, 0);
     }
@@ -150,24 +154,14 @@ export default function Indexing(props: IndexProps) {
       setSelectedIndex: React.Dispatch<SetStateAction<number>>;
     },
   ) => {
+    console.log('handleScroll', selectedIndex);
     const offsetX = e.nativeEvent.contentOffset.x;
-    let direction =
-      type == 'chap' || type == 'verse'
-        ? offsetX > selectedIndex * buttonSmallWidth + 20
-          ? 'right'
-          : 'left'
-        : offsetX > selectedIndex * buttonWidth
-        ? 'right'
-        : 'left';
-    const index =
-      type == 'testament' || type == 'book'
-        ? Math.round(offsetX / buttonWidth)
-        : direction == 'right'
-        ? Math.round((offsetX - 40) / buttonSmallWidth)
-        : Math.round((offsetX - 20) / buttonSmallWidth);
+    // let direction = offsetX > selectedIndex * buttonWidth ? 'right' : 'left';
+    const index = Math.round(offsetX / buttonWidth);
     console.log('offsetX', offsetX);
-    console.log(buttonSmallWidth * index);
     if (index !== selectedIndex) {
+      console.log('index', index, 'selectedIndex', selectedIndex);
+      setSelectedIndex(index);
       if (type == 'testament') {
         scrollToTestament(index, testament);
         scrollToBook(0, book);
@@ -184,28 +178,37 @@ export default function Indexing(props: IndexProps) {
         scrollToVerse(0, verse);
       } else if (type == 'chap') {
         scrollToChap(index, chap);
+        // scrollRef3.current?.scrollToOffset({
+        //   animated: true,
+        //   offset: index * buttonSmallWidth + 20,
+        // });
         setVerseFocusedIndex(0);
         scrollToVerse(0, verse);
       } else {
         scrollToVerse(index, verse);
+        // console.log('scrollToVerse', index, index * buttonSmallWidth + 20);
+        // scrollRef4.current?.scrollToOffset({
+        //   animated: true,
+        //   offset: index * buttonSmallWidth + 20,
+        // });
       }
-      setSelectedIndex(index);
     } else {
-      if (
-        (type == 'chap' || type == 'verse') &&
-        offsetX > (datalen - 1) * buttonSmallWidth + 20
-      ) {
-        console.log('overflow', type, index, datalen - 1);
-        ref.current?.scrollToOffset({
-          animated: true,
-          offset: index * buttonSmallWidth + 20,
-        });
-      } else if (type == 'chap' || type == 'verse') {
-        ref.current?.scrollToOffset({
-          animated: true,
-          offset: index * buttonSmallWidth + 20,
-        });
-      }
+      console.log('same index');
+      // if (
+      //   (type == 'chap' || type == 'verse') &&
+      //   offsetX > (datalen - 1) * buttonSmallWidth + 20
+      // ) {
+      //   console.log('overflow', type, index, datalen - 1);
+      //   ref.current?.scrollToOffset({
+      //     animated: true,
+      //     offset: index * buttonSmallWidth + 20,
+      //   });
+      // } else if (type == 'chap' || type == 'verse') {
+      //   ref.current?.scrollToOffset({
+      //     animated: true,
+      //     offset: index * buttonSmallWidth + 20,
+      //   });
+      // }
       setLoading(false);
     }
   };
@@ -254,6 +257,7 @@ export default function Indexing(props: IndexProps) {
 
   useEffect(() => {
     setLoading(true);
+    console.log('useEffect > getData');
     setTimeout(() => getData(), 0);
   }, [
     testamentFocusedIndex,
@@ -264,6 +268,7 @@ export default function Indexing(props: IndexProps) {
   ]);
 
   const getData = async () => {
+    console.log('getData');
     try {
       const response = await axios.get(
         reduxTestament !== -1
@@ -289,12 +294,8 @@ export default function Indexing(props: IndexProps) {
       setFullname(response.data.full_name);
       setVerseId(response.data.verseId);
       if (reduxTestament !== -1) {
-        setTestamentFocusedIndex(reduxTestament);
-        setBookFocusedIndex(reduxBook);
-        setChapFocusedIndex(reduxChap);
-        setVerseFocusedIndex(reduxVerse);
+        checkRedux(response.data.books);
       }
-      checkRedux(response.data.books);
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -306,6 +307,10 @@ export default function Indexing(props: IndexProps) {
   const checkRedux = (books: string[]) => {
     console.log('redux', reduxTestament, reduxBook, reduxChap, reduxVerse);
     if (reduxTestament !== -1) {
+      setTestamentFocusedIndex(reduxTestament);
+      setBookFocusedIndex(reduxBook);
+      setChapFocusedIndex(reduxChap);
+      setVerseFocusedIndex(reduxVerse);
       setTimeout(() => {
         scrollToTestament(reduxTestament, testament);
         scrollToBook(reduxBook, books);
@@ -444,11 +449,12 @@ export default function Indexing(props: IndexProps) {
           />
           <View style={{height: 16}} />
           <FlatList
+            scrollEnabled={true}
             ref={scrollRef3}
             data={chap}
-            onLayout={() => {
-              scrollRef3.current?.scrollToOffset({offset: 20, animated: false});
-            }}
+            // onLayout={() => {
+            //   scrollRef3.current?.scrollToOffset({offset: 20, animated: false});
+            // }}
             renderItem={({item, index}) => (
               <Pressable
                 onPress={() => {
@@ -459,7 +465,7 @@ export default function Indexing(props: IndexProps) {
                 }}
                 style={[
                   styles.item,
-                  chapFocusedIndex !== index && {width: buttonSmallWidth},
+                  // chapFocusedIndex !== index && {width: buttonSmallWidth},
                   {height: itemHeight},
                 ]}>
                 <TextBold
@@ -483,8 +489,9 @@ export default function Indexing(props: IndexProps) {
             }}
             showsHorizontalScrollIndicator={false}
             decelerationRate="fast"
+            snapToInterval={buttonWidth}
             onScrollEndDrag={e => {
-              if (e.nativeEvent.velocity?.x === 0 && loading) {
+              if (e.nativeEvent.velocity?.x === 0) {
                 handleScroll(e, {
                   ref: scrollRef3,
                   type: 'chap',
@@ -504,16 +511,17 @@ export default function Indexing(props: IndexProps) {
               })
             }
             contentContainerStyle={{
-              paddingHorizontal: (screenWidth - buttonSmallWidth) / 2,
+              paddingHorizontal: (screenWidth - buttonWidth) / 2,
             }}
           />
           <View style={{height: 16}} />
           <FlatList
+            scrollEnabled={true}
             ref={scrollRef4}
             data={verse}
-            onLayout={() => {
-              scrollRef4.current?.scrollToOffset({offset: 20, animated: false});
-            }}
+            // onLayout={() => {
+            //   scrollRef4.current?.scrollToOffset({offset: 20, animated: false});
+            // }}
             renderItem={({item, index}) => (
               <Pressable
                 onPress={() => {
@@ -522,7 +530,7 @@ export default function Indexing(props: IndexProps) {
                 }}
                 style={[
                   styles.item,
-                  verseFocusedIndex !== index && {width: buttonSmallWidth},
+                  // verseFocusedIndex !== index && {width: buttonSmallWidth},
                   {height: itemHeight},
                 ]}>
                 <TextBold
@@ -542,12 +550,14 @@ export default function Indexing(props: IndexProps) {
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
+            snapToInterval={buttonWidth}
             decelerationRate="fast"
             onScrollBeginDrag={() => {
               setLoading(true);
             }}
             onScrollEndDrag={e => {
-              if (e.nativeEvent.velocity?.x === 0 && loading) {
+              if (e.nativeEvent.velocity?.x === 0) {
+                console.log('velocity 0');
                 handleScroll(e, {
                   ref: scrollRef4,
                   type: 'verse',
@@ -567,7 +577,7 @@ export default function Indexing(props: IndexProps) {
               })
             }
             contentContainerStyle={{
-              paddingHorizontal: (screenWidth - buttonSmallWidth) / 2,
+              paddingHorizontal: (screenWidth - buttonWidth) / 2,
             }}
           />
           <LinearGradient

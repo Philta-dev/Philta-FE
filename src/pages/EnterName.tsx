@@ -93,10 +93,10 @@ export default function EnterName(props: EnterNameProps) {
           <SvgXml xml={svgList.backBtn} width={24} height={24} />
         </Pressable>
         <Text style={styles.titleTxt}>
-          {'이름을 입력하면\n회원가입이 완료됩니다.'}
+          {'닉네임을 입력하면\n회원가입이 완료됩니다.'}
         </Text>
         <TextInput
-          placeholder="이름"
+          placeholder="닉네임"
           style={styles.input}
           placeholderTextColor={'#3C3C4399'}
           value={name}
@@ -113,7 +113,7 @@ export default function EnterName(props: EnterNameProps) {
           styles.submitBtn,
           name ? {backgroundColor: '#5856D6'} : {backgroundColor: '#9B9EA5'},
         ]}>
-        <TextBold style={styles.btnTxt}>완료</TextBold>
+        <Text style={styles.btnTxt}>완료</Text>
       </Pressable>
     </View>
   );
