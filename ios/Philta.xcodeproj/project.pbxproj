@@ -494,7 +494,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Philta/Philta.entitlements;
-				CURRENT_PROJECT_VERSION = 2408101;
+				CURRENT_PROJECT_VERSION = 2408111;
 				DEVELOPMENT_TEAM = 52BCNB2X3L;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Philta/Info.plist;
@@ -502,7 +502,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -523,14 +523,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Philta/Philta.entitlements;
-				CURRENT_PROJECT_VERSION = 2408101;
+				CURRENT_PROJECT_VERSION = 2408111;
 				DEVELOPMENT_TEAM = 52BCNB2X3L;
 				INFOPLIST_FILE = Philta/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.3;
+				MARKETING_VERSION = 1.0.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
