@@ -10,6 +10,7 @@ import {
   Platform,
   FlatList,
   Animated,
+  Linking,
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {LinearGradient} from 'react-native-linear-gradient';
@@ -841,7 +842,13 @@ export default function Typing(props: TypingProps) {
             <TextBold style={styles.modalBtnTxt}>북마크</TextBold>
           </Pressable>
           <View style={styles.modalBottomView}>
-            <Pressable style={styles.modalBottomBtn}>
+            <Pressable
+              onPress={() => {
+                Linking.openURL(
+                  'https://rhealabs.notion.site/99ce6275fc8a4bc998cbc1ebccef613f?pvs=4',
+                );
+              }}
+              style={styles.modalBottomBtn}>
               <TextBold style={styles.modalBottomBtnTxt}>문의하기</TextBold>
             </Pressable>
             <Pressable

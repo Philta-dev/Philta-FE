@@ -82,6 +82,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
+	<NO/>
 </dict>
 </plist>
