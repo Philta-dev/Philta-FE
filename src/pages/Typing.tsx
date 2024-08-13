@@ -39,17 +39,13 @@ import Modal from 'react-native-modal';
 import {resetTrackUser, trackEvent} from '../services/trackEvent.service';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import TextBold from '../components/TextBold';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
 >;
-// type TypingWithSearchScreenNavigationProp = NativeStackNavigationProp<
-//   NavParamList,
-//   'Base'
-// >;
 type TypingProps = {
   navigation: TypingScreenNavigationProp;
-  // navigation: TypingWithSearchScreenNavigationProp;
 };
 
 type verseContent = {
@@ -791,7 +787,18 @@ export default function Typing(props: TypingProps) {
           />
           <Pressable
             style={styles.modalBtn}
-            onPress={() => console.log(StatusBarHeight)}>
+            onPress={() => {
+              setShowModal(false);
+              dispatch(
+                userSlice.actions.setIndex({
+                  testament: -1,
+                  book: -1,
+                  chapter: -1,
+                  verse: -1,
+                }),
+              );
+              props.navigation.navigate('Favorite');
+            }}>
             <View style={[styles.modalBtnIcon, {backgroundColor: '#EBEBF599'}]}>
               <SvgXml
                 xml={svgList.tabbar.modal.typing}
@@ -799,9 +806,7 @@ export default function Typing(props: TypingProps) {
                 height={20}
               />
             </View>
-            <TextBold style={[styles.modalBtnTxt, {color: '#EBEBF599'}]}>
-              구절 타이핑
-            </TextBold>
+            <TextBold style={styles.modalBtnTxt}>북마크</TextBold>
           </Pressable>
           <Pressable
             onPress={() => {
@@ -814,7 +819,7 @@ export default function Typing(props: TypingProps) {
                   verse: -1,
                 }),
               );
-              props.navigation.navigate('Indexing');
+              props.navigation.navigate('Statistics');
             }}
             style={styles.modalBtn}>
             <View style={styles.modalBtnIcon}>
@@ -824,23 +829,9 @@ export default function Typing(props: TypingProps) {
                 height={40}
               />
             </View>
-            <TextBold style={styles.modalBtnTxt}>전체 성경</TextBold>
+            <TextBold style={styles.modalBtnTxt}>나의 통계</TextBold>
           </Pressable>
-          <Pressable
-            onPress={() => {
-              setShowModal(false);
-              props.navigation.navigate('Favorite');
-            }}
-            style={styles.modalBtn}>
-            <View style={styles.modalBtnIcon}>
-              <SvgXml
-                xml={svgList.tabbar.modal.favorite}
-                width={40}
-                height={40}
-              />
-            </View>
-            <TextBold style={styles.modalBtnTxt}>북마크</TextBold>
-          </Pressable>
+
           <View style={styles.modalBottomView}>
             <Pressable
               onPress={() => {
