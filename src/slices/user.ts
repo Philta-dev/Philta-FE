@@ -9,6 +9,7 @@ const initialState = {
   book: -1,
   chapter: -1,
   verse: -1,
+  lang: 'en',
 };
 
 const userSlice = createSlice({
@@ -42,6 +43,9 @@ const userSlice = createSlice({
     },
     setVersion(state, action) {
       state.version = action.payload.version;
+    },
+    setLang(state, action) {
+      state.lang = action.payload.lang;
     },
   },
   extraReducers: builder => {},

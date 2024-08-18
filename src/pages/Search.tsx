@@ -123,7 +123,11 @@ export default function Search(props: SearchProps) {
                 {/* <Text style={styles.searchedTxt}>{item.name}</Text>
               <Text style={styles.searchedBoldTxt}>{item.name}</Text> */}
                 {item.name.split('').map((txt, i) =>
-                  txt.toLocaleLowerCase() == search.toLocaleLowerCase() ? (
+                  i >= item.name.toLowerCase().indexOf(search.toLowerCase()) &&
+                  i <=
+                    item.name.toLowerCase().indexOf(search.toLowerCase()) +
+                      search.length -
+                      1 ? (
                     <TextBold
                       style={styles.searchedBoldTxt}
                       key={`${index}-${i}`}>

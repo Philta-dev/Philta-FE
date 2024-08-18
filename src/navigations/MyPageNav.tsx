@@ -155,7 +155,7 @@ export default function MyPageNav() {
                 <View style={styles.headerRight}>
                   <Pressable
                     onPress={() =>
-                      props.navigation.navigate('Search', {page: 'Favorite'})
+                      props.navigation.navigate('Search', {page: 'favorite'})
                     }>
                     <SvgXml xml={svgList.searchBtn} width={24} height={24} />
                   </Pressable>

@@ -9,7 +9,6 @@ import {SvgXml} from 'react-native-svg';
 import Text from '../components/Text';
 import Typing from '../pages/Typing';
 import Indexing from '../pages/Indexing';
-import Favorite from '../pages/Favorite';
 import DropDownModal from '../components/DropDownModal';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
