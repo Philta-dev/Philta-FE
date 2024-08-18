@@ -49,6 +49,8 @@ type verseContent = {
 };
 
 export default function Typing(props: TypingProps) {
+  const lang = useSelector((state: RootState) => state.user.lang);
+
   const [pressedButton, setPressedButton] = useState('');
   const [status, setStatus] = useState('');
   const fadingTime = 200;
@@ -114,6 +116,7 @@ export default function Typing(props: TypingProps) {
 
   useEffect(() => {
     const KeyboardDismiss = Keyboard.addListener('keyboardDidHide', () => {
+      ref.current?.blur();
       setKeyBoardHeight(0);
       setVersionDropdown(false);
       console.log('keyboard dismiss');
@@ -744,7 +747,9 @@ export default function Typing(props: TypingProps) {
                 height={40}
               />
             </View>
-            <TextBold style={styles.modalBtnTxt}>북마크</TextBold>
+            <TextBold style={styles.modalBtnTxt}>
+              {lang == 'en' ? 'bookmark' : '북마크'}
+            </TextBold>
           </Pressable>
           <Pressable
             onPress={() => {
@@ -767,7 +772,9 @@ export default function Typing(props: TypingProps) {
                 height={40}
               />
             </View>
-            <TextBold style={styles.modalBtnTxt}>나의 통계</TextBold>
+            <TextBold style={styles.modalBtnTxt}>
+              {lang == 'en' ? 'progress' : '나의 통계'}
+            </TextBold>
           </Pressable>
         </MenuModal>
         {/* <ToastModal
@@ -841,10 +848,14 @@ export default function Typing(props: TypingProps) {
           svgxml={svgList.modal.check}
           text={
             is_last_in_book
-              ? current_bookname + ' 필타가 완료됐습니다'
+              ? lang == 'en'
+                ? current_bookname + ' typing completed'
+                : current_bookname + ' 필타가 완료됐습니다'
+              : lang == 'en'
+              ? 'proceeding to ' + next_location
               : next_location + '으로 이동합니다.'
           }
-          btnText={'확인'}
+          btnText={lang == 'en' ? 'confirm' : '확인'}
           onBtnPress={() => {
             if (nextVerse) {
               setPageMove(true);

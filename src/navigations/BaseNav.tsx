@@ -12,11 +12,12 @@ import Indexing from '../pages/Indexing';
 import DropDownModal from '../components/DropDownModal';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
-import {useAppDispatch} from '../store';
+import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import {trackEvent} from '../services/trackEvent.service';
 import TextBold from '../components/TextBold';
 import MyPageNav from './MyPageNav';
+import {useSelector} from 'react-redux';
 
 export type RootTabParamList = {
   Typing: undefined;
@@ -32,6 +33,7 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const CustomTabbar = ({state, descriptors, navigation}: any) => {
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const iconList = [
     svgList.tabbar.typing,
@@ -43,7 +45,10 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
     svgList.tabbar.indexingPressed,
     svgList.tabbar.myPagePressed,
   ];
-  const labelList = ['구절 타이핑', '전체 성경', '마이페이지'];
+  const labelList =
+    lang == 'en'
+      ? ['typing', 'search', 'my page']
+      : ['구절 타이핑', '전체 성경', '마이페이지'];
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -136,6 +141,7 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 
 export default function BaseNav() {
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const [dropDown, setDropDown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
@@ -202,7 +208,9 @@ export default function BaseNav() {
               <View style={styles.header}>
                 <View style={styles.headerLeft} />
                 <View style={styles.headerCenter}>
-                  <TextBold style={styles.headerTitleTxt}>전체 성경</TextBold>
+                  <TextBold style={styles.headerTitleTxt}>
+                    {lang == 'en' ? 'search' : '전체 성경'}
+                  </TextBold>
                 </View>
                 <View style={styles.headerRight}>
                   <Pressable

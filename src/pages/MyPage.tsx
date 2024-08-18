@@ -39,6 +39,7 @@ type MyPageProps = {
 
 export default function MyPage(props: MyPageProps) {
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
 
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
@@ -52,7 +53,12 @@ export default function MyPage(props: MyPageProps) {
 
   const [showQuitModal, setShowQuitModal] = useState(false);
   const [socialType, setSocialType] = useState('');
-  const lang = useSelector((state: RootState) => state.user.lang);
+
+  const changeLanguage = async (lang: string) => {
+    dispatch(userSlice.actions.setLang({lang}));
+    EncryptedStorage.setItem('lang', lang);
+    console.log('change language to ' + lang);
+  };
 
   const logout = async () => {
     try {
@@ -121,13 +127,17 @@ export default function MyPage(props: MyPageProps) {
             <View style={styles.btnHeader}>
               <View style={styles.btnHeaderInner}>
                 <SvgXml xml={svgList.myPage.statistics} />
-                <TextBold style={styles.btnHeaderTxt}>나의 통계</TextBold>
+                <TextBold style={styles.btnHeaderTxt}>
+                  {lang == 'en' ? 'progress' : '나의 통계'}
+                </TextBold>
               </View>
               <SvgXml xml={svgList.myPage.arrowRight} />
             </View>
             <View style={styles.content}>
               <View style={styles.contentRow}>
-                <Text style={styles.contentTxt}>전체</Text>
+                <Text style={styles.contentTxt}>
+                  {lang == 'en' ? 'Total' : '전체'}
+                </Text>
                 <View style={{flex: 1}}>
                   <ProgressBar
                     width={'100%'}
@@ -141,7 +151,9 @@ export default function MyPage(props: MyPageProps) {
               </View>
               <View style={styles.contentRow}>
                 <View style={[styles.contentRow, {flex: 1}]}>
-                  <Text style={styles.contentTxt}>구약</Text>
+                  <Text style={styles.contentTxt}>
+                    {lang == 'en' ? 'Old' : '구약'}
+                  </Text>
                   <View style={{flex: 1}}>
                     <ProgressBar
                       width={'100%'}
@@ -155,7 +167,9 @@ export default function MyPage(props: MyPageProps) {
                 </View>
                 <View style={{width: 8}} />
                 <View style={[styles.contentRow, {flex: 1}]}>
-                  <Text style={styles.contentTxt}>신약</Text>
+                  <Text style={styles.contentTxt}>
+                    {lang == 'en' ? 'New' : '신약'}
+                  </Text>
                   <View style={{flex: 1}}>
                     <ProgressBar
                       width={'100%'}
@@ -187,7 +201,9 @@ export default function MyPage(props: MyPageProps) {
             <View style={styles.btnHeader}>
               <View style={styles.btnHeaderInner}>
                 <SvgXml xml={svgList.myPage.favorite} />
-                <TextBold style={styles.btnHeaderTxt}>북마크</TextBold>
+                <TextBold style={styles.btnHeaderTxt}>
+                  {lang == 'en' ? 'Bookmark' : '북마크'}
+                </TextBold>
               </View>
               <SvgXml xml={svgList.myPage.arrowRight} />
             </View>
@@ -197,17 +213,27 @@ export default function MyPage(props: MyPageProps) {
       </View>
       <View style={{flex: 3}}>
         <View style={styles.separator}>
-          <TextBold style={styles.separatorTxt}>회원정보 관리</TextBold>
+          <TextBold style={styles.separatorTxt}>
+            {lang == 'en' ? 'Settings' : '회원정보 관리'}
+          </TextBold>
         </View>
         <View style={{paddingLeft: 32, paddingRight: 27}}>
           <Pressable style={styles.infoBtn}>
-            <Text style={styles.infoBtnTxt}>닉네임 변경</Text>
+            <Text style={styles.infoBtnTxt}>
+              {lang == 'en' ? 'nickname' : '닉네임 변경'}
+            </Text>
           </Pressable>
           <Pressable
             style={[styles.infoBtn, {justifyContent: 'space-between'}]}>
-            <Text style={styles.infoBtnTxt}>앱 언어 변경</Text>
+            <Text style={styles.infoBtnTxt}>
+              {lang == 'en' ? 'default language' : '앱 언어 변경'}
+            </Text>
             <View style={styles.switchView}>
-              <Pressable>
+              <Pressable
+                onPress={() => {
+                  if (lang == 'en') return;
+                  changeLanguage('en');
+                }}>
                 <Text
                   style={[
                     styles.switchText,
@@ -216,7 +242,12 @@ export default function MyPage(props: MyPageProps) {
                   English
                 </Text>
               </Pressable>
-              <Pressable style={styles.switchBtn}>
+              <Pressable
+                style={styles.switchBtn}
+                onPress={() => {
+                  if (lang == 'en') changeLanguage('ko');
+                  else changeLanguage('en');
+                }}>
                 <View
                   style={[
                     styles.switchKnob,
@@ -224,7 +255,11 @@ export default function MyPage(props: MyPageProps) {
                   ]}
                 />
               </Pressable>
-              <Pressable>
+              <Pressable
+                onPress={() => {
+                  if (lang == 'ko') return;
+                  changeLanguage('ko');
+                }}>
                 <Text
                   style={[
                     styles.switchText,
@@ -242,14 +277,18 @@ export default function MyPage(props: MyPageProps) {
                 'https://docs.google.com/forms/d/e/1FAIpQLSdW2tb9QZGBT3sA5eHLWRamqixbsrRK-7q1GhGPZ--4CGEnEQ/viewform?usp=sf_link',
               );
             }}>
-            <Text style={styles.infoBtnTxt}>문의하기</Text>
+            <Text style={styles.infoBtnTxt}>
+              {lang == 'en' ? 'ask anything' : '문의하기'}
+            </Text>
           </Pressable>
           <Pressable
             style={styles.infoBtn}
             onPress={() => {
               logout();
             }}>
-            <Text style={styles.infoBtnTxt}>로그아웃</Text>
+            <Text style={styles.infoBtnTxt}>
+              {lang == 'en' ? 'log out' : '로그아웃'}
+            </Text>
           </Pressable>
           <Pressable
             style={styles.infoBtn}
@@ -257,7 +296,9 @@ export default function MyPage(props: MyPageProps) {
               setShowQuitModal(true);
               // quit();
             }}>
-            <Text style={styles.infoBtnTxt}>회원탈퇴</Text>
+            <Text style={styles.infoBtnTxt}>
+              {lang == 'en' ? 'sign out' : '회원탈퇴'}
+            </Text>
           </Pressable>
           <Pressable style={styles.infoBtn}>
             <Text style={styles.infoBtnTxtGray}>
@@ -293,7 +334,7 @@ export default function MyPage(props: MyPageProps) {
               fontSize: 18,
               fontWeight: '600',
             }}>
-            회원탈퇴
+            {lang == 'en' ? 'sign out' : '회원탈퇴'}
           </TextBold>
           <Text
             style={{
@@ -302,7 +343,7 @@ export default function MyPage(props: MyPageProps) {
               marginBottom: 16,
               fontWeight: '400',
             }}>
-            정말 탈퇴하시겠어요?
+            {lang == 'en' ? 'All data will be lost' : '정말 탈퇴하시겠어요?'}
           </Text>
           <View style={{flexDirection: 'row'}}>
             <Pressable
@@ -325,7 +366,7 @@ export default function MyPage(props: MyPageProps) {
                   fontSize: 16,
                   fontWeight: '600',
                 }}>
-                탈퇴
+                {lang == 'en' ? 'confirm' : '탈퇴'}
               </TextBold>
             </Pressable>
             <View style={{width: 15}} />
@@ -346,7 +387,7 @@ export default function MyPage(props: MyPageProps) {
                   fontSize: 16,
                   fontWeight: '600',
                 }}>
-                취소
+                {lang == 'en' ? 'back' : '취소'}
               </TextBold>
             </Pressable>
           </View>

@@ -14,11 +14,12 @@ import Statistics from '../pages/Statistics';
 import Search from '../pages/Search';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
-import {useAppDispatch} from '../store';
+import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import {trackEvent} from '../services/trackEvent.service';
 import DropDownModal from '../components/DropDownModal';
 import Record from '../pages/Record';
+import {useSelector} from 'react-redux';
 
 export type MyPageNavStackParamList = {
   MyPage: undefined;
@@ -36,6 +37,7 @@ const Stack = createNativeStackNavigator<MyPageNavStackParamList>();
 
 export default function MyPageNav() {
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const [dropDown, setDropDown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
@@ -102,7 +104,9 @@ export default function MyPageNav() {
               <View style={styles.header}>
                 <View style={styles.headerLeft} />
                 <View style={styles.headerCenter}>
-                  <TextBold style={styles.headerTitleTxt}>마이페이지</TextBold>
+                  <TextBold style={styles.headerTitleTxt}>
+                    {lang == 'en' ? 'my page' : '마이페이지'}
+                  </TextBold>
                 </View>
                 <View style={styles.headerRight}>
                   <View style={{width: 24}} />
@@ -133,7 +137,9 @@ export default function MyPageNav() {
                   </Pressable>
                 </View>
                 <View style={styles.headerCenter}>
-                  <TextBold style={styles.headerTitleTxt}>나의 통계</TextBold>
+                  <TextBold style={styles.headerTitleTxt}>
+                    {lang == 'en' ? 'progress' : '나의 통계'}
+                  </TextBold>
                 </View>
                 <View style={styles.headerRight}>
                   <View style={{width: 24}} />
@@ -164,7 +170,9 @@ export default function MyPageNav() {
                   </Pressable>
                 </View>
                 <View style={styles.headerCenter}>
-                  <TextBold style={styles.headerTitleTxt}>나의 통계</TextBold>
+                  <TextBold style={styles.headerTitleTxt}>
+                    {lang == 'en' ? 'progress' : '나의 통계'}
+                  </TextBold>
                 </View>
                 <View style={styles.headerRight}>
                   <View style={{width: 24}} />

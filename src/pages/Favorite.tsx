@@ -35,6 +35,7 @@ type favItem = {
 };
 export default function Favorite(props: FavProps) {
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const [testament, setTestament] = useState(0);
   const [bookname, setBookname] = useState(0);
   const [testamentList, setTestamentList] = useState<string[]>([]);

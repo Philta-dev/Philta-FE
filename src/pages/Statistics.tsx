@@ -23,6 +23,7 @@ type StatisticsProps = {
 };
 
 export default function Statistics(props: StatisticsProps) {
+  const lang = useSelector((state: RootState) => state.user.lang);
   const [testament, setTestament] = useState(true);
   const [book, setBook] = useState(-1);
   useEffect(() => {
@@ -75,7 +76,7 @@ export default function Statistics(props: StatisticsProps) {
           nonProgressColor="#F4F4F4"
           progress={10}
           selected={testament}
-          text="구약"
+          text={lang == 'en' ? 'Old' : '구약'}
           fonstSize={14}
           fontLineHeight={22.4}
           fontLetterSpacing={-0.32}
@@ -95,7 +96,7 @@ export default function Statistics(props: StatisticsProps) {
           nonProgressColor="#F4F4F4"
           progress={10}
           selected={!testament}
-          text="신약"
+          text={lang == 'en' ? 'New' : '신약'}
           fonstSize={14}
           fontLineHeight={22.4}
           fontLetterSpacing={-0.32}

@@ -63,6 +63,7 @@ const BaseStack = createNativeStackNavigator<NavParamList>();
 function AppInner() {
   useAxiosInterceptor();
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const isLoggedIn = useSelector(
     (state: RootState) => !!state.user.accessToken,
   );
@@ -122,7 +123,9 @@ function AppInner() {
   const [loadingPage, setLoadingPage] = useState(false);
   useEffect(() => {
     if (internetState.isConnected) {
-      setLoadingPage(false);
+      setTimeout(() => {
+        setLoadingPage(false);
+      }, 1000);
     } else {
       setLoadingPage(true);
     }
@@ -190,7 +193,9 @@ function AppInner() {
           lineHeight: 25,
           textAlign: 'center',
         }}>
-        {'인터넷 연결 없음.\n네트워크를 확인해주세요.'}
+        {lang == 'en'
+          ? 'no internet connection\nplease check your connection status'
+          : '인터넷 연결 없음.\n네트워크를 확인해주세요.'}
       </Text>
     </View>
   ) : (

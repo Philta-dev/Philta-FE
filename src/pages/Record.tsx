@@ -1,6 +1,6 @@
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MyPageNavStackParamList} from '../navigations/MyPageNav';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {BackHandler, Pressable, StyleSheet, View} from 'react-native';
 import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
@@ -19,6 +19,18 @@ type RecordProps = {
 };
 
 export default function Record(props: RecordProps) {
+  useEffect(() => {
+    const backHanlder = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        props.navigation.goBack();
+        return true;
+      },
+    );
+    return () => {
+      backHanlder.remove();
+    };
+  }, [props.navigation]);
   return <View style={styles.entire}></View>;
 }
 
