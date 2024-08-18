@@ -18,11 +18,13 @@ import {useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import {trackEvent} from '../services/trackEvent.service';
 import DropDownModal from '../components/DropDownModal';
+import Record from '../pages/Record';
 
 export type MyPageNavStackParamList = {
   MyPage: undefined;
   Favorite: undefined;
   Statistics: undefined;
+  Record: undefined;
   Search: {page: string};
   Typing: undefined;
 };
@@ -123,7 +125,44 @@ export default function MyPageNav() {
           options={{
             header: props => (
               <View style={styles.header}>
-                <View style={styles.headerLeft} />
+                <View style={styles.headerLeft}>
+                  <Pressable
+                    style={{marginLeft: 24}}
+                    onPress={() => props.navigation.goBack()}>
+                    <SvgXml xml={svgList.backBtn} width={24} height={24} />
+                  </Pressable>
+                </View>
+                <View style={styles.headerCenter}>
+                  <TextBold style={styles.headerTitleTxt}>나의 통계</TextBold>
+                </View>
+                <View style={styles.headerRight}>
+                  <View style={{width: 24}} />
+
+                  <Pressable
+                    style={styles.headerDropDown}
+                    onPress={() => setDropDown(true)}>
+                    <Text style={styles.headerDropDownTxt}>
+                      {dropDownItems[selectedIndex]}
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="Record"
+          component={Record}
+          options={{
+            header: props => (
+              <View style={styles.header}>
+                <View style={styles.headerLeft}>
+                  <Pressable
+                    style={{marginLeft: 24}}
+                    onPress={() => props.navigation.goBack()}>
+                    <SvgXml xml={svgList.backBtn} width={24} height={24} />
+                  </Pressable>
+                </View>
                 <View style={styles.headerCenter}>
                   <TextBold style={styles.headerTitleTxt}>나의 통계</TextBold>
                 </View>
@@ -148,7 +187,13 @@ export default function MyPageNav() {
           options={{
             header: props => (
               <View style={styles.header}>
-                <View style={styles.headerLeft} />
+                <View style={styles.headerLeft}>
+                  <Pressable
+                    style={{marginLeft: 24}}
+                    onPress={() => props.navigation.goBack()}>
+                    <SvgXml xml={svgList.backBtn} width={24} height={24} />
+                  </Pressable>
+                </View>
                 <View style={styles.headerCenter}>
                   <TextBold style={styles.headerTitleTxt}>북마크</TextBold>
                 </View>
@@ -201,6 +246,8 @@ const styles = StyleSheet.create({
   },
   headerLeft: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   headerCenter: {
     flex: 1,
