@@ -25,7 +25,7 @@ export type MyPageNavStackParamList = {
   MyPage: undefined;
   Favorite: undefined;
   Statistics: undefined;
-  Record: undefined;
+  Record: {chapId: number};
   Search: {page: string};
   Typing: undefined;
 };
@@ -203,7 +203,9 @@ export default function MyPageNav() {
                   </Pressable>
                 </View>
                 <View style={styles.headerCenter}>
-                  <TextBold style={styles.headerTitleTxt}>북마크</TextBold>
+                  <TextBold style={styles.headerTitleTxt}>
+                    {lang == 'en' ? 'bookmark' : '북마크'}
+                  </TextBold>
                 </View>
                 <View style={styles.headerRight}>
                   <Pressable

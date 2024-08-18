@@ -258,7 +258,9 @@ export default function Favorite(props: FavProps) {
       </View>
       <View>
         {favData.length == 0 ? (
-          <Text style={styles.noFavTxt}>저장된 북마크가 없습니다.</Text>
+          <Text style={styles.noFavTxt}>
+            {lang == 'en' ? 'No bookmark results' : '저장된 북마크가 없습니다.'}
+          </Text>
         ) : (
           <FlatList
             data={favData}

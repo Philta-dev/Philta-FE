@@ -7,6 +7,7 @@ import {
   Platform,
   ScrollView,
   Linking,
+  TextInput,
 } from 'react-native';
 import {useEffect, useRef, useState} from 'react';
 import axios, {AxiosError} from 'axios';
@@ -41,6 +42,15 @@ export default function MyPage(props: MyPageProps) {
   const dispatch = useAppDispatch();
   const lang = useSelector((state: RootState) => state.user.lang);
 
+  const [showQuitModal, setShowQuitModal] = useState(false);
+  const [nickNameChangeModal, setNickNameChangeModal] = useState(false);
+  const [totalProgress, setTotalProgress] = useState(0);
+  const [oldProgress, setOldProgress] = useState(0);
+  const [newProgress, setNewProgress] = useState(0);
+  const [socialType, setSocialType] = useState('');
+  const [nickName, setNickName] = useState('');
+  const [nickNameValue, setNickNameValue] = useState('');
+
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
     const unsubscriber = appleAuth.onCredentialRevoked(async () => {
@@ -51,8 +61,25 @@ export default function MyPage(props: MyPageProps) {
     };
   }, []);
 
-  const [showQuitModal, setShowQuitModal] = useState(false);
-  const [socialType, setSocialType] = useState('');
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    nameRef.current?.setNativeProps({
+      style: {fontFamily: 'KoPubWorldBatangPL'},
+    });
+  }, []);
+
+  useEffect(() => {
+    if (nickNameChangeModal) {
+      nameRef.current?.focus();
+    } else {
+      nameRef.current?.blur();
+    }
+  }, [nickNameChangeModal]);
+
+  const nameRef = useRef<TextInput>(null);
 
   const changeLanguage = async (lang: string) => {
     dispatch(userSlice.actions.setLang({lang}));
@@ -101,6 +128,38 @@ export default function MyPage(props: MyPageProps) {
     }
   };
 
+  const getData = async () => {
+    try {
+      const response = await axios.get(`${Config.API_URL}/mypage/totalstat`);
+      console.log(response.data);
+      setTotalProgress(response.data.totalProgress);
+      setOldProgress(response.data.oldTestamentProgress);
+      setNewProgress(response.data.newTestamentProgress);
+      setSocialType(response.data.socialType);
+      setNickName(response.data.name);
+      setNickNameValue(response.data.name);
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+
+  const changeNickName = async () => {
+    try {
+      const response = await axios.patch(`${Config.API_URL}/auth/name`, {
+        name: nickNameValue,
+      });
+      setNickNameChangeModal(false);
+    } catch (e) {
+      const errorResponse = (
+        e as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+
   return (
     <ScrollView>
       <View
@@ -144,7 +203,7 @@ export default function MyPage(props: MyPageProps) {
                     height={8}
                     progressColor="#5656D6"
                     nonProgressColor="#F4F4F4"
-                    progress={10}
+                    progress={totalProgress}
                     borderRadius={8}
                   />
                 </View>
@@ -160,7 +219,7 @@ export default function MyPage(props: MyPageProps) {
                       height={8}
                       progressColor="#5656D6"
                       nonProgressColor="#F4F4F4"
-                      progress={0}
+                      progress={oldProgress}
                       borderRadius={8}
                     />
                   </View>
@@ -176,7 +235,7 @@ export default function MyPage(props: MyPageProps) {
                       height={8}
                       progressColor="#5656D6"
                       nonProgressColor="#F4F4F4"
-                      progress={50}
+                      progress={newProgress}
                       borderRadius={8}
                     />
                   </View>
@@ -202,7 +261,7 @@ export default function MyPage(props: MyPageProps) {
               <View style={styles.btnHeaderInner}>
                 <SvgXml xml={svgList.myPage.favorite} />
                 <TextBold style={styles.btnHeaderTxt}>
-                  {lang == 'en' ? 'Bookmark' : '북마크'}
+                  {lang == 'en' ? 'bookmark' : '북마크'}
                 </TextBold>
               </View>
               <SvgXml xml={svgList.myPage.arrowRight} />
@@ -214,11 +273,15 @@ export default function MyPage(props: MyPageProps) {
       <View style={{flex: 3}}>
         <View style={styles.separator}>
           <TextBold style={styles.separatorTxt}>
-            {lang == 'en' ? 'Settings' : '회원정보 관리'}
+            {lang == 'en' ? 'settings' : '회원정보 관리'}
           </TextBold>
         </View>
         <View style={{paddingLeft: 32, paddingRight: 27}}>
-          <Pressable style={styles.infoBtn}>
+          <Pressable
+            style={styles.infoBtn}
+            onPress={() => {
+              setNickNameChangeModal(true);
+            }}>
             <Text style={styles.infoBtnTxt}>
               {lang == 'en' ? 'nickname' : '닉네임 변경'}
             </Text>
@@ -297,7 +360,7 @@ export default function MyPage(props: MyPageProps) {
               // quit();
             }}>
             <Text style={styles.infoBtnTxt}>
-              {lang == 'en' ? 'sign out' : '회원탈퇴'}
+              {lang == 'en' ? 'delete account' : '회원탈퇴'}
             </Text>
           </Pressable>
           <Pressable style={styles.infoBtn}>
@@ -334,7 +397,7 @@ export default function MyPage(props: MyPageProps) {
               fontSize: 18,
               fontWeight: '600',
             }}>
-            {lang == 'en' ? 'sign out' : '회원탈퇴'}
+            {lang == 'en' ? 'delete account' : '회원탈퇴'}
           </TextBold>
           <Text
             style={{
@@ -389,6 +452,123 @@ export default function MyPage(props: MyPageProps) {
                 }}>
                 {lang == 'en' ? 'back' : '취소'}
               </TextBold>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        isVisible={nickNameChangeModal}
+        backdropOpacity={0.4}
+        onBackdropPress={() => setNickNameChangeModal(false)}
+        onBackButtonPress={() => setNickNameChangeModal(false)}
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
+          paddingHorizontal: 24,
+        }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 20,
+            backgroundColor: 'white',
+            borderRadius: 8,
+          }}>
+          <TextBold
+            style={{
+              marginVertical: 8,
+              color: 'black',
+              fontSize: 18,
+              fontWeight: '600',
+            }}>
+            {lang == 'en' ? 'edit nickname' : '닉네임 변경'}
+          </TextBold>
+          <View
+            style={{
+              flexDirection: 'row',
+              position: 'relative',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 8,
+              marginBottom: 24,
+            }}>
+            <TextInput
+              style={{
+                // marginTop: 8,
+                // marginBottom: 24,
+                fontSize: 15,
+                color: 'black',
+                letterSpacing: -0.15,
+                paddingVertical: 12,
+                paddingLeft: 16,
+                paddingRight: 50,
+                borderRadius: 4,
+                borderWidth: 1,
+                borderColor: '#C6C6C8',
+                width: '100%',
+              }}
+              placeholder={lang == 'en' ? 'new nickname' : '닉네임 입력'}
+              placeholderTextColor={'#898A8D'}
+              maxLength={20}
+              value={nickNameValue}
+              onChangeText={t => setNickNameValue(t)}
+              ref={nameRef}
+              onSubmitEditing={() => {
+                if (
+                  nickNameValue.trim() === '' ||
+                  nickNameValue.trim() == nickName
+                )
+                  setNickNameChangeModal(false);
+                changeNickName();
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                right: 16,
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: '#3C3C4399',
+                  fontSize: 14,
+                  letterSpacing: -0.14,
+                }}>
+                {nickNameValue.length.toString() + '/20'}
+              </Text>
+            </View>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Pressable
+              onPress={() => {
+                if (
+                  nickNameValue.trim() === '' ||
+                  nickNameValue.trim() == nickName
+                )
+                  setNickNameChangeModal(false);
+                changeNickName();
+              }}
+              style={{
+                flex: 1,
+                borderRadius: 4,
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingVertical: 15,
+                // paddingHorizontal: 48,
+                backgroundColor: '#5656D6',
+              }}>
+              <Text
+                style={{
+                  color: '#FFFFFF',
+                  fontSize: 16,
+                  fontWeight: '600',
+                }}>
+                {lang == 'en' ? 'confirm' : '확인'}
+              </Text>
             </Pressable>
           </View>
         </View>

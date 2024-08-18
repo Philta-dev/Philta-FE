@@ -853,7 +853,7 @@ export default function Typing(props: TypingProps) {
                 : current_bookname + ' 필타가 완료됐습니다'
               : lang == 'en'
               ? 'proceeding to ' + next_location
-              : next_location + '으로 이동합니다.'
+              : next_location + '으로 이동합니다'
           }
           btnText={lang == 'en' ? 'confirm' : '확인'}
           onBtnPress={() => {

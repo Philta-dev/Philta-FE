@@ -47,7 +47,7 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
   ];
   const labelList =
     lang == 'en'
-      ? ['typing', 'search', 'my page']
+      ? ['typing', 'bible', 'my page']
       : ['구절 타이핑', '전체 성경', '마이페이지'];
 
   useEffect(() => {
@@ -209,7 +209,7 @@ export default function BaseNav() {
                 <View style={styles.headerLeft} />
                 <View style={styles.headerCenter}>
                   <TextBold style={styles.headerTitleTxt}>
-                    {lang == 'en' ? 'search' : '전체 성경'}
+                    {lang == 'en' ? 'bible' : '전체 성경'}
                   </TextBold>
                 </View>
                 <View style={styles.headerRight}>
