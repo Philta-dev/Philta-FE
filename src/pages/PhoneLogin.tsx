@@ -8,6 +8,7 @@ import {
   View,
   Text,
   Platform,
+  TextInputKeyPressEventData,
 } from 'react-native';
 import Config from 'react-native-config';
 import {useAppDispatch} from '../store';
@@ -34,6 +35,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
   const [isPhoneRefFocused, setIsPhoneRefFocused] = useState(false);
   const [isAuthRefFocused, setIsAuthRefFocused] = useState(false);
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
+  const [phoneCheck, setPhoneCheck] = useState(false);
 
   const TIME_AUTH = 180;
   const [time, setTime] = useState(TIME_AUTH);
@@ -183,8 +185,30 @@ export default function PhoneLogin(props: PhoneLoginProps) {
   };
 
   const isValidPhoneNum = (phone: string) => {
-    const regExp = /^\d{3}\d{3,4}\d{4}$/;
+    const regExp = /^01\d{1}-\d{3,4}-\d{4}$/;
     return regExp.test(phone);
+  };
+  const formatPhoneNum = (phone: string) => {
+    let phoneInput: string = phone.replace(/\D/g, '');
+
+    if (phoneInput.length == 11) {
+      return (
+        phoneInput.slice(0, 3) +
+        '-' +
+        phoneInput.slice(3, 7) +
+        '-' +
+        phoneInput.slice(7, 11)
+      );
+    }
+
+    const formattedNumber =
+      phoneInput.slice(0, 3) +
+      (phoneInput.length > 2 ? '-' : '') +
+      phoneInput.slice(3, 6) +
+      (phoneInput.length > 5 ? '-' : '') +
+      phoneInput.slice(6, 11);
+
+    return formattedNumber;
   };
   const formatSectoMin = (sec: number) => {
     const min = Math.floor(sec / 60);
@@ -227,7 +251,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         />
         <TextInput
           placeholder="전화번호"
-          maxLength={11}
+          maxLength={13}
           style={[
             styles.input,
             isPhoneRefFocused && {
@@ -236,15 +260,31 @@ export default function PhoneLogin(props: PhoneLoginProps) {
             },
           ]}
           placeholderTextColor={'#3C3C4399'}
-          value={phone}
+          value={formatPhoneNum(phone)}
           onChangeText={e => {
-            setPhone(e.trim());
+            if (!phoneCheck) {
+              setPhone(e.replaceAll('-', '').trim());
+            } else {
+              setPhoneCheck(false);
+            }
             setIsSent(false);
             setIsVerified('yet');
             setTime(TIME_AUTH);
             setAuthNum('');
             clearInterval(timerRef.current);
             setShowTimeAlert(false);
+          }}
+          onKeyPress={({
+            nativeEvent,
+          }: {
+            nativeEvent: TextInputKeyPressEventData;
+          }) => {
+            if (nativeEvent.key === 'Backspace') {
+              if (phone.length === 3 || phone.length === 6) {
+                setPhone(phone.slice(0, phone.length - 1));
+                setPhoneCheck(true);
+              }
+            }
           }}
           ref={phoneRef}
           onFocus={() => setIsPhoneRefFocused(true)}
