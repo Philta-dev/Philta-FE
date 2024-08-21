@@ -9,6 +9,7 @@ import {
   Text,
   Platform,
   TextInputKeyPressEventData,
+  ActivityIndicator,
 } from 'react-native';
 import Config from 'react-native-config';
 import {useAppDispatch} from '../store';
@@ -36,6 +37,8 @@ export default function PhoneLogin(props: PhoneLoginProps) {
   const [isAuthRefFocused, setIsAuthRefFocused] = useState(false);
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
   const [phoneCheck, setPhoneCheck] = useState(false);
+  const [unformattedPhoneNum, setUnformattedPhoneNum] = useState(false);
+  const [indicator, setIndicator] = useState(false);
 
   const TIME_AUTH = 180;
   const [time, setTime] = useState(TIME_AUTH);
@@ -126,6 +129,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
       setTimeout(() => {
         authRef.current?.focus();
       }, 500);
+      setIndicator(false);
     } catch (error: any) {
       const errorResponse = error.response;
       console.log('cannot send auth msg', error);
@@ -148,6 +152,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
       if (!response.data.isNew) {
         setChangeBtnMsg('로그인');
       }
+      setIndicator(false);
     } catch (error: any) {
       const errorResponse = error.response;
       console.log('cannot confirm', errorResponse);
@@ -168,6 +173,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         phoneNumberToken: phoneToken,
       });
       console.log(response.data.accessToken);
+      setIndicator(false);
       dispatch(
         userSlice.actions.setToken({accessToken: response.data.accessToken}),
       );
@@ -223,7 +229,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         Platform.OS === 'ios' &&
           keyBoardStatus && {paddingBottom: keyBoardHeight + 40},
       ]}>
-      <View>
+      <View style={{position: 'relative'}}>
         <Pressable
           style={styles.backBtn}
           onPress={() => props.navigation.goBack()}>
@@ -241,7 +247,10 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           ]}
           placeholderTextColor={'#3C3C4399'}
           value={name}
-          onChangeText={e => setName(e.trim())}
+          onChangeText={e => {
+            setName(e.trim());
+            setUnformattedPhoneNum(false);
+          }}
           onFocus={() => setIsNameRefFocused(true)}
           onBlur={() => setIsNameRefFocused(false)}
           ref={nameRef}
@@ -273,6 +282,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
             setAuthNum('');
             clearInterval(timerRef.current);
             setShowTimeAlert(false);
+            setUnformattedPhoneNum(false);
           }}
           onKeyPress={({
             nativeEvent,
@@ -292,7 +302,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
           blurOnSubmit={false}
           keyboardType="number-pad"
           onSubmitEditing={() => {
-            if (isValidPhoneNum(phone)) {
+            if (isValidPhoneNum(formatPhoneNum(phone))) {
               sendAuthNum();
             } else {
               phoneRef.current?.focus();
@@ -331,7 +341,8 @@ export default function PhoneLogin(props: PhoneLoginProps) {
               />
               <Pressable
                 onPress={() => {
-                  console.log('send auth num');
+                  setIndicator(true);
+                  console.log('check auth num');
                   if (authNum.length == 6) checkAuthNum();
                   setChangeBtnMsg('');
                 }}
@@ -341,7 +352,20 @@ export default function PhoneLogin(props: PhoneLoginProps) {
                     ? {backgroundColor: '#5856D6'}
                     : {backgroundColor: '#989BA2F7'},
                 ]}>
-                <Text style={styles.authBtnTxt}>인증하기</Text>
+                {indicator && (
+                  <ActivityIndicator
+                    color="#FFFFFF"
+                    size={'small'}
+                    style={{position: 'absolute'}}
+                  />
+                )}
+                <Text
+                  style={[
+                    styles.authBtnTxt,
+                    indicator && {color: 'transparent'},
+                  ]}>
+                  인증하기
+                </Text>
               </Pressable>
             </View>
             {isVerified === 'true' ? (
@@ -363,19 +387,34 @@ export default function PhoneLogin(props: PhoneLoginProps) {
             )}
           </View>
         )}
-        {phoneToken && <Text>{phoneToken}</Text>}
+        {/* {phoneToken && <Text>{phoneToken}</Text>} */}
+        {unformattedPhoneNum && (
+          <Text
+            style={[
+              styles.authTxt,
+              {color: '#FF3B30', position: 'absolute', bottom: -14},
+            ]}>
+            전화번호 형식이 일치하지 않습니다.
+          </Text>
+        )}
       </View>
       <Pressable
         disabled={
-          !isValidPhoneNum(phone) ||
+          !isValidPhoneNum(formatPhoneNum(phone)) ||
           name.length == 0 ||
           time <= 0 ||
           (isSent && !(isVerified == 'true'))
         }
+        onTouchStart={() => {
+          if (!isValidPhoneNum(formatPhoneNum(phone))) {
+            setUnformattedPhoneNum(true);
+          }
+        }}
         onPress={() => {
-          if (name == 'adminRLsPhilta' && phone == '80104105108') {
+          if (name == 'adminRLsPhilta' && phone == '0104105108') {
             loginInAdmin();
           } else {
+            setIndicator(true);
             if (isSent) {
               if (isVerified === 'true') {
                 login();
@@ -387,17 +426,26 @@ export default function PhoneLogin(props: PhoneLoginProps) {
         }}
         style={[
           styles.enterBtn,
-          !isValidPhoneNum(phone) ||
+          !isValidPhoneNum(formatPhoneNum(phone)) ||
           name.length == 0 ||
           time <= 0 ||
           (isSent && isVerified !== 'true')
             ? {backgroundColor: '#9B9EA5'}
             : {backgroundColor: '#5856D6'},
         ]}>
+        {indicator && (
+          <ActivityIndicator
+            color="#FFFFFF"
+            size={'small'}
+            style={{position: 'absolute'}}
+          />
+        )}
         {!isSent ? (
-          <Text style={styles.btnTxt}>인증번호 받기</Text>
+          <Text style={[styles.btnTxt, indicator && {color: 'transparent'}]}>
+            인증번호 받기
+          </Text>
         ) : (
-          <Text style={styles.btnTxt}>
+          <Text style={[styles.btnTxt, indicator && {color: 'transparent'}]}>
             {changeBtnMsg === '' ? '가입하기' : '로그인'}
           </Text>
         )}
@@ -547,6 +595,7 @@ const styles = StyleSheet.create({
     color: '#3C3C4399',
     fontWeight: '600',
     fontSize: 14,
+    lineHeight: 31,
   },
   enterBtn: {
     borderRadius: 7,
