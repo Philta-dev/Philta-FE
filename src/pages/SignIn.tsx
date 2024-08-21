@@ -4,7 +4,7 @@ import Config from 'react-native-config';
 import {SignInNavParamList} from '../../AppInner';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import axios, {AxiosError} from 'axios';
-import {useAppDispatch} from '../store';
+import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import appleAuth from '@invertase/react-native-apple-authentication';
@@ -13,6 +13,7 @@ import {svgList} from '../assets/svgList';
 import {Ex, Splash} from '../components/animations';
 import {useEffect} from 'react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {useSelector} from 'react-redux';
 
 type SignInPageNavigationProp = NativeStackNavigationProp<
   SignInNavParamList,
@@ -26,6 +27,7 @@ type SignInProps = {
 export default function SignIn(props: SignInProps) {
   const navigation = props.navigation;
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
 
   const LoginWithKakao = async () => {
     console.log('카카오 로그인');
@@ -201,13 +203,27 @@ export default function SignIn(props: SignInProps) {
         <Pressable
           style={[styles.btn, {backgroundColor: '#FEE500'}]}
           onPress={() => LoginWithKakao()}>
-          <SvgXml xml={svgList.socialLogin.kakao} />
+          <SvgXml
+            xml={
+              lang == 'en'
+                ? svgList.socialLogin.kakaoEng
+                : svgList.socialLogin.kakao
+            }
+          />
         </Pressable>
         {Platform.OS == 'ios' && (
           <Pressable
             style={[styles.btn, {backgroundColor: '#000000'}]}
             onPress={() => LoginWithApple()}>
-            <SvgXml xml={svgList.socialLogin.apple} width={160} height={32} />
+            <SvgXml
+              xml={
+                lang == 'en'
+                  ? svgList.socialLogin.appleEng
+                  : svgList.socialLogin.apple
+              }
+              width={160}
+              height={32}
+            />
           </Pressable>
         )}
         <Pressable
@@ -221,7 +237,13 @@ export default function SignIn(props: SignInProps) {
             },
           ]}
           onPress={() => LoginWithGoogle()}>
-          <SvgXml xml={svgList.socialLogin.google} />
+          <SvgXml
+            xml={
+              lang == 'en'
+                ? svgList.socialLogin.googleEng
+                : svgList.socialLogin.kakao
+            }
+          />
         </Pressable>
         <Pressable
           style={[styles.btn, {backgroundColor: '#F4F4F4'}]}
