@@ -69,13 +69,14 @@ export default function MyPage(props: MyPageProps) {
     nameRef.current?.setNativeProps({
       style: {fontFamily: 'KoPubWorldBatangPL'},
     });
-  }, []);
+  }, [nickNameChangeModal]);
 
   useEffect(() => {
     if (nickNameChangeModal) {
       nameRef.current?.focus();
     } else {
       nameRef.current?.blur();
+      getData();
     }
   }, [nickNameChangeModal]);
 
@@ -161,7 +162,7 @@ export default function MyPage(props: MyPageProps) {
   };
 
   return (
-    <ScrollView>
+    <ScrollView keyboardShouldPersistTaps="always">
       <View
         style={{
           paddingTop: 30,
@@ -519,9 +520,10 @@ export default function MyPage(props: MyPageProps) {
                 if (
                   nickNameValue.trim() === '' ||
                   nickNameValue.trim() == nickName
-                )
+                ) {
                   setNickNameChangeModal(false);
-                changeNickName();
+                  setNickNameValue(nickName);
+                } else changeNickName();
               }}
             />
             <View
@@ -548,9 +550,10 @@ export default function MyPage(props: MyPageProps) {
                 if (
                   nickNameValue.trim() === '' ||
                   nickNameValue.trim() == nickName
-                )
+                ) {
                   setNickNameChangeModal(false);
-                changeNickName();
+                  setNickNameValue(nickName);
+                } else changeNickName();
               }}
               style={{
                 flex: 1,
@@ -559,7 +562,8 @@ export default function MyPage(props: MyPageProps) {
                 alignItems: 'center',
                 paddingVertical: 15,
                 // paddingHorizontal: 48,
-                backgroundColor: '#5656D6',
+                backgroundColor:
+                  nickNameValue.trim() == '' ? '#9B9EA5' : '#5656D6',
               }}>
               <Text
                 style={{
