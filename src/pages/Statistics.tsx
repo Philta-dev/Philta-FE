@@ -270,13 +270,13 @@ export default function Statistics(props: StatisticsProps) {
                   }}
                   style={[
                     styles.eachRow,
-                    index == bookData.length - 1 && {borderBottomWidth: 0},
+                    index == chapData.length - 1 && {borderBottomWidth: 0},
                   ]}>
                   <View
                     style={[
                       styles.rowContent,
                       index == 0 && {borderTopEndRadius: 8},
-                      index == bookData.length - 1 && {
+                      index == chapData.length - 1 && {
                         borderBottomEndRadius: 8,
                       },
                       {paddingLeft: 64, width: '100%'},

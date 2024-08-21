@@ -67,12 +67,19 @@ export default function Favorite(props: FavProps) {
       setTestament(0);
       setBookname(0);
     } else {
+      if (!reduxTestament && reduxTestament != 0) {
+        dispatch(userSlice.actions.setTestament(-1));
+        dispatch(userSlice.actions.setBook(-1));
+        return;
+      }
       if (reduxTestament + 1 !== testament) {
         setTestament(reduxTestament + 1);
       }
       if (reduxBook + 1 !== bookname) {
         setBookname(reduxBook + 1);
       }
+      dispatch(userSlice.actions.setTestament(-1));
+      dispatch(userSlice.actions.setBook(-1));
     }
   }, [reduxTestament, reduxBook]);
 
@@ -116,9 +123,13 @@ export default function Favorite(props: FavProps) {
       setBookList(['전체', ...response.data.books]);
       setNone(-1);
       setFavData(response.data.favorites);
-      setTimeout(() => {
-        bookRef.current?.scrollToIndex({index: bookname, animated: true});
-      }, 0);
+      if (bookList.length > bookname)
+        setTimeout(() => {
+          bookRef.current?.scrollToIndex({index: bookname, animated: true});
+        }, 100);
+      else {
+        onScrollToIndexFailed(bookname);
+      }
     } catch (error) {
       const errorResponse = (
         error as AxiosError<{message: string; statusCode: number}>
@@ -153,6 +164,17 @@ export default function Favorite(props: FavProps) {
       ).response;
       console.log(errorResponse?.data);
     }
+  };
+
+  const onScrollToIndexFailed = (index: number) => {
+    console.log('index error');
+    const wait = new Promise(resolve => setTimeout(resolve, 500));
+    wait.then(() => {
+      bookRef.current?.scrollToIndex({
+        index: index,
+        animated: true,
+      });
+    });
   };
   return (
     <View style={styles.entire}>
