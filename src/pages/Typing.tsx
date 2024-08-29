@@ -53,6 +53,7 @@ export default function Typing(props: TypingProps) {
 
   const [pressedButton, setPressedButton] = useState('');
   const [status, setStatus] = useState('');
+  const [page, setPage] = useState('');
   const fadingTime = 200;
   const [red, setRed] = useState(false);
   const [pageMove, setPageMove] = useState(false);
@@ -80,6 +81,7 @@ export default function Typing(props: TypingProps) {
     const focusListener = props.navigation.addListener('focus', () => {
       getData();
       trackEvent('Screen Viewed - Typing');
+      setPage('typing');
     });
     return focusListener;
   }, [reduxVersion]);
@@ -120,7 +122,10 @@ export default function Typing(props: TypingProps) {
       setKeyBoardHeight(0);
       setVersionDropdown(false);
       console.log('keyboard dismiss');
-      trackEvent('Keyboard Dismissed');
+      console.log('page', page);
+      if (page == 'typing') {
+        trackEvent('Keyboard Dismissed');
+      }
       setKeyBoardStatus(false);
     });
     const KeyboardShow = Keyboard.addListener('keyboardDidShow', e => {
@@ -129,6 +134,7 @@ export default function Typing(props: TypingProps) {
     });
     const blurListener = props.navigation.addListener('blur', () => {
       setText('');
+      setPage('');
     });
 
     return () => {
@@ -136,7 +142,7 @@ export default function Typing(props: TypingProps) {
       KeyboardShow.remove();
       blurListener();
     };
-  }, []);
+  }, [page]);
 
   const handleTextChange = (textEntered: string) => {
     if (textEntered.length < 1) {

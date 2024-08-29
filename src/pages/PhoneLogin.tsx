@@ -283,6 +283,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
             clearInterval(timerRef.current);
             setShowTimeAlert(false);
             setUnformattedPhoneNum(false);
+            setIndicator(false);
           }}
           onKeyPress={({
             nativeEvent,
@@ -309,6 +310,7 @@ export default function PhoneLogin(props: PhoneLoginProps) {
             }
           }}
         />
+
         {isSent && (
           <View>
             <View style={{flexDirection: 'row'}}>
@@ -341,9 +343,11 @@ export default function PhoneLogin(props: PhoneLoginProps) {
               />
               <Pressable
                 onPress={() => {
-                  setIndicator(true);
                   console.log('check auth num');
-                  if (authNum.length == 6) checkAuthNum();
+                  if (authNum.length == 6) {
+                    setIndicator(true);
+                    checkAuthNum();
+                  }
                   setChangeBtnMsg('');
                 }}
                 style={[
@@ -396,6 +400,42 @@ export default function PhoneLogin(props: PhoneLoginProps) {
             ]}>
             전화번호 형식이 일치하지 않습니다.
           </Text>
+        )}
+        {!isSent && (
+          <View
+            style={[
+              {
+                backgroundColor: '#E3FFEB87',
+                borderTopWidth: 1,
+                borderTopColor: '#13BD3D',
+                paddingHorizontal: 5,
+                paddingVertical: 11,
+                flexDirection: 'row',
+                alignItems: 'center',
+                position: 'absolute',
+                width: '100%',
+                bottom: -58,
+              },
+              unformattedPhoneNum && {bottom: -82},
+            ]}>
+            <SvgXml
+              xml={svgList.socialLogin.notice}
+              width={24}
+              height={24}
+              style={{marginBottom: 10}}
+            />
+            <Text
+              style={{
+                marginLeft: 12,
+                color: '#13BD3D',
+                fontSize: 13,
+                lineHeight: 16.9,
+              }}>
+              {
+                'This menu is only available in South Korea.\nPlease sign up using Google.'
+              }
+            </Text>
+          </View>
         )}
       </View>
       <Pressable
