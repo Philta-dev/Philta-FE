@@ -241,7 +241,7 @@ export default function SignIn(props: SignInProps) {
             xml={
               lang == 'en'
                 ? svgList.socialLogin.googleEng
-                : svgList.socialLogin.kakao
+                : svgList.socialLogin.google
             }
           />
         </Pressable>

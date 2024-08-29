@@ -104,6 +104,15 @@ function AppInner() {
       console.log(errorResponse?.data);
     }
   };
+  // useEffect(() => {
+  //   const KeyboardDismiss = Keyboard.addListener('keyboardDidHide', () => {});
+  //   const KeyboardShow = Keyboard.addListener('keyboardDidShow', e => {});
+
+  //   return () => {
+  //     KeyboardDismiss.remove();
+  //     KeyboardShow.remove();
+  //   };
+  // }, []);
   useEffect(() => {
     const init = async () => {};
     init().finally(async () => {
