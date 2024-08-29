@@ -10,18 +10,17 @@ import {
   Platform,
   FlatList,
   Animated,
-  Linking,
 } from 'react-native';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {LinearGradient} from 'react-native-linear-gradient';
 import Svg, {Line, SvgXml} from 'react-native-svg';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootTabParamList} from '../navigations/BaseNav';
 import MenuModal from '../components/MenuModal';
 import Text from '../components/Text';
+import TextBold from '../components/TextBold';
 import {svgList} from '../assets/svgList';
 import ProgressBar from '../components/ProgessBar';
-import {useFocusEffect} from '@react-navigation/native';
 import {StatusBarHeight} from '../components/Safe';
 import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
@@ -32,24 +31,14 @@ import {useSelector} from 'react-redux';
 import FadingView from '../components/Fading';
 import CustomToastScreen from '../components/CustomToastScreen';
 import {Shadow} from 'react-native-shadow-2';
-import EncryptedStorage from 'react-native-encrypted-storage';
-import * as KakaoLogin from '@react-native-seoul/kakao-login';
-import appleAuth from '@invertase/react-native-apple-authentication';
-import Modal from 'react-native-modal';
-import {resetTrackUser, trackEvent} from '../services/trackEvent.service';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import TextBold from '../components/TextBold';
+import {trackEvent} from '../services/trackEvent.service';
+
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
   'Typing'
 >;
-// type TypingWithSearchScreenNavigationProp = NativeStackNavigationProp<
-//   NavParamList,
-//   'Base'
-// >;
 type TypingProps = {
   navigation: TypingScreenNavigationProp;
-  // navigation: TypingWithSearchScreenNavigationProp;
 };
 
 type verseContent = {
@@ -60,8 +49,11 @@ type verseContent = {
 };
 
 export default function Typing(props: TypingProps) {
+  const lang = useSelector((state: RootState) => state.user.lang);
+
   const [pressedButton, setPressedButton] = useState('');
   const [status, setStatus] = useState('');
+  const [page, setPage] = useState('');
   const fadingTime = 200;
   const [red, setRed] = useState(false);
   const [pageMove, setPageMove] = useState(false);
@@ -89,6 +81,7 @@ export default function Typing(props: TypingProps) {
     const focusListener = props.navigation.addListener('focus', () => {
       getData();
       trackEvent('Screen Viewed - Typing');
+      setPage('typing');
     });
     return focusListener;
   }, [reduxVersion]);
@@ -125,10 +118,14 @@ export default function Typing(props: TypingProps) {
 
   useEffect(() => {
     const KeyboardDismiss = Keyboard.addListener('keyboardDidHide', () => {
+      ref.current?.blur();
       setKeyBoardHeight(0);
       setVersionDropdown(false);
       console.log('keyboard dismiss');
-      trackEvent('Keyboard Dismissed');
+      console.log('page', page);
+      if (page == 'typing') {
+        trackEvent('Keyboard Dismissed');
+      }
       setKeyBoardStatus(false);
     });
     const KeyboardShow = Keyboard.addListener('keyboardDidShow', e => {
@@ -137,6 +134,7 @@ export default function Typing(props: TypingProps) {
     });
     const blurListener = props.navigation.addListener('blur', () => {
       setText('');
+      setPage('');
     });
 
     return () => {
@@ -144,7 +142,7 @@ export default function Typing(props: TypingProps) {
       KeyboardShow.remove();
       blurListener();
     };
-  }, []);
+  }, [page]);
 
   const handleTextChange = (textEntered: string) => {
     if (textEntered.length < 1) {
@@ -369,61 +367,6 @@ export default function Typing(props: TypingProps) {
       console.log(errorResponse?.data);
     }
   };
-  const logout = async () => {
-    try {
-      setShowModal(false);
-      const response = await axios.post(`${Config.API_URL}/auth/logout`);
-      console.log(response.data);
-      if (socialType === 'kakao') {
-        await KakaoLogin.logout();
-      } else if (socialType == 'google') {
-        await GoogleSignin.signOut();
-      }
-      // else if (socialType == 'apple') {
-      //   appleAuth.Operation.LOGOUT;
-      // }
-      resetTrackUser();
-      await EncryptedStorage.removeItem('refreshToken');
-      dispatch(userSlice.actions.setToken({accessToken: ''}));
-    } catch (e) {
-      const errorResponse = (
-        e as AxiosError<{message: string; statusCode: number}>
-      ).response;
-      console.log(errorResponse?.data);
-    }
-  };
-
-  const quit = async () => {
-    console.log('quit');
-    try {
-      setShowModal(false);
-      const response = await axios.delete(`${Config.API_URL}/auth/quit`);
-      console.log(response.data);
-      if (socialType === 'kakao') {
-        await KakaoLogin.unlink();
-      } else if (socialType === 'google') {
-        await GoogleSignin.revokeAccess();
-      }
-      resetTrackUser();
-      await EncryptedStorage.removeItem('refreshToken');
-      dispatch(userSlice.actions.setToken({accessToken: ''}));
-    } catch (error) {
-      const errorResponse = (
-        error as AxiosError<{message: string; statusCode: number}>
-      ).response;
-      console.log(errorResponse?.data);
-    }
-  };
-
-  useEffect(() => {
-    if (Platform.OS !== 'ios') return;
-    const unsubscriber = appleAuth.onCredentialRevoked(async () => {
-      quit();
-    });
-    return () => {
-      unsubscriber();
-    };
-  }, []);
 
   const handlePointer = async (id: number) => {
     try {
@@ -791,16 +734,27 @@ export default function Typing(props: TypingProps) {
           />
           <Pressable
             style={styles.modalBtn}
-            onPress={() => console.log(StatusBarHeight)}>
-            <View style={[styles.modalBtnIcon, {backgroundColor: '#EBEBF599'}]}>
+            onPress={() => {
+              setShowModal(false);
+              dispatch(
+                userSlice.actions.setIndex({
+                  testament: -1,
+                  book: -1,
+                  chapter: -1,
+                  verse: -1,
+                }),
+              );
+              props.navigation.navigate('Favorite');
+            }}>
+            <View style={[styles.modalBtnIcon]}>
               <SvgXml
-                xml={svgList.tabbar.modal.typing}
-                width={20}
-                height={20}
+                xml={svgList.tabbar.modal.favorite}
+                width={40}
+                height={40}
               />
             </View>
-            <TextBold style={[styles.modalBtnTxt, {color: '#EBEBF599'}]}>
-              구절 타이핑
+            <TextBold style={styles.modalBtnTxt}>
+              {lang == 'en' ? 'bookmark' : '북마크'}
             </TextBold>
           </Pressable>
           <Pressable
@@ -814,148 +768,20 @@ export default function Typing(props: TypingProps) {
                   verse: -1,
                 }),
               );
-              props.navigation.navigate('Indexing');
+              props.navigation.navigate('Statistics');
             }}
             style={styles.modalBtn}>
             <View style={styles.modalBtnIcon}>
               <SvgXml
-                xml={svgList.tabbar.modal.indexing}
+                xml={svgList.tabbar.modal.statistics}
                 width={40}
                 height={40}
               />
             </View>
-            <TextBold style={styles.modalBtnTxt}>전체 성경</TextBold>
+            <TextBold style={styles.modalBtnTxt}>
+              {lang == 'en' ? 'progress' : '나의 통계'}
+            </TextBold>
           </Pressable>
-          <Pressable
-            onPress={() => {
-              setShowModal(false);
-              props.navigation.navigate('Favorite');
-            }}
-            style={styles.modalBtn}>
-            <View style={styles.modalBtnIcon}>
-              <SvgXml
-                xml={svgList.tabbar.modal.favorite}
-                width={40}
-                height={40}
-              />
-            </View>
-            <TextBold style={styles.modalBtnTxt}>북마크</TextBold>
-          </Pressable>
-          <View style={styles.modalBottomView}>
-            <Pressable
-              onPress={() => {
-                Linking.openURL(
-                  'https://rhealabs.notion.site/99ce6275fc8a4bc998cbc1ebccef613f?pvs=4',
-                );
-              }}
-              style={styles.modalBottomBtn}>
-              <TextBold style={styles.modalBottomBtnTxt}>문의하기</TextBold>
-            </Pressable>
-            <Pressable
-              style={styles.modalBottomBtn}
-              onPress={() => {
-                logout();
-              }}>
-              <TextBold style={styles.modalBottomBtnTxt}>로그아웃</TextBold>
-            </Pressable>
-            <Pressable
-              style={styles.modalBottomBtn}
-              onPress={() => {
-                setShowQuitModal(true);
-                // quit();
-              }}>
-              <TextBold
-                style={[styles.modalBottomBtnTxt, {color: '#EBEBF599'}]}>
-                회원탈퇴
-              </TextBold>
-            </Pressable>
-          </View>
-          <Modal
-            isVisible={showQuitModal}
-            backdropOpacity={0.4}
-            onBackdropPress={() => setShowQuitModal(false)}
-            onBackButtonPress={() => setShowQuitModal(false)}
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'row',
-              paddingHorizontal: 24,
-            }}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 20,
-                backgroundColor: 'white',
-                borderRadius: 8,
-              }}>
-              <TextBold
-                style={{
-                  marginVertical: 8,
-                  color: 'black',
-                  fontSize: 18,
-                  fontWeight: '600',
-                }}>
-                회원탈퇴
-              </TextBold>
-              <Text
-                style={{
-                  color: 'black',
-                  fontSize: 16,
-                  marginBottom: 16,
-                  fontWeight: '400',
-                }}>
-                정말 탈퇴하시겠어요?
-              </Text>
-              <View style={{flexDirection: 'row'}}>
-                <Pressable
-                  onPress={() => {
-                    setShowQuitModal(false);
-                    quit();
-                  }}
-                  style={{
-                    flex: 1,
-                    borderRadius: 4,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingVertical: 15,
-                    // paddingHorizontal: 48,
-                    backgroundColor: '#FF3B30',
-                  }}>
-                  <TextBold
-                    style={{
-                      color: '#FFFFFF',
-                      fontSize: 16,
-                      fontWeight: '600',
-                    }}>
-                    탈퇴
-                  </TextBold>
-                </Pressable>
-                <View style={{width: 15}} />
-                <Pressable
-                  onPress={() => setShowQuitModal(false)}
-                  style={{
-                    flex: 1,
-                    borderRadius: 4,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingVertical: 15,
-                    // paddingHorizontal: 48,
-                    backgroundColor: '#C6C6C8',
-                  }}>
-                  <TextBold
-                    style={{
-                      color: 'black',
-                      fontSize: 16,
-                      fontWeight: '600',
-                    }}>
-                    취소
-                  </TextBold>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
         </MenuModal>
         {/* <ToastModal
           showModal={showToast}
@@ -1028,10 +854,14 @@ export default function Typing(props: TypingProps) {
           svgxml={svgList.modal.check}
           text={
             is_last_in_book
-              ? current_bookname + ' 필타가 완료됐습니다'
-              : next_location + '으로 이동합니다.'
+              ? lang == 'en'
+                ? current_bookname + ' typing completed'
+                : current_bookname + ' 필타가 완료됐습니다'
+              : lang == 'en'
+              ? 'proceeding to ' + next_location
+              : next_location + '으로 이동합니다'
           }
-          btnText={'확인'}
+          btnText={lang == 'en' ? 'confirm' : '확인'}
           onBtnPress={() => {
             if (nextVerse) {
               setPageMove(true);

@@ -53,6 +53,7 @@ export default function EnterName(props: EnterNameProps) {
     };
   }, []);
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const accessToken = useSelector((state: RootState) => state.user.preAcc);
   const refreshToken = useSelector((state: RootState) => state.user.preRef);
   const [keyBoardHeight, setKeyBoardHeight] = useState(0);
@@ -93,19 +94,31 @@ export default function EnterName(props: EnterNameProps) {
           <SvgXml xml={svgList.backBtn} width={24} height={24} />
         </Pressable>
         <Text style={styles.titleTxt}>
-          {'닉네임을 입력하면\n회원가입이 완료됩니다.'}
+          {lang == 'en'
+            ? 'Enter a nickname\nto complete registration'
+            : '닉네임을 입력하면\n회원가입이 완료됩니다.'}
         </Text>
         <TextInput
-          placeholder="닉네임"
+          placeholder={lang == 'en' ? 'nickname' : '닉네임'}
           style={styles.input}
           placeholderTextColor={'#3C3C4399'}
           value={name}
           onChangeText={e => setName(e.trim())}
           ref={nameRef}
+          maxLength={20}
           onSubmitEditing={() => {
             enterName();
           }}
         />
+        <Text
+          style={{
+            color: '#3C3C4399',
+            fontSize: 14,
+            lineHeight: 31,
+            textAlign: 'right',
+          }}>
+          {name.length.toString() + '/20'}
+        </Text>
       </View>
       <Pressable
         onPress={() => enterName()}
@@ -113,7 +126,7 @@ export default function EnterName(props: EnterNameProps) {
           styles.submitBtn,
           name ? {backgroundColor: '#5856D6'} : {backgroundColor: '#9B9EA5'},
         ]}>
-        <Text style={styles.btnTxt}>완료</Text>
+        <Text style={styles.btnTxt}>{lang == 'en' ? 'confirm' : '완료'}</Text>
       </Pressable>
     </View>
   );

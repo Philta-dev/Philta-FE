@@ -36,6 +36,7 @@ type IndexProps = {
 
 export default function Indexing(props: IndexProps) {
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const reduxTestament = useSelector(
     (state: RootState) => state.user.testament,
   );
@@ -354,7 +355,9 @@ export default function Indexing(props: IndexProps) {
     <View style={{backgroundColor: 'white', paddingTop: 8, flex: 1}}>
       <Text
         style={{marginVertical: windowHeight > 600 ? 20 : 32, marginLeft: 24}}>
-        좌우로 스크롤하여 구절 선택
+        {lang == 'en'
+          ? 'scroll to choose verse'
+          : '좌우로 스크롤하여 구절 선택'}
       </Text>
       <View>
         <View>
@@ -622,7 +625,7 @@ export default function Indexing(props: IndexProps) {
           }}>
           <TextBold
             style={[styles.confirmBtnTxt, loading && {color: 'transparent'}]}>
-            완료
+            {lang == 'en' ? 'confirm' : '완료'}
           </TextBold>
           {loading && (
             <View

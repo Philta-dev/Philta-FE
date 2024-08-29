@@ -2,7 +2,7 @@ import {FlatList, Pressable, StyleSheet, TextInput, View} from 'react-native';
 import Text from '../components/Text';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {NavParamList} from '../../AppInner';
-import {useAppDispatch} from '../store';
+import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
 import {SvgXml} from 'react-native-svg';
 import {svgList} from '../assets/svgList';
@@ -10,6 +10,7 @@ import {useEffect, useRef, useState} from 'react';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import TextBold from '../components/TextBold';
+import {useSelector} from 'react-redux';
 
 type SearchScreenNavigationProp = NativeStackNavigationProp<
   NavParamList,
@@ -31,6 +32,7 @@ type itemProps = {
 };
 export default function Search(props: SearchProps) {
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const [search, setSearch] = useState('');
   const [searched, setSearched] = useState<searchResult[]>([
     // {name: '창세기', T: 1, B: 1},
@@ -94,9 +96,13 @@ export default function Search(props: SearchProps) {
       </View>
       <View style={styles.container}>
         {search == '' ? (
-          <Text style={styles.searchedTxt}>검색어를 입력해주세요.</Text>
+          <Text style={styles.searchedTxt}>
+            {lang == 'en' ? 'type in book name' : '검색어를 입력해주세요.'}
+          </Text>
         ) : searched.length == 0 ? (
-          <Text style={styles.searchedTxt}>검색 결과가 없습니다.</Text>
+          <Text style={styles.searchedTxt}>
+            {lang == 'en' ? 'no results' : '검색 결과가 없습니다.'}
+          </Text>
         ) : (
           <FlatList
             keyboardShouldPersistTaps="always"
@@ -123,7 +129,11 @@ export default function Search(props: SearchProps) {
                 {/* <Text style={styles.searchedTxt}>{item.name}</Text>
               <Text style={styles.searchedBoldTxt}>{item.name}</Text> */}
                 {item.name.split('').map((txt, i) =>
-                  txt.toLocaleLowerCase() == search.toLocaleLowerCase() ? (
+                  i >= item.name.toLowerCase().indexOf(search.toLowerCase()) &&
+                  i <=
+                    item.name.toLowerCase().indexOf(search.toLowerCase()) +
+                      search.length -
+                      1 ? (
                     <TextBold
                       style={styles.searchedBoldTxt}
                       key={`${index}-${i}`}>

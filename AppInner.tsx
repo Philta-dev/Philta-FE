@@ -34,7 +34,8 @@ import BaseNav from './src/navigations/BaseNav';
 import {useNetInfo} from '@react-native-community/netinfo';
 import BootSplash from 'react-native-bootsplash';
 import {Splash} from './src/components/animations';
-import {setTrackUser} from './src/services/trackEvent.service';
+import {resetTrackUser, setTrackUser} from './src/services/trackEvent.service';
+import {getLocales} from 'react-native-localize';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -62,6 +63,7 @@ const BaseStack = createNativeStackNavigator<NavParamList>();
 function AppInner() {
   useAxiosInterceptor();
   const dispatch = useAppDispatch();
+  const lang = useSelector((state: RootState) => state.user.lang);
   const isLoggedIn = useSelector(
     (state: RootState) => !!state.user.accessToken,
   );
@@ -72,6 +74,7 @@ function AppInner() {
       const refreshToken = await EncryptedStorage.getItem('refreshToken');
       // console.log('before', refreshToken);
       if (!refreshToken) {
+        resetTrackUser();
         dispatch(
           userSlice.actions.setToken({
             accessToken: '',
@@ -101,6 +104,15 @@ function AppInner() {
       console.log(errorResponse?.data);
     }
   };
+  // useEffect(() => {
+  //   const KeyboardDismiss = Keyboard.addListener('keyboardDidHide', () => {});
+  //   const KeyboardShow = Keyboard.addListener('keyboardDidShow', e => {});
+
+  //   return () => {
+  //     KeyboardDismiss.remove();
+  //     KeyboardShow.remove();
+  //   };
+  // }, []);
   useEffect(() => {
     const init = async () => {};
     init().finally(async () => {
@@ -120,7 +132,9 @@ function AppInner() {
   const [loadingPage, setLoadingPage] = useState(false);
   useEffect(() => {
     if (internetState.isConnected) {
-      setLoadingPage(false);
+      setTimeout(() => {
+        setLoadingPage(false);
+      }, 1000);
     } else {
       setLoadingPage(true);
     }
@@ -133,6 +147,31 @@ function AppInner() {
       setTrackUser(response.data.id, response.data.name);
     } catch (error) {}
   };
+
+  useEffect(() => {
+    const getLang = async () => {
+      const storageLang = await EncryptedStorage.getItem('lang');
+      if (storageLang) {
+        dispatch(
+          userSlice.actions.setLang({
+            lang: storageLang,
+          }),
+        );
+      } else {
+        const locales = getLocales();
+        for (const locale of locales) {
+          if (locale.languageCode === 'ko') {
+            dispatch(
+              userSlice.actions.setLang({
+                lang: 'ko',
+              }),
+            );
+          }
+        }
+      }
+    };
+    getLang();
+  }, []);
   return showCustomSplash ? (
     <View
       style={{
@@ -163,7 +202,9 @@ function AppInner() {
           lineHeight: 25,
           textAlign: 'center',
         }}>
-        {'인터넷 연결 없음.\n네트워크를 확인해주세요.'}
+        {lang == 'en'
+          ? 'no internet connection\nplease check your connection status'
+          : '인터넷 연결 없음.\n네트워크를 확인해주세요.'}
       </Text>
     </View>
   ) : (

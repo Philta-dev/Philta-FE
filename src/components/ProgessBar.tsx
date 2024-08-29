@@ -1,7 +1,7 @@
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {DimensionValue, Dimensions, StyleSheet, View} from 'react-native';
 
 type ProgressBarProps = {
-  width: number;
+  width: number | DimensionValue;
   height: number;
   progressColor: string;
   nonProgressColor: string;
@@ -24,6 +24,7 @@ export default function ProgressBar(props: ProgressBarProps) {
           height: props.height,
           backgroundColor: props.progressColor,
           borderRadius: props.borderRadius,
+          minWidth: props.height / 2,
         }}></View>
     </View>
   );
