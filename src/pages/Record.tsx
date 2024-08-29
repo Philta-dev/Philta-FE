@@ -116,6 +116,20 @@ export default function Record(props: RecordProps) {
   };
   return (
     <View style={styles.entire}>
+      {loading && (
+        <ActivityIndicator
+          size="large"
+          color="#5656D6"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 1,
+          }}
+        />
+      )}
       <TextBold style={styles.titleText}>{bookName}</TextBold>
       <FlatList
         data={verseData}
@@ -135,6 +149,7 @@ export default function Record(props: RecordProps) {
                 xml={svgList.myPage.typingCompleted}
                 width={16}
                 height={16}
+                style={{marginTop: 1}}
               />
             ) : (
               <View style={{width: 16}} />
