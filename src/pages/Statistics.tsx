@@ -40,6 +40,8 @@ type chapItem = {
 
 export default function Statistics(props: StatisticsProps) {
   const lang = useSelector((state: RootState) => state.user.lang);
+  const version = useSelector((state: RootState) => state.user.version);
+
   const [testament, setTestament] = useState(true);
   const [oldTestProgress, setOldTestProgress] = useState(0);
   const [newTestProgress, setNewTestProgress] = useState(0);
@@ -64,7 +66,7 @@ export default function Statistics(props: StatisticsProps) {
   }, [book]);
   useEffect(() => {
     getData();
-  }, [testament]);
+  }, [testament, version]);
   useEffect(() => {
     if (book == -1) {
       setChapData([]);
@@ -196,6 +198,10 @@ export default function Statistics(props: StatisticsProps) {
               <Pressable
                 key={`book-${item.book_id}`}
                 onPress={() => {
+                  if (book == item.book_id) {
+                    setBook(-1);
+                    return;
+                  }
                   setBook(item.book_id);
                   refChap.current?.scrollToOffset({offset: 0, animated: true});
                 }}

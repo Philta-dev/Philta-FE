@@ -65,10 +65,10 @@ export default function Record(props: RecordProps) {
     };
   }, [props.navigation]);
   useEffect(() => {
-    getData();
+    getData(0);
   }, [version]);
 
-  const getData = async () => {
+  const getData = async (newpage?: number) => {
     if (!isLast) {
       setLoading(true);
       console.log('getData');
@@ -76,13 +76,17 @@ export default function Record(props: RecordProps) {
         const response = await axios.get(
           `${Config.API_URL}/mypage/versestat?chapterId=${
             props.route.params.chapId
-          }&offset=${page * 15}`,
+          }&offset=${newpage ?? page * 15}`,
         );
         console.log(response.data);
         setBookName(response.data.book_name);
         setChapter(response.data.chapter_number);
-        setVerseData([...verseData, ...response.data.verses]);
-        setPage(page + 1);
+        setVerseData(
+          newpage != undefined
+            ? [...response.data.verses]
+            : [...verseData, ...response.data.verses],
+        );
+        setPage((newpage ?? page) + 1);
         setLoading(false);
         if (!response.data.pagination.has_more) {
           setIsLast(true);
