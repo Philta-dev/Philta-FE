@@ -41,9 +41,13 @@ type MyPageProps = {
 export default function MyPage(props: MyPageProps) {
   const dispatch = useAppDispatch();
   const lang = useSelector((state: RootState) => state.user.lang);
+  const version = useSelector((state: RootState) => state.user.version);
 
   const [showQuitModal, setShowQuitModal] = useState(false);
   const [nickNameChangeModal, setNickNameChangeModal] = useState(false);
+  const [totalName, setTotalName] = useState('');
+  const [oldName, setOldName] = useState('');
+  const [newName, setNewName] = useState('');
   const [totalProgress, setTotalProgress] = useState(0);
   const [oldProgress, setOldProgress] = useState(0);
   const [newProgress, setNewProgress] = useState(0);
@@ -78,7 +82,7 @@ export default function MyPage(props: MyPageProps) {
       nameRef.current?.blur();
       getData();
     }
-  }, [nickNameChangeModal]);
+  }, [nickNameChangeModal, version]);
 
   const nameRef = useRef<TextInput>(null);
 
@@ -133,6 +137,9 @@ export default function MyPage(props: MyPageProps) {
     try {
       const response = await axios.get(`${Config.API_URL}/mypage/totalstat`);
       console.log(response.data);
+      setTotalName(response.data.total);
+      setOldName(response.data.old_testament_name);
+      setNewName(response.data.new_testament_name);
       setTotalProgress(response.data.totalProgress);
       setOldProgress(response.data.oldTestamentProgress);
       setNewProgress(response.data.newTestamentProgress);
@@ -195,9 +202,7 @@ export default function MyPage(props: MyPageProps) {
             </View>
             <View style={styles.content}>
               <View style={styles.contentRow}>
-                <Text style={styles.contentTxt}>
-                  {lang == 'en' ? 'Total' : '전체'}
-                </Text>
+                <Text style={styles.contentTxt}>{totalName}</Text>
                 <View style={{flex: 1}}>
                   <ProgressBar
                     width={'100%'}
@@ -211,9 +216,7 @@ export default function MyPage(props: MyPageProps) {
               </View>
               <View style={styles.contentRow}>
                 <View style={[styles.contentRow, {flex: 1}]}>
-                  <Text style={styles.contentTxt}>
-                    {lang == 'en' ? 'Old' : '구약'}
-                  </Text>
+                  <Text style={styles.contentTxt}>{oldName}</Text>
                   <View style={{flex: 1}}>
                     <ProgressBar
                       width={'100%'}
@@ -227,9 +230,7 @@ export default function MyPage(props: MyPageProps) {
                 </View>
                 <View style={{width: 8}} />
                 <View style={[styles.contentRow, {flex: 1}]}>
-                  <Text style={styles.contentTxt}>
-                    {lang == 'en' ? 'New' : '신약'}
-                  </Text>
+                  <Text style={styles.contentTxt}>{newName}</Text>
                   <View style={{flex: 1}}>
                     <ProgressBar
                       width={'100%'}
@@ -612,6 +613,7 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     letterSpacing: -0.32,
     marginRight: 9,
+    minWidth: 23,
   },
   contentCol: {
     flexDirection: 'row',

@@ -43,6 +43,9 @@ export default function Statistics(props: StatisticsProps) {
   const version = useSelector((state: RootState) => state.user.version);
 
   const [testament, setTestament] = useState(true);
+  const [oldTestamentName, setOldTestamentName] = useState('구약');
+  const [newTestamentName, setNewTestamentName] = useState('신약');
+  const [chapterString, setChapterString] = useState('');
   const [oldTestProgress, setOldTestProgress] = useState(0);
   const [newTestProgress, setNewTestProgress] = useState(0);
   const [book, setBook] = useState(-1);
@@ -116,6 +119,9 @@ export default function Statistics(props: StatisticsProps) {
         `${Config.API_URL}/mypage/bookstat?testamentId=` + (testament ? 1 : 2),
       );
       console.log(response.data);
+      setOldTestamentName(response.data.old_testament_name);
+      setNewTestamentName(response.data.new_testament_name);
+      setChapterString(response.data.chapter_string);
       setOldTestProgress(response.data.old_testament_progress);
       setNewTestProgress(response.data.new_testament_progress);
       setBookData(response.data.books);
@@ -150,7 +156,7 @@ export default function Statistics(props: StatisticsProps) {
           nonProgressColor="#F4F4F4"
           progress={oldTestProgress < 0.0001 ? 0.0001 : oldTestProgress}
           selected={testament}
-          text={lang == 'en' ? 'Old' : '구약'}
+          text={oldTestamentName}
           fonstSize={14}
           fontLineHeight={22.4}
           fontLetterSpacing={-0.32}
@@ -170,7 +176,7 @@ export default function Statistics(props: StatisticsProps) {
           nonProgressColor="#F4F4F4"
           progress={newTestProgress < 0.0001 ? 0.0001 : newTestProgress}
           selected={!testament}
-          text={lang == 'en' ? 'New' : '신약'}
+          text={newTestamentName}
           fonstSize={14}
           fontLineHeight={22.4}
           fontLetterSpacing={-0.32}
@@ -292,7 +298,10 @@ export default function Statistics(props: StatisticsProps) {
                         styles.rowText,
                         {position: 'absolute', left: 16},
                       ]}>
-                      {item.chapter_number}장
+                      {chapterString.replace(
+                        '#',
+                        item.chapter_number.toString(),
+                      )}
                     </Text>
                     <ProgressBar
                       width={'100%'}

@@ -120,7 +120,7 @@ export default function Favorite(props: FavProps) {
       if (testament == 0) {
         setBookList(Array(39).fill(''));
       }
-      setBookList(['전체', ...response.data.books]);
+      setBookList([response.data.total, ...response.data.books]);
       setNone(-1);
       setFavData(response.data.favorites);
       if (bookList.length > bookname)
