@@ -754,7 +754,7 @@ export default function Typing(props: TypingProps) {
               />
             </View>
             <TextBold style={styles.modalBtnTxt}>
-              {lang == 'en' ? 'bookmark' : '북마크'}
+              {lang == 'en' ? 'Bookmark' : '북마크'}
             </TextBold>
           </Pressable>
           <Pressable
@@ -779,7 +779,7 @@ export default function Typing(props: TypingProps) {
               />
             </View>
             <TextBold style={styles.modalBtnTxt}>
-              {lang == 'en' ? 'progress' : '나의 통계'}
+              {lang == 'en' ? 'Progress' : '나의 통계'}
             </TextBold>
           </Pressable>
         </MenuModal>
@@ -858,10 +858,10 @@ export default function Typing(props: TypingProps) {
                 ? current_bookname + ' typing completed'
                 : current_bookname + ' 필타가 완료됐습니다'
               : lang == 'en'
-              ? 'proceeding to ' + next_location
+              ? 'Proceeding to ' + next_location
               : next_location + '으로 이동합니다'
           }
-          btnText={lang == 'en' ? 'confirm' : '확인'}
+          btnText={lang == 'en' ? 'Confirm' : '확인'}
           onBtnPress={() => {
             if (nextVerse) {
               setPageMove(true);

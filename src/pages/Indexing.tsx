@@ -356,7 +356,7 @@ export default function Indexing(props: IndexProps) {
       <Text
         style={{marginVertical: windowHeight > 600 ? 20 : 32, marginLeft: 24}}>
         {lang == 'en'
-          ? 'scroll to choose verse'
+          ? 'Scroll to choose verse'
           : '좌우로 스크롤하여 구절 선택'}
       </Text>
       <View>
@@ -625,7 +625,7 @@ export default function Indexing(props: IndexProps) {
           }}>
           <TextBold
             style={[styles.confirmBtnTxt, loading && {color: 'transparent'}]}>
-            {lang == 'en' ? 'confirm' : '완료'}
+            {lang == 'en' ? 'Confirm' : '완료'}
           </TextBold>
           {loading && (
             <View

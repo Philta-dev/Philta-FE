@@ -99,7 +99,7 @@ export default function EnterName(props: EnterNameProps) {
             : '닉네임을 입력하면\n회원가입이 완료됩니다.'}
         </Text>
         <TextInput
-          placeholder={lang == 'en' ? 'nickname' : '닉네임'}
+          placeholder={lang == 'en' ? 'Nickname' : '닉네임'}
           style={styles.input}
           placeholderTextColor={'#3C3C4399'}
           value={name}
@@ -126,7 +126,7 @@ export default function EnterName(props: EnterNameProps) {
           styles.submitBtn,
           name ? {backgroundColor: '#5856D6'} : {backgroundColor: '#9B9EA5'},
         ]}>
-        <Text style={styles.btnTxt}>{lang == 'en' ? 'confirm' : '완료'}</Text>
+        <Text style={styles.btnTxt}>{lang == 'en' ? 'Confirm' : '완료'}</Text>
       </Pressable>
     </View>
   );

@@ -195,7 +195,7 @@ export default function MyPage(props: MyPageProps) {
               <View style={styles.btnHeaderInner}>
                 <SvgXml xml={svgList.myPage.statistics} />
                 <TextBold style={styles.btnHeaderTxt}>
-                  {lang == 'en' ? 'progress' : '나의 통계'}
+                  {lang == 'en' ? 'Progress' : '나의 통계'}
                 </TextBold>
               </View>
               <SvgXml xml={svgList.myPage.arrowRight} />
@@ -263,7 +263,7 @@ export default function MyPage(props: MyPageProps) {
               <View style={styles.btnHeaderInner}>
                 <SvgXml xml={svgList.myPage.favorite} />
                 <TextBold style={styles.btnHeaderTxt}>
-                  {lang == 'en' ? 'bookmark' : '북마크'}
+                  {lang == 'en' ? 'Bookmark' : '북마크'}
                 </TextBold>
               </View>
               <SvgXml xml={svgList.myPage.arrowRight} />
@@ -275,7 +275,7 @@ export default function MyPage(props: MyPageProps) {
       <View style={{flex: 3}}>
         <View style={styles.separator}>
           <TextBold style={styles.separatorTxt}>
-            {lang == 'en' ? 'settings' : '회원정보 관리'}
+            {lang == 'en' ? 'Settings' : '회원정보 관리'}
           </TextBold>
         </View>
         <View style={{paddingLeft: 32, paddingRight: 27}}>
@@ -285,13 +285,13 @@ export default function MyPage(props: MyPageProps) {
               setNickNameChangeModal(true);
             }}>
             <Text style={styles.infoBtnTxt}>
-              {lang == 'en' ? 'nickname' : '닉네임 변경'}
+              {lang == 'en' ? 'Nickname' : '닉네임 변경'}
             </Text>
           </Pressable>
           <Pressable
             style={[styles.infoBtn, {justifyContent: 'space-between'}]}>
             <Text style={styles.infoBtnTxt}>
-              {lang == 'en' ? 'default language' : '앱 언어 변경'}
+              {lang == 'en' ? 'Default Language' : '앱 언어 변경'}
             </Text>
             <View style={styles.switchView}>
               <Pressable
@@ -343,7 +343,7 @@ export default function MyPage(props: MyPageProps) {
               );
             }}>
             <Text style={styles.infoBtnTxt}>
-              {lang == 'en' ? 'ask anything' : '문의하기'}
+              {lang == 'en' ? 'Ask Anything' : '문의하기'}
             </Text>
           </Pressable>
           <Pressable
@@ -352,7 +352,7 @@ export default function MyPage(props: MyPageProps) {
               logout();
             }}>
             <Text style={styles.infoBtnTxt}>
-              {lang == 'en' ? 'log out' : '로그아웃'}
+              {lang == 'en' ? 'Log Out' : '로그아웃'}
             </Text>
           </Pressable>
           <Pressable
@@ -362,7 +362,7 @@ export default function MyPage(props: MyPageProps) {
               // quit();
             }}>
             <Text style={styles.infoBtnTxt}>
-              {lang == 'en' ? 'delete account' : '회원탈퇴'}
+              {lang == 'en' ? 'Delete Account' : '회원탈퇴'}
             </Text>
           </Pressable>
           <Pressable style={styles.infoBtn}>
@@ -399,7 +399,7 @@ export default function MyPage(props: MyPageProps) {
               fontSize: 18,
               fontWeight: '600',
             }}>
-            {lang == 'en' ? 'delete account' : '회원탈퇴'}
+            {lang == 'en' ? 'Delete Account' : '회원탈퇴'}
           </TextBold>
           <Text
             style={{
@@ -431,7 +431,7 @@ export default function MyPage(props: MyPageProps) {
                   fontSize: 16,
                   fontWeight: '600',
                 }}>
-                {lang == 'en' ? 'confirm' : '탈퇴'}
+                {lang == 'en' ? 'Confirm' : '탈퇴'}
               </TextBold>
             </Pressable>
             <View style={{width: 15}} />
@@ -452,7 +452,7 @@ export default function MyPage(props: MyPageProps) {
                   fontSize: 16,
                   fontWeight: '600',
                 }}>
-                {lang == 'en' ? 'back' : '취소'}
+                {lang == 'en' ? 'Back' : '취소'}
               </TextBold>
             </Pressable>
           </View>
@@ -485,7 +485,7 @@ export default function MyPage(props: MyPageProps) {
               fontSize: 18,
               fontWeight: '600',
             }}>
-            {lang == 'en' ? 'edit nickname' : '닉네임 변경'}
+            {lang == 'en' ? 'Edit Nickname' : '닉네임 변경'}
           </TextBold>
           <View
             style={{
@@ -511,7 +511,7 @@ export default function MyPage(props: MyPageProps) {
                 borderColor: '#C6C6C8',
                 width: '100%',
               }}
-              placeholder={lang == 'en' ? 'new nickname' : '닉네임 입력'}
+              placeholder={lang == 'en' ? 'New Nickname' : '닉네임 입력'}
               placeholderTextColor={'#898A8D'}
               maxLength={20}
               value={nickNameValue}
@@ -572,7 +572,7 @@ export default function MyPage(props: MyPageProps) {
                   fontSize: 16,
                   fontWeight: '600',
                 }}>
-                {lang == 'en' ? 'confirm' : '확인'}
+                {lang == 'en' ? 'Confirm' : '확인'}
               </Text>
             </Pressable>
           </View>

@@ -105,7 +105,7 @@ export default function MyPageNav() {
                 <View style={styles.headerLeft} />
                 <View style={styles.headerCenter}>
                   <TextBold style={styles.headerTitleTxt}>
-                    {lang == 'en' ? 'my page' : '마이페이지'}
+                    {lang == 'en' ? 'My Page' : '마이페이지'}
                   </TextBold>
                 </View>
                 <View style={styles.headerRight}>
@@ -138,7 +138,7 @@ export default function MyPageNav() {
                 </View>
                 <View style={styles.headerCenter}>
                   <TextBold style={styles.headerTitleTxt}>
-                    {lang == 'en' ? 'progress' : '나의 통계'}
+                    {lang == 'en' ? 'Progress' : '나의 통계'}
                   </TextBold>
                 </View>
                 <View style={styles.headerRight}>
@@ -171,7 +171,7 @@ export default function MyPageNav() {
                 </View>
                 <View style={styles.headerCenter}>
                   <TextBold style={styles.headerTitleTxt}>
-                    {lang == 'en' ? 'progress' : '나의 통계'}
+                    {lang == 'en' ? 'Progress' : '나의 통계'}
                   </TextBold>
                 </View>
                 <View style={styles.headerRight}>
@@ -204,7 +204,7 @@ export default function MyPageNav() {
                 </View>
                 <View style={styles.headerCenter}>
                   <TextBold style={styles.headerTitleTxt}>
-                    {lang == 'en' ? 'bookmark' : '북마크'}
+                    {lang == 'en' ? 'Bookmark' : '북마크'}
                   </TextBold>
                 </View>
                 <View style={styles.headerRight}>

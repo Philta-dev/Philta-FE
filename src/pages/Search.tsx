@@ -75,7 +75,7 @@ export default function Search(props: SearchProps) {
         <View style={styles.searchView}>
           <TextInput
             style={styles.searchArea}
-            placeholder="책 검색..."
+            placeholder={lang == 'en' ? 'Search...' : '책 검색...'}
             placeholderTextColor={'#3C3C4399'}
             value={search}
             onChangeText={setSearch}
@@ -97,11 +97,11 @@ export default function Search(props: SearchProps) {
       <View style={styles.container}>
         {search == '' ? (
           <Text style={styles.searchedTxt}>
-            {lang == 'en' ? 'type in book name' : '검색어를 입력해주세요.'}
+            {lang == 'en' ? 'Type in book name' : '검색어를 입력해주세요.'}
           </Text>
         ) : searched.length == 0 ? (
           <Text style={styles.searchedTxt}>
-            {lang == 'en' ? 'no results' : '검색 결과가 없습니다.'}
+            {lang == 'en' ? 'No Results' : '검색 결과가 없습니다.'}
           </Text>
         ) : (
           <FlatList
