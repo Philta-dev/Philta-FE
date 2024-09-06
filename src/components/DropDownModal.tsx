@@ -11,6 +11,7 @@ type DropDownModalProps = {
   selectedIndex: number;
   setSelectedIndex: React.Dispatch<React.SetStateAction<number>>;
   dropDownItems: string[];
+  setIndicator?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function DropDownModal(props: DropDownModalProps) {
@@ -22,7 +23,11 @@ export default function DropDownModal(props: DropDownModalProps) {
       style={{flex: 1, padding: 0, margin: 0}}
       hasBackdrop
       backdropOpacity={0}>
-      <Pressable style={styles.modalBG} onPress={() => props.setVisible(false)}>
+      <Pressable
+        style={styles.modalBG}
+        onPress={() => {
+          props.setVisible(false);
+        }}>
         <View style={styles.modalContainer}>
           <Shadow
             distance={6}
@@ -36,6 +41,9 @@ export default function DropDownModal(props: DropDownModalProps) {
                 <Pressable
                   style={styles.item}
                   onPress={() => {
+                    if (props.setIndicator) {
+                      props.setIndicator(true);
+                    }
                     props.setSelectedIndex(index);
                   }}>
                   {index == props.selectedIndex ? (

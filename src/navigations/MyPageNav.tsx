@@ -4,7 +4,13 @@ import {
 } from '@react-navigation/native-stack';
 import {useEffect, useState} from 'react';
 import {svgList} from '../assets/svgList';
-import {Keyboard, Pressable, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import Text from '../components/Text';
 import TextBold from '../components/TextBold';
@@ -38,6 +44,7 @@ const Stack = createNativeStackNavigator<MyPageNavStackParamList>();
 export default function MyPageNav() {
   const dispatch = useAppDispatch();
   const lang = useSelector((state: RootState) => state.user.lang);
+  const [indicator, setIndicator] = useState(false);
   const [dropDown, setDropDown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [dropDownItems, setDropDownItems] = useState(['KRV', 'NIV', 'ESV']);
@@ -49,6 +56,7 @@ export default function MyPageNav() {
       setSelectedIndex(
         response.data.versions.indexOf(response.data.current_version),
       );
+      setIndicator(false);
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -242,7 +250,23 @@ export default function MyPageNav() {
         selectedIndex={selectedIndex}
         setSelectedIndex={setSelectedIndex}
         dropDownItems={dropDownItems}
+        setIndicator={setIndicator}
       />
+      {indicator && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'transparent',
+          }}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
     </View>
   );
 }
