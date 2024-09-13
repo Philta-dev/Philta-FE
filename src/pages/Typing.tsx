@@ -32,6 +32,8 @@ import FadingView from '../components/Fading';
 import CustomToastScreen from '../components/CustomToastScreen';
 import {Shadow} from 'react-native-shadow-2';
 import {trackEvent} from '../services/trackEvent.service';
+import GradationFullScreenModal from '../components/GradationFullScreenModal';
+import paymentSlice from '../slices/payments';
 
 type TypingScreenNavigationProp = BottomTabNavigationProp<
   RootTabParamList,
@@ -50,6 +52,7 @@ type verseContent = {
 
 export default function Typing(props: TypingProps) {
   const lang = useSelector((state: RootState) => state.user.lang);
+  const needToPay = useSelector((state: RootState) => state.payments.needToPay);
 
   const [pressedButton, setPressedButton] = useState('');
   const [status, setStatus] = useState('');
@@ -197,6 +200,12 @@ export default function Typing(props: TypingProps) {
       setRed(true);
     }
   };
+
+  useEffect(() => {
+    if (!needToPay) {
+      ref.current?.focus();
+    }
+  }, [needToPay]);
   const [givenText, setGivenText] = useState('');
   const [editable, setEditable] = useState(true);
   const [givenVerse, setGivenVerse] = useState<verseContent>();
@@ -221,7 +230,7 @@ export default function Typing(props: TypingProps) {
   const [textArray, setTextArray] = useState<Array<string>>([]);
   const [textArrayING, setTextArrayING] = useState<Array<string>>([]);
   const [textArrayAfter, setTextArrayAfter] = useState<Array<string>>([]);
-
+  const [areaHeightForPaymentModal, setAreaHeightForPaymentModal] = useState(0);
   const getData = async () => {
     try {
       const response = await axios.get(`${Config.API_URL}/typing/baseinfo`);
@@ -699,6 +708,10 @@ export default function Typing(props: TypingProps) {
                 if (keyBoardStatus) {
                   setPressedButton('keyboard');
                   setPressedButton('');
+                  setAreaHeightForPaymentModal(keyBoardHeight);
+                  dispatch(
+                    paymentSlice.actions.setNeedToPay({needToPay: true}),
+                  );
                   ref.current?.blur();
                 }
               }}>
@@ -909,6 +922,7 @@ export default function Typing(props: TypingProps) {
           </Animated.View>
         </View>
       )}
+      {needToPay && <View style={{height: areaHeightForPaymentModal}} />}
     </View>
   );
 }
