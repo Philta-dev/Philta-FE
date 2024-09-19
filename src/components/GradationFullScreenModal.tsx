@@ -17,18 +17,20 @@ export default function GradationFullScreenModal(
   return (
     <View style={styles.entire}>
       <LinearGradient
-        colors={['transparent', '#000']}
-        locations={[0, 1]}
+        colors={['#ABB0BA80', '#1C1B1F', '#1C1B1F']}
+        locations={[0, 0.5, 1]}
         style={styles.entire}
       />
-      <Pressable
-        style={{position: 'absolute', top: 160, right: 24}}
-        onPress={() => {
-          dispatch(paymentSlice.actions.setNeedToPay({needToPay: false}));
-        }}>
-        <SvgXml width={24} height={24} xml={svgList.modal.xBtn} />
-      </Pressable>
-      <SvgXml width={80} height={80} xml={svgList.modal.logo} />
+      <View style={{position: 'relative', width: '100%', alignItems: 'center'}}>
+        <Pressable
+          style={{position: 'absolute', top: 0, right: 24}}
+          onPress={() => {
+            dispatch(paymentSlice.actions.setNeedToPay({needToPay: false}));
+          }}>
+          <SvgXml width={24} height={24} xml={svgList.modal.xBtn} />
+        </Pressable>
+        <SvgXml width={80} height={80} xml={svgList.modal.logo} />
+      </View>
 
       <Text
         style={[
