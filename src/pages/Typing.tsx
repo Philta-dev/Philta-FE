@@ -709,9 +709,9 @@ export default function Typing(props: TypingProps) {
                   setPressedButton('keyboard');
                   setPressedButton('');
                   setAreaHeightForPaymentModal(keyBoardHeight);
-                  dispatch(
-                    paymentSlice.actions.setNeedToPay({needToPay: true}),
-                  );
+                  // dispatch(
+                  //   paymentSlice.actions.setNeedToPay({needToPay: true}),
+                  // );
                   ref.current?.blur();
                 }
               }}>
