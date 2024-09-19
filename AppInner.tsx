@@ -36,6 +36,7 @@ import BootSplash from 'react-native-bootsplash';
 import {Splash} from './src/components/animations';
 import {resetTrackUser, setTrackUser} from './src/services/trackEvent.service';
 import {getLocales} from 'react-native-localize';
+import GradationFullScreenModal from './src/components/GradationFullScreenModal';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -67,6 +68,8 @@ function AppInner() {
   const isLoggedIn = useSelector(
     (state: RootState) => !!state.user.accessToken,
   );
+  const needToPay = useSelector((state: RootState) => state.payments.needToPay);
+
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const reissue = async () => {
     try {
@@ -229,6 +232,7 @@ function AppInner() {
           </Stack.Navigator>
         </Safe>
       )}
+      {needToPay && <GradationFullScreenModal />}
     </NavigationContainer>
   );
 }
