@@ -36,7 +36,7 @@ export default function GradationFullScreenModal(
         style={[
           styles.txt,
           {
-            fontWeight: '400',
+            fontFamily: 'Pretendard-Medium',
             lineHeight: 25.6,
             letterSpacing: -0.32,
             fontSize: 16,
@@ -51,7 +51,8 @@ export default function GradationFullScreenModal(
         style={[
           styles.txt,
           {
-            fontWeight: '400',
+            fontFamily: 'Pretendard-Medium',
+
             lineHeight: 24.31,
             fontSize: 17,
             textAlign: 'center',
@@ -66,7 +67,8 @@ export default function GradationFullScreenModal(
         style={[
           styles.txt,
           {
-            fontWeight: '400',
+            fontFamily: 'Pretendard-Medium',
+
             lineHeight: 24.31,
             fontSize: 17,
             marginTop: 6,
@@ -80,7 +82,8 @@ export default function GradationFullScreenModal(
         style={[
           styles.txt,
           {
-            fontWeight: '400',
+            fontFamily: 'Pretendard-Medium',
+
             lineHeight: 22.4,
             fontSize: 14,
             letterSpacing: -0.28,
@@ -97,7 +100,8 @@ export default function GradationFullScreenModal(
           styles.txt,
           {
             color: '#ABABF5',
-            fontWeight: '400',
+            fontFamily: 'Pretendard-Medium',
+
             fontSize: 13,
             letterSpacing: -0.26,
             textAlign: 'center',
@@ -110,8 +114,7 @@ export default function GradationFullScreenModal(
         <Text
           style={{
             color: 'white',
-            fontFamily: 'Pretendard',
-            fontWeight: '700',
+            fontFamily: 'Pretendard-ExtraBold',
             fontSize: 18,
             lineHeight: 24,
             letterSpacing: -0.32,
@@ -127,7 +130,8 @@ export default function GradationFullScreenModal(
           styles.txt,
           {
             color: '#ABABF5',
-            fontWeight: '400',
+            fontFamily: 'Pretendard-Medium',
+
             fontSize: 13,
             letterSpacing: -0.26,
             textAlign: 'center',

@@ -10,6 +10,7 @@ import {
   Platform,
   FlatList,
   Animated,
+  BackHandler,
 } from 'react-native';
 import {useEffect, useRef, useState} from 'react';
 import {LinearGradient} from 'react-native-linear-gradient';
@@ -205,6 +206,20 @@ export default function Typing(props: TypingProps) {
     if (!needToPay) {
       ref.current?.focus();
     }
+    const backBtnListener = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (needToPay) {
+          dispatch(paymentSlice.actions.setNeedToPay({needToPay: false}));
+          return true;
+        } else {
+          return false;
+        }
+      },
+    );
+    return () => {
+      backBtnListener.remove();
+    };
   }, [needToPay]);
   const [givenText, setGivenText] = useState('');
   const [editable, setEditable] = useState(true);
@@ -709,9 +724,9 @@ export default function Typing(props: TypingProps) {
                   setPressedButton('keyboard');
                   setPressedButton('');
                   setAreaHeightForPaymentModal(keyBoardHeight);
-                  // dispatch(
-                  //   paymentSlice.actions.setNeedToPay({needToPay: true}),
-                  // );
+                  dispatch(
+                    paymentSlice.actions.setNeedToPay({needToPay: true}),
+                  );
                   ref.current?.blur();
                 }
               }}>
