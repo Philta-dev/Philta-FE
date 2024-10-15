@@ -358,7 +358,7 @@ export default function MyPage(props: MyPageProps) {
               }
             }}>
             <Text style={styles.infoBtnTxt}>
-              {lang == 'en' ? '구독 관리' : '구독 관리'}
+              {lang == 'en' ? 'Manage Subscription' : '구독 관리'}
             </Text>
           </Pressable>
           <Pressable
