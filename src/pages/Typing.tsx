@@ -53,6 +53,7 @@ type verseContent = {
 
 export default function Typing(props: TypingProps) {
   const lang = useSelector((state: RootState) => state.user.lang);
+  const payModal = useSelector((state: RootState) => state.payments.payModal);
   const needToPay = useSelector((state: RootState) => state.payments.needToPay);
 
   const [pressedButton, setPressedButton] = useState('');
@@ -203,14 +204,14 @@ export default function Typing(props: TypingProps) {
   };
 
   useEffect(() => {
-    if (!needToPay) {
+    if (!payModal) {
       ref.current?.focus();
     }
     const backBtnListener = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        if (needToPay) {
-          dispatch(paymentSlice.actions.setNeedToPay({needToPay: false}));
+        if (payModal) {
+          dispatch(paymentSlice.actions.setPayModal({payModal: false}));
           return true;
         } else {
           return false;
@@ -220,7 +221,7 @@ export default function Typing(props: TypingProps) {
     return () => {
       backBtnListener.remove();
     };
-  }, [needToPay]);
+  }, [payModal]);
   const [givenText, setGivenText] = useState('');
   const [editable, setEditable] = useState(true);
   const [givenVerse, setGivenVerse] = useState<verseContent>();
@@ -411,6 +412,12 @@ export default function Typing(props: TypingProps) {
       console.log(errorResponse?.data);
     }
   };
+  useEffect(() => {
+    if (!needToPay) {
+      setAreaHeightForPaymentModal(0);
+      ref.current?.focus();
+    }
+  }, [needToPay]);
   return (
     <View style={styles.entire}>
       <View style={{flex: 1, paddingLeft: 1}}>
@@ -723,10 +730,13 @@ export default function Typing(props: TypingProps) {
                 if (keyBoardStatus) {
                   setPressedButton('keyboard');
                   setPressedButton('');
-                  setAreaHeightForPaymentModal(keyBoardHeight);
-                  dispatch(
-                    paymentSlice.actions.setNeedToPay({needToPay: true}),
-                  );
+                  console.log('pressed', needToPay);
+                  if (needToPay) {
+                    setAreaHeightForPaymentModal(keyBoardHeight);
+                    dispatch(
+                      paymentSlice.actions.setPayModal({payModal: true}),
+                    );
+                  }
                   ref.current?.blur();
                 }
               }}>
@@ -937,7 +947,7 @@ export default function Typing(props: TypingProps) {
           </Animated.View>
         </View>
       )}
-      {needToPay && <View style={{height: areaHeightForPaymentModal}} />}
+      {payModal && <View style={{height: areaHeightForPaymentModal}} />}
     </View>
   );
 }

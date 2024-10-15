@@ -1,18 +1,81 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {View, Animated, StyleSheet, Pressable, Text} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, StyleSheet, Pressable, Text, Platform} from 'react-native';
 import {Svg, SvgXml} from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
 import {useAppDispatch} from '../store';
 import paymentSlice from '../slices/payments';
 import {svgList} from '../assets/svgList';
 
-type GradationFullScreenModalProps = {};
+import {requestSubscription, getAvailablePurchases} from 'react-native-iap';
+import EncryptedStorage from 'react-native-encrypted-storage';
+
+type GradationFullScreenModalProps = {
+  sku?: string;
+  offerToken?: string;
+  setIndicator?: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 export default function GradationFullScreenModal(
   props: GradationFullScreenModalProps,
 ) {
   useEffect(() => {}, []);
   const dispatch = useAppDispatch();
+
+  const _requestSubscription = () => {
+    console.log('requestSubscription', props.sku);
+    if (props.sku) {
+      if (props.setIndicator) {
+        props.setIndicator(true);
+      }
+      if (Platform.OS == 'ios') {
+        requestSubscription({
+          sku: props.sku,
+        });
+      } else {
+        console.log('requestSubscription', props.sku, props.offerToken);
+        requestSubscription({
+          subscriptionOffers: [
+            {sku: props.sku, offerToken: props.offerToken ?? ''},
+          ],
+        });
+      }
+    }
+  };
+
+  const _restoreSubscription = () => {
+    console.log('restoreSubscription');
+    if (props.setIndicator) {
+      props.setIndicator(true);
+    }
+    getAvailablePurchases()
+      .then(async purchases => {
+        // console.log('getAvailablePurchases', purchases);
+        if (purchases.length > 0) {
+          let receipt = purchases[0].transactionReceipt;
+          if (Platform.OS == 'android' && purchases[0].purchaseToken) {
+            receipt = purchases[0].purchaseToken;
+          }
+          console.log('receipt', receipt);
+          await EncryptedStorage.setItem('receipt', receipt);
+        } else {
+          console.log('no purchases');
+          dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
+          await EncryptedStorage.removeItem('receipt');
+          if (props.setIndicator) {
+            props.setIndicator(false);
+          }
+          dispatch(paymentSlice.actions.setPayModal({payModal: false}));
+        }
+      })
+      .catch(async error => {
+        console.log('getAvailablePurchases', error);
+        await EncryptedStorage.removeItem('receipt');
+        if (props.setIndicator) {
+          props.setIndicator(false);
+        }
+        dispatch(paymentSlice.actions.setPayModal({payModal: false}));
+      });
+  };
 
   return (
     <View style={styles.entire}>
@@ -25,7 +88,7 @@ export default function GradationFullScreenModal(
         <Pressable
           style={{position: 'absolute', top: 0, right: 24}}
           onPress={() => {
-            dispatch(paymentSlice.actions.setNeedToPay({needToPay: false}));
+            dispatch(paymentSlice.actions.setPayModal({payModal: false}));
           }}>
           <SvgXml width={24} height={24} xml={svgList.modal.xBtn} />
         </Pressable>
@@ -110,7 +173,11 @@ export default function GradationFullScreenModal(
         ]}>
         {'원하실 때 취소하실 수 있습니다.'}
       </Text>
-      <Pressable style={styles.btn}>
+      <Pressable
+        style={styles.btn}
+        onPress={() => {
+          _requestSubscription();
+        }}>
         <Text
           style={{
             color: 'white',
@@ -124,6 +191,12 @@ export default function GradationFullScreenModal(
         </Text>
         <View style={{width: 10}} />
         <SvgXml width={20} height={20} xml={svgList.modal.backBtn} />
+      </Pressable>
+      <Pressable
+        onPress={() => {
+          _restoreSubscription();
+        }}>
+        <Text style={styles.txt}>복원하기</Text>
       </Pressable>
       <Text
         style={[

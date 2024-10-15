@@ -28,6 +28,7 @@ import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import Modal from 'react-native-modal';
 import {resetTrackUser} from '../services/trackEvent.service';
+import paymentSlice from '../slices/payments';
 
 type MyPageNavigationProp = NativeStackNavigationProp<
   MyPageNavStackParamList,
@@ -42,6 +43,7 @@ export default function MyPage(props: MyPageProps) {
   const dispatch = useAppDispatch();
   const lang = useSelector((state: RootState) => state.user.lang);
   const version = useSelector((state: RootState) => state.user.version);
+  const needToPay = useSelector((state: RootState) => state.payments.needToPay);
 
   const [showQuitModal, setShowQuitModal] = useState(false);
   const [nickNameChangeModal, setNickNameChangeModal] = useState(false);
@@ -101,6 +103,7 @@ export default function MyPage(props: MyPageProps) {
       } else if (socialType == 'google') {
         await GoogleSignin.signOut();
       }
+      await EncryptedStorage.removeItem('receipt');
       resetTrackUser();
       await EncryptedStorage.removeItem('refreshToken');
       dispatch(userSlice.actions.setToken({accessToken: ''}));
@@ -122,6 +125,7 @@ export default function MyPage(props: MyPageProps) {
       } else if (socialType === 'google') {
         await GoogleSignin.revokeAccess();
       }
+      await EncryptedStorage.removeItem('receipt');
       resetTrackUser();
       await EncryptedStorage.removeItem('refreshToken');
       dispatch(userSlice.actions.setToken({accessToken: ''}));
@@ -334,6 +338,28 @@ export default function MyPage(props: MyPageProps) {
                 </Text>
               </Pressable>
             </View>
+          </Pressable>
+          <Pressable
+            style={styles.infoBtn}
+            onPress={() => {
+              if (needToPay) {
+                dispatch(paymentSlice.actions.setPayModal({payModal: true}));
+              } else {
+                if (Platform.OS === 'ios') {
+                  Linking.openURL(
+                    'https://apps.apple.com/account/subscriptions',
+                  );
+                }
+                if (Platform.OS === 'android') {
+                  Linking.openURL(
+                    'https://play.google.com/store/account/subscriptions?package=com.philta',
+                  );
+                }
+              }
+            }}>
+            <Text style={styles.infoBtnTxt}>
+              {lang == 'en' ? '구독 관리' : '구독 관리'}
+            </Text>
           </Pressable>
           <Pressable
             style={styles.infoBtn}
