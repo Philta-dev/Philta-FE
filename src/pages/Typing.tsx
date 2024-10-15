@@ -247,6 +247,7 @@ export default function Typing(props: TypingProps) {
   const [textArrayING, setTextArrayING] = useState<Array<string>>([]);
   const [textArrayAfter, setTextArrayAfter] = useState<Array<string>>([]);
   const [areaHeightForPaymentModal, setAreaHeightForPaymentModal] = useState(0);
+  const [isSatisfyPricing, setIsSatisfyPricing] = useState(false);
   const getData = async () => {
     try {
       const response = await axios.get(`${Config.API_URL}/typing/baseinfo`);
@@ -305,6 +306,7 @@ export default function Typing(props: TypingProps) {
       setEditable(true);
       console.log('prevVerse', prevVerse);
       ref.current?.focus();
+      checkIsSatisfyPricing();
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -412,6 +414,22 @@ export default function Typing(props: TypingProps) {
       console.log(errorResponse?.data);
     }
   };
+
+  const checkIsSatisfyPricing = async () => {
+    try {
+      const response = await axios.get(
+        `${Config.API_URL}/payments/issatisfypricing`,
+      );
+      console.log('checkIsSatisfyPricing', response.data);
+      setIsSatisfyPricing(response.data.isSatisfyPricing);
+    } catch (error) {
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+
   useEffect(() => {
     if (!needToPay) {
       setAreaHeightForPaymentModal(0);
@@ -498,6 +516,15 @@ export default function Typing(props: TypingProps) {
                 maxLength={givenText.length + 1}
                 caretHidden={true}
                 onChangeText={text => {
+                  console.log('onchangetext', needToPay, isSatisfyPricing);
+                  if (needToPay && isSatisfyPricing) {
+                    ref.current?.blur();
+                    setAreaHeightForPaymentModal(keyBoardHeight);
+                    dispatch(
+                      paymentSlice.actions.setPayModal({payModal: true}),
+                    );
+                    return;
+                  }
                   if (editable) handleTextChange(text);
                 }}
                 value={text}
@@ -730,13 +757,13 @@ export default function Typing(props: TypingProps) {
                 if (keyBoardStatus) {
                   setPressedButton('keyboard');
                   setPressedButton('');
-                  console.log('pressed', needToPay);
-                  if (needToPay) {
-                    setAreaHeightForPaymentModal(keyBoardHeight);
-                    dispatch(
-                      paymentSlice.actions.setPayModal({payModal: true}),
-                    );
-                  }
+                  // console.log('pressed', needToPay);
+                  // if (needToPay) {
+                  //   setAreaHeightForPaymentModal(keyBoardHeight);
+                  //   dispatch(
+                  //     paymentSlice.actions.setPayModal({payModal: true}),
+                  //   );
+                  // }
                   ref.current?.blur();
                 }
               }}>
