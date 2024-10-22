@@ -248,6 +248,8 @@ export default function Typing(props: TypingProps) {
   const [textArrayAfter, setTextArrayAfter] = useState<Array<string>>([]);
   const [areaHeightForPaymentModal, setAreaHeightForPaymentModal] = useState(0);
   const [isSatisfyPricing, setIsSatisfyPricing] = useState(false);
+  const [completedChapterCount, setCompletedChapterCount] = useState(0);
+  const [usedBookCount, setUsedBookCount] = useState(0);
   const getData = async () => {
     try {
       const response = await axios.get(`${Config.API_URL}/typing/baseinfo`);
@@ -422,6 +424,8 @@ export default function Typing(props: TypingProps) {
       );
       console.log('checkIsSatisfyPricing', response.data);
       setIsSatisfyPricing(response.data.isSatisfyPricing);
+      setCompletedChapterCount(response.data.completedChapterCount);
+      setUsedBookCount(response.data.usedBookCount);
     } catch (error) {
       const errorResponse = (
         error as AxiosError<{message: string; statusCode: number}>
@@ -523,6 +527,15 @@ export default function Typing(props: TypingProps) {
                     dispatch(
                       paymentSlice.actions.setPayModal({payModal: true}),
                     );
+                    let reason = '';
+                    if (usedBookCount >= 4) reason = reason + 'UsedBookCnt';
+                    if (usedBookCount >= 4 && completedChapterCount >= 5)
+                      reason = reason + ' + ';
+                    if (completedChapterCount >= 5)
+                      reason = reason + 'CompletedChapCnt';
+                    trackEvent('Payment Modal Shown', {
+                      reason: reason,
+                    });
                     return;
                   }
                   if (editable) handleTextChange(text);

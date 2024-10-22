@@ -1,5 +1,12 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, Pressable, Text, Platform} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Text,
+  Platform,
+  Linking,
+} from 'react-native';
 import {Svg, SvgXml} from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
 import {useAppDispatch} from '../store';
@@ -8,6 +15,7 @@ import {svgList} from '../assets/svgList';
 
 import {requestSubscription, getAvailablePurchases} from 'react-native-iap';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {trackEvent} from '../services/trackEvent.service';
 
 type GradationFullScreenModalProps = {
   sku?: string;
@@ -20,6 +28,7 @@ export default function GradationFullScreenModal(
 ) {
   useEffect(() => {}, []);
   const dispatch = useAppDispatch();
+  const [restoreFailed, setRestoreFailed] = useState(false);
 
   const _requestSubscription = () => {
     console.log('requestSubscription', props.sku);
@@ -57,6 +66,7 @@ export default function GradationFullScreenModal(
           }
           console.log('receipt', receipt);
           await EncryptedStorage.setItem('receipt', receipt);
+          trackEvent('Payment Restored');
         } else {
           console.log('no purchases');
           dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
@@ -64,7 +74,8 @@ export default function GradationFullScreenModal(
           if (props.setIndicator) {
             props.setIndicator(false);
           }
-          dispatch(paymentSlice.actions.setPayModal({payModal: false}));
+          setRestoreFailed(true);
+          // dispatch(paymentSlice.actions.setPayModal({payModal: false}));
         }
       })
       .catch(async error => {
@@ -192,27 +203,32 @@ export default function GradationFullScreenModal(
         <View style={{width: 10}} />
         <SvgXml width={20} height={20} xml={svgList.modal.backBtn} />
       </Pressable>
+
       <Pressable
         onPress={() => {
-          _restoreSubscription();
+          if (restoreFailed) {
+            Linking.openURL('https://open.kakao.com/o/saLj2nTg');
+          } else _restoreSubscription();
         }}>
-        <Text style={styles.txt}>복원하기</Text>
-      </Pressable>
-      <Text
-        style={[
-          styles.txt,
-          {
-            color: '#ABABF5',
-            fontFamily: 'Pretendard-Medium',
+        <Text
+          style={[
+            styles.txt,
+            {
+              color: '#ABABF5',
+              fontFamily: 'Pretendard-Medium',
 
-            fontSize: 13,
-            letterSpacing: -0.26,
-            textAlign: 'center',
-            marginTop: 56,
-          },
-        ]}>
-        {'비용을 줄일 수 있는 개발자 분들의 자문 환영합니다'}
-      </Text>
+              fontSize: 13,
+              letterSpacing: -0.26,
+              textAlign: 'center',
+              marginTop: 56,
+              lineHeight: 20,
+            },
+          ]}>
+          {!restoreFailed
+            ? '비용을 줄일 수 있는 개발자 분들의 자문 환영합니다\n이미 구독 중이신가요?'
+            : '시스템상에서 구독 중이 아니신 것으로 파악됩니다.\n오류라고 생각되시면 문의 부탁드립니다.\n(마이페이지 > 문의하기)'}
+        </Text>
+      </Pressable>
     </View>
   );
 }

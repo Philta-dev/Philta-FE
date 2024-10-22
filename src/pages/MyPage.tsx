@@ -27,7 +27,7 @@ import appleAuth from '@invertase/react-native-apple-authentication';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import Modal from 'react-native-modal';
-import {resetTrackUser} from '../services/trackEvent.service';
+import {resetTrackUser, trackEvent} from '../services/trackEvent.service';
 import paymentSlice from '../slices/payments';
 
 type MyPageNavigationProp = NativeStackNavigationProp<
@@ -343,6 +343,9 @@ export default function MyPage(props: MyPageProps) {
             style={styles.infoBtn}
             onPress={() => {
               if (needToPay) {
+                trackEvent('Payment Modal Shown', {
+                  reason: 'Manage Subscription Pressed',
+                });
                 dispatch(paymentSlice.actions.setPayModal({payModal: true}));
               } else {
                 if (Platform.OS === 'ios') {
