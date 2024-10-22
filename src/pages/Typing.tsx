@@ -21,7 +21,7 @@ import MenuModal from '../components/MenuModal';
 import Text from '../components/Text';
 import TextBold from '../components/TextBold';
 import {svgList} from '../assets/svgList';
-import ProgressBar from '../components/ProgessBar';
+import ProgressBar from '../components/ProgressBar';
 import {StatusBarHeight} from '../components/Safe';
 import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';

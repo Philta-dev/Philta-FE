@@ -24,7 +24,7 @@ export default function ProgressBar(props: ProgressBarProps) {
           height: props.height,
           backgroundColor: props.progressColor,
           borderRadius: props.borderRadius,
-          minWidth: props.height / 2,
+          minWidth: props.progress == 0 ? 0 : props.height / 2,
         }}></View>
     </View>
   );

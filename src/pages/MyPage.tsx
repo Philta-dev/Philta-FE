@@ -21,7 +21,7 @@ import {svgList} from '../assets/svgList';
 import Text from '../components/Text';
 import TextBold from '../components/TextBold';
 import {Shadow} from 'react-native-shadow-2';
-import ProgressBar from '../components/ProgessBar';
+import ProgressBar from '../components/ProgressBar';
 import DeviceInfo from 'react-native-device-info';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import * as KakaoLogin from '@react-native-seoul/kakao-login';
@@ -365,7 +365,8 @@ export default function MyPage(props: MyPageProps) {
             style={styles.infoBtn}
             onPress={() => {
               Linking.openURL(
-                'https://docs.google.com/forms/d/e/1FAIpQLSdW2tb9QZGBT3sA5eHLWRamqixbsrRK-7q1GhGPZ--4CGEnEQ/viewform?usp=sf_link',
+                'https://open.kakao.com/o/saLj2nTg',
+                // 'https://docs.google.com/forms/d/e/1FAIpQLSdW2tb9QZGBT3sA5eHLWRamqixbsrRK-7q1GhGPZ--4CGEnEQ/viewform?usp=sf_link',
               );
             }}>
             <Text style={styles.infoBtnTxt}>
@@ -541,7 +542,7 @@ export default function MyPage(props: MyPageProps) {
               placeholderTextColor={'#898A8D'}
               maxLength={20}
               value={nickNameValue}
-              onChangeText={t => setNickNameValue(t)}
+              onChangeText={t => setNickNameValue(t.trim())}
               ref={nameRef}
               onSubmitEditing={() => {
                 if (
