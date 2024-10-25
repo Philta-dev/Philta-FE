@@ -123,11 +123,11 @@ function AppInner() {
   useEffect(() => {
     const init = async () => {};
     init().finally(async () => {
-      setShowCustomSplash(true);
-      await BootSplash.hide({fade: true});
-      setTimeout(() => {
-        setShowCustomSplash(false);
-      }, 2200);
+      // setShowCustomSplash(true);
+      setTimeout(async () => {
+        await BootSplash.hide({fade: true});
+        // setShowCustomSplash(false);
+      }, 1500);
     });
   }, []);
   const [showCustomSplash, setShowCustomSplash] = useState(false);
@@ -139,9 +139,9 @@ function AppInner() {
   const [loadingPage, setLoadingPage] = useState(false);
   useEffect(() => {
     if (internetState.isConnected) {
-      setTimeout(() => {
-        setLoadingPage(false);
-      }, 1000);
+      // setTimeout(() => {
+      setLoadingPage(false);
+      // }, 1000);
     } else {
       setLoadingPage(true);
     }
@@ -373,14 +373,14 @@ function AppInner() {
   return showCustomSplash ? (
     <View
       style={{
-        backgroundColor: 'white',
+        // backgroundColor: 'white',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 5,
         paddingRight: 8,
       }}>
-      <Splash />
+      {/* <Splash /> */}
     </View>
   ) : loadingPage ? (
     <View

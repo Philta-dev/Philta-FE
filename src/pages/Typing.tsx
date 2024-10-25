@@ -83,6 +83,11 @@ export default function Typing(props: TypingProps) {
   const reduxVersion = useSelector((state: RootState) => state.user.version);
 
   useEffect(() => {
+    if (!showModal) {
+      ref.current?.focus();
+    }
+  }, [showModal]);
+  useEffect(() => {
     const focusListener = props.navigation.addListener('focus', () => {
       getData();
       trackEvent('Screen Viewed - Typing');

@@ -97,13 +97,13 @@ export default function GradationFullScreenModal(
       />
       <View style={{position: 'relative', width: '100%', alignItems: 'center'}}>
         <Pressable
-          style={{position: 'absolute', top: 0, right: 24}}
+          style={{position: 'absolute', top: 0, right: 24, zIndex: 10}}
           onPress={() => {
             dispatch(paymentSlice.actions.setPayModal({payModal: false}));
           }}>
           <SvgXml width={24} height={24} xml={svgList.modal.xBtn} />
         </Pressable>
-        <SvgXml width={80} height={80} xml={svgList.modal.logo} />
+        <SvgXml width={80} height={80} xml={svgList.appLogo} />
       </View>
 
       <Text
