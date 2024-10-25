@@ -8,10 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* PhiltaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PhiltaTests.m */; };
+		06C2EC894A494496A9893F68 /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8043A79A435D421598E3934C /* Pretendard-SemiBold.otf */; };
 		0C80B921A6F3F58F76C31292 /* libPods-Philta.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-Philta.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		391A250E6DC84DFC8A06CA58 /* Pretendard-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = A3080B571DFD4998BBDB856A /* Pretendard-Light.otf */; };
+		3E4C8C5399824853965C26F3 /* Pretendard-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08F443877BDC42818BA12EE6 /* Pretendard-ExtraBold.otf */; };
+		43B66D0919024DE0911AB4E7 /* Pretendard-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 48F35261A46C4624989D7BDF /* Pretendard-Black.otf */; };
+		527EEF0F2CCAC13200EEF030 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 527EEF0E2CCAC13200EEF030 /* Localizable.xcstrings */; };
+		527EEF112CCAC17100EEF030 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 527EEF102CCAC17100EEF030 /* InfoPlist.xcstrings */; };
 		52FFD9F92C8AC6E900ED85DE /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52FFD9F82C8AC6E900ED85DE /* StoreKit.framework */; };
 		67597B7EF9D998CADD76D187 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */; };
 		7699B88040F8A987B510C191 /* libPods-Philta-PhiltaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Philta-PhiltaTests.a */; };
@@ -19,6 +25,11 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		98A74FC6AFFA48BD9F238088 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */; };
 		98ADB4BB08704FB5B94B6A0E /* KoPubWorldBatangPB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */; };
+		AD893E761ADA4396A469EC5B /* Pretendard-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = AAD45102F795442F90E8D3B0 /* Pretendard-ExtraLight.otf */; };
+		CF31AE368BA042A9BCC0460B /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1DA4DBDA845D40CA86EFC9BE /* Pretendard-Medium.otf */; };
+		D268FCE0149A4CB2A1A565F2 /* Pretendard-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6A943455AEF04C19AFA51B70 /* Pretendard-Thin.otf */; };
+		E509F6236F7742A689E3CCDF /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 07FDA509B2814823A33E3F5B /* Pretendard-Bold.otf */; };
+		EAC3687F9E8E4B37917574E2 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 16B2D66886874BD09D6A8351 /* Pretendard-Regular.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +46,8 @@
 		00E356EE1AD99517003FC87E /* PhiltaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhiltaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* PhiltaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhiltaTests.m; sourceTree = "<group>"; };
+		07FDA509B2814823A33E3F5B /* Pretendard-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Bold.otf"; path = "../src/assets/fonts/Pretendard-Bold.otf"; sourceTree = "<group>"; };
+		08F443877BDC42818BA12EE6 /* Pretendard-ExtraBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-ExtraBold.otf"; path = "../src/assets/fonts/Pretendard-ExtraBold.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Philta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Philta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Philta/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Philta/AppDelegate.mm; sourceTree = "<group>"; };
@@ -42,18 +55,27 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Philta/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Philta/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		16B2D66886874BD09D6A8351 /* Pretendard-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Regular.otf"; path = "../src/assets/fonts/Pretendard-Regular.otf"; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-Philta-PhiltaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Philta-PhiltaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DA4DBDA845D40CA86EFC9BE /* Pretendard-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Medium.otf"; path = "../src/assets/fonts/Pretendard-Medium.otf"; sourceTree = "<group>"; };
 		1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = KoPubWorldBatangPB.otf; path = ../src/assets/fonts/KoPubWorldBatangPB.otf; sourceTree = "<group>"; };
 		23D44E9B79B144D794ED2C0D /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = Philta/BootSplash.storyboard; sourceTree = "<group>"; };
 		25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = KoPubWorldBatangPL.otf; path = ../src/assets/fonts/KoPubWorldBatangPL.otf; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Philta.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta.debug.xcconfig"; path = "Target Support Files/Pods-Philta/Pods-Philta.debug.xcconfig"; sourceTree = "<group>"; };
+		48F35261A46C4624989D7BDF /* Pretendard-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Black.otf"; path = "../src/assets/fonts/Pretendard-Black.otf"; sourceTree = "<group>"; };
+		527EEF0E2CCAC13200EEF030 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		527EEF102CCAC17100EEF030 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		52CAA55A2C25A7E3001E43AD /* Philta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Philta.entitlements; path = Philta/Philta.entitlements; sourceTree = "<group>"; };
 		52FFD9F82C8AC6E900ED85DE /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		5709B34CF0A7D63546082F79 /* Pods-Philta.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta.release.xcconfig"; path = "Target Support Files/Pods-Philta/Pods-Philta.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Philta-PhiltaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta-PhiltaTests.debug.xcconfig"; path = "Target Support Files/Pods-Philta-PhiltaTests/Pods-Philta-PhiltaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-Philta.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Philta.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A943455AEF04C19AFA51B70 /* Pretendard-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Thin.otf"; path = "../src/assets/fonts/Pretendard-Thin.otf"; sourceTree = "<group>"; };
+		8043A79A435D421598E3934C /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-SemiBold.otf"; path = "../src/assets/fonts/Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Philta/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Philta-PhiltaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Philta-PhiltaTests.release.xcconfig"; path = "Target Support Files/Pods-Philta-PhiltaTests/Pods-Philta-PhiltaTests.release.xcconfig"; sourceTree = "<group>"; };
+		A3080B571DFD4998BBDB856A /* Pretendard-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Light.otf"; path = "../src/assets/fonts/Pretendard-Light.otf"; sourceTree = "<group>"; };
+		AAD45102F795442F90E8D3B0 /* Pretendard-ExtraLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-ExtraLight.otf"; path = "../src/assets/fonts/Pretendard-ExtraLight.otf"; sourceTree = "<group>"; };
 		B1FA4C317EA40DCF982C3A82 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Philta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -104,6 +126,8 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				527EEF0E2CCAC13200EEF030 /* Localizable.xcstrings */,
+				527EEF102CCAC17100EEF030 /* InfoPlist.xcstrings */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
@@ -129,6 +153,15 @@
 			children = (
 				1F083E699E3B4C8F908A0531 /* KoPubWorldBatangPB.otf */,
 				25BB85BE43184AD494939E23 /* KoPubWorldBatangPL.otf */,
+				48F35261A46C4624989D7BDF /* Pretendard-Black.otf */,
+				07FDA509B2814823A33E3F5B /* Pretendard-Bold.otf */,
+				08F443877BDC42818BA12EE6 /* Pretendard-ExtraBold.otf */,
+				AAD45102F795442F90E8D3B0 /* Pretendard-ExtraLight.otf */,
+				A3080B571DFD4998BBDB856A /* Pretendard-Light.otf */,
+				1DA4DBDA845D40CA86EFC9BE /* Pretendard-Medium.otf */,
+				16B2D66886874BD09D6A8351 /* Pretendard-Regular.otf */,
+				8043A79A435D421598E3934C /* Pretendard-SemiBold.otf */,
+				6A943455AEF04C19AFA51B70 /* Pretendard-Thin.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -245,6 +278,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -275,6 +309,17 @@
 				98A74FC6AFFA48BD9F238088 /* BootSplash.storyboard in Resources */,
 				98ADB4BB08704FB5B94B6A0E /* KoPubWorldBatangPB.otf in Resources */,
 				7E67B2948F644C348F8019A2 /* KoPubWorldBatangPL.otf in Resources */,
+				43B66D0919024DE0911AB4E7 /* Pretendard-Black.otf in Resources */,
+				E509F6236F7742A689E3CCDF /* Pretendard-Bold.otf in Resources */,
+				3E4C8C5399824853965C26F3 /* Pretendard-ExtraBold.otf in Resources */,
+				AD893E761ADA4396A469EC5B /* Pretendard-ExtraLight.otf in Resources */,
+				527EEF0F2CCAC13200EEF030 /* Localizable.xcstrings in Resources */,
+				391A250E6DC84DFC8A06CA58 /* Pretendard-Light.otf in Resources */,
+				CF31AE368BA042A9BCC0460B /* Pretendard-Medium.otf in Resources */,
+				EAC3687F9E8E4B37917574E2 /* Pretendard-Regular.otf in Resources */,
+				527EEF112CCAC17100EEF030 /* InfoPlist.xcstrings in Resources */,
+				06C2EC894A494496A9893F68 /* Pretendard-SemiBold.otf in Resources */,
+				D268FCE0149A4CB2A1A565F2 /* Pretendard-Thin.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -498,7 +543,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Philta/Philta.entitlements;
-				CURRENT_PROJECT_VERSION = 2409191;
+				CURRENT_PROJECT_VERSION = 2410251;
 				DEVELOPMENT_TEAM = 52BCNB2X3L;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Philta/Info.plist;
@@ -506,7 +551,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 2.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -527,14 +572,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Philta/Philta.entitlements;
-				CURRENT_PROJECT_VERSION = 2409191;
+				CURRENT_PROJECT_VERSION = 2410251;
 				DEVELOPMENT_TEAM = 52BCNB2X3L;
 				INFOPLIST_FILE = Philta/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = 2.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -623,6 +668,7 @@
 				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				USE_HERMES = true;
 			};
 			name = Debug;
@@ -695,6 +741,7 @@
 				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};

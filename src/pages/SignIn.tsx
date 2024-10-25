@@ -197,7 +197,8 @@ export default function SignIn(props: SignInProps) {
   return (
     <View style={styles.entire}>
       <View style={styles.title}>
-        <Splash loop={true} />
+        {/* <Splash loop={true} /> */}
+        <SvgXml xml={svgList.appLogo} width={150} height={150} />
       </View>
       <View style={styles.btnView}>
         <Pressable

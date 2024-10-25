@@ -3,11 +3,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import {
-  BottomTabNavigationProp,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
-import {Keyboard, Platform, Pressable, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, Platform, View} from 'react-native';
 
 import {useSelector} from 'react-redux';
 import {RootState, useAppDispatch} from './src/store';
@@ -36,7 +32,23 @@ import BootSplash from 'react-native-bootsplash';
 import {Splash} from './src/components/animations';
 import {resetTrackUser, setTrackUser} from './src/services/trackEvent.service';
 import {getLocales} from 'react-native-localize';
+
+import {
+  PurchaseError,
+  Subscription,
+  SubscriptionAndroid,
+  SubscriptionPurchase,
+  clearProductsIOS,
+  finishTransaction,
+  flushFailedPurchasesCachedAsPendingAndroid,
+  getAvailablePurchases,
+  getSubscriptions,
+  initConnection,
+  purchaseErrorListener,
+  purchaseUpdatedListener,
+} from 'react-native-iap';
 import GradationFullScreenModal from './src/components/GradationFullScreenModal';
+import paymentSlice from './src/slices/payments';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -69,6 +81,7 @@ function AppInner() {
     (state: RootState) => !!state.user.accessToken,
   );
   const needToPay = useSelector((state: RootState) => state.payments.needToPay);
+  const payModal = useSelector((state: RootState) => state.payments.payModal);
 
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const reissue = async () => {
@@ -107,23 +120,14 @@ function AppInner() {
       console.log(errorResponse?.data);
     }
   };
-  // useEffect(() => {
-  //   const KeyboardDismiss = Keyboard.addListener('keyboardDidHide', () => {});
-  //   const KeyboardShow = Keyboard.addListener('keyboardDidShow', e => {});
-
-  //   return () => {
-  //     KeyboardDismiss.remove();
-  //     KeyboardShow.remove();
-  //   };
-  // }, []);
   useEffect(() => {
     const init = async () => {};
     init().finally(async () => {
-      setShowCustomSplash(true);
-      await BootSplash.hide({fade: true});
-      setTimeout(() => {
-        setShowCustomSplash(false);
-      }, 2200);
+      // setShowCustomSplash(true);
+      setTimeout(async () => {
+        await BootSplash.hide({fade: true});
+        // setShowCustomSplash(false);
+      }, 1500);
     });
   }, []);
   const [showCustomSplash, setShowCustomSplash] = useState(false);
@@ -135,9 +139,9 @@ function AppInner() {
   const [loadingPage, setLoadingPage] = useState(false);
   useEffect(() => {
     if (internetState.isConnected) {
-      setTimeout(() => {
-        setLoadingPage(false);
-      }, 1000);
+      // setTimeout(() => {
+      setLoadingPage(false);
+      // }, 1000);
     } else {
       setLoadingPage(true);
     }
@@ -175,17 +179,208 @@ function AppInner() {
     };
     getLang();
   }, []);
+
+  let purchaseUpdateSubscription: any;
+  let purchaseErrorSubscription: any;
+
+  const [subscription, setSubscription] = useState<
+    Subscription | SubscriptionAndroid | undefined
+  >();
+  const [indicator, setIndicator] = useState(false);
+  const [offerToken, setOfferToken] = useState('');
+
+  const getReadyForPayments = async () => {
+    /*
+      clearProductsIOS: ios의 경우 이전에 구매한 상품을 초기화
+      initConnection: sdk 초기화
+      flushFailedPurchasesCachedAsPendingAndroid: 안드로이드의 경우 실패한 구매를 초기화
+
+      purchaseUpdatedListener: 구매가 업데이트 될 때 호출
+      purchaseErrorListener: 구매 에러가 발생할 때 호출
+
+      getSubscriptions: 구독 정보를 가져옴 (앱스토어에 등록된)
+
+      EncryptedStorage.getItem('receipt'): 저장된 receipt를 가져옴
+      기기에 저장된 receipt가 있으면 validatePaymentsIOS를 호출하여 결제가 유효한지 확인 => needToPay
+    */
+    console.log('getReadyForPayments');
+    if (Platform.OS == 'ios') clearProductsIOS();
+    try {
+      console.log('initConnection');
+      const result = await initConnection();
+      if (Platform.OS == 'android')
+        await flushFailedPurchasesCachedAsPendingAndroid();
+      console.log('initConnection res', result);
+    } catch (error) {
+      console.log('error in initConnection', error);
+    }
+
+    purchaseUpdateSubscription = purchaseUpdatedListener(
+      (purchase: SubscriptionPurchase) => {
+        console.log('purchaseUpdatedListener', purchase);
+        const receiptNow =
+          Platform.OS == 'ios'
+            ? purchase.transactionReceipt
+            : purchase.purchaseToken;
+        if (receiptNow) {
+          if (Platform.OS == 'ios') {
+            validatePaymentsIOS(receiptNow);
+            finishTransaction({purchase});
+          } else validatePaymentsAndroid(receiptNow, purchase);
+        }
+      },
+    );
+
+    purchaseErrorSubscription = purchaseErrorListener(
+      (error: PurchaseError) => {
+        console.warn('purchaseErrorListener', error);
+        EncryptedStorage.removeItem('receipt');
+        if (error.code?.toLowerCase().includes('already')) {
+          _restoreSubscription();
+        }
+        dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
+        dispatch(paymentSlice.actions.setPayModal({payModal: false}));
+        setIndicator(false);
+      },
+    );
+
+    const subscriptions = await getSubscriptions({
+      // skus: ['test'],
+      skus: ['test', 'philta.monthly.test'],
+    });
+    console.log('subscriptions', subscriptions);
+    if (subscriptions[0].subscriptionOfferDetails) {
+      setOfferToken(
+        subscriptions[0].subscriptionOfferDetails[0].offerToken || '',
+      );
+    }
+    setSubscription(subscriptions[0]);
+
+    const receipt = await EncryptedStorage.getItem('receipt');
+    if (receipt) {
+      if (Platform.OS == 'ios') {
+        validatePaymentsIOS(receipt);
+      } else {
+        validatePaymentsAndroid(receipt);
+      }
+    } else {
+      dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
+    }
+  };
+
+  const validatePaymentsIOS = async (receipt: string) => {
+    console.log('validatePayments IOS');
+    try {
+      const response = await axios.post(
+        `${Config.API_URL}/payments/appleverify`,
+        {
+          receiptData: receipt,
+          productId: 'test',
+        },
+      );
+      console.log('validation reciept for server', response.data.data.status);
+      if (response.data.data.status == 0) {
+        console.log('success');
+        dispatch(paymentSlice.actions.setNeedToPay({needToPay: false}));
+        await EncryptedStorage.setItem('receipt', receipt);
+      } else {
+        dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
+        await EncryptedStorage.removeItem('receipt');
+      }
+      setIndicator(false);
+    } catch (error) {
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+      await EncryptedStorage.removeItem('receipt');
+    }
+  };
+
+  const validatePaymentsAndroid = async (receipt: string, purchase?: any) => {
+    console.log('validatePayments Android', receipt);
+    try {
+      const response = await axios.post(
+        `${Config.API_URL}/payments/googleverify`,
+        {
+          purchaseToken: receipt,
+          productId: 'test',
+        },
+      );
+      console.log(
+        'validation reciept for server',
+        response.data.data.subscriptionState,
+      );
+      finishTransaction({purchase});
+      if (response.data.data.subscriptionState == 'SUBSCRIPTION_STATE_ACTIVE') {
+        console.log('success');
+        dispatch(paymentSlice.actions.setNeedToPay({needToPay: false}));
+        await EncryptedStorage.setItem('receipt', receipt);
+      } else {
+        dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
+        await EncryptedStorage.removeItem('receipt');
+      }
+      setIndicator(false);
+    } catch (error) {
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+      await EncryptedStorage.removeItem('receipt');
+    }
+  };
+
+  const _restoreSubscription = () => {
+    console.log('restoreSubscription');
+    getAvailablePurchases()
+      .then(async purchases => {
+        // console.log('getAvailablePurchases', purchases);
+        if (purchases.length > 0) {
+          let receipt = purchases[0].transactionReceipt;
+          if (Platform.OS == 'android' && purchases[0].purchaseToken) {
+            receipt = purchases[0].purchaseToken;
+          }
+          console.log('receipt', receipt);
+          await EncryptedStorage.setItem('receipt', receipt);
+        } else {
+          console.log('no purchases');
+          dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
+          await EncryptedStorage.removeItem('receipt');
+          dispatch(paymentSlice.actions.setPayModal({payModal: false}));
+        }
+      })
+      .catch(async error => {
+        console.log('getAvailablePurchases', error);
+        await EncryptedStorage.removeItem('receipt');
+        dispatch(paymentSlice.actions.setPayModal({payModal: false}));
+      });
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      getReadyForPayments();
+    }
+    return () => {
+      if (purchaseUpdateSubscription) {
+        purchaseUpdateSubscription.remove();
+      }
+      if (purchaseErrorSubscription) {
+        purchaseErrorSubscription.remove();
+      }
+    };
+  }, [accessToken]);
+
   return showCustomSplash ? (
     <View
       style={{
-        backgroundColor: 'white',
+        // backgroundColor: 'white',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 5,
         paddingRight: 8,
       }}>
-      <Splash />
+      {/* <Splash /> */}
     </View>
   ) : loadingPage ? (
     <View
@@ -232,7 +427,27 @@ function AppInner() {
           </Stack.Navigator>
         </Safe>
       )}
-      {needToPay && <GradationFullScreenModal />}
+      {needToPay && payModal && (
+        <GradationFullScreenModal
+          sku={subscription?.productId}
+          offerToken={offerToken}
+          setIndicator={setIndicator}
+        />
+      )}
+      {indicator && (
+        <View
+          style={{
+            position: 'absolute',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 100,
+          }}>
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      )}
     </NavigationContainer>
   );
 }

@@ -10,6 +10,7 @@ import {
   Platform,
   FlatList,
   Animated,
+  BackHandler,
 } from 'react-native';
 import {useEffect, useRef, useState} from 'react';
 import {LinearGradient} from 'react-native-linear-gradient';
@@ -20,7 +21,7 @@ import MenuModal from '../components/MenuModal';
 import Text from '../components/Text';
 import TextBold from '../components/TextBold';
 import {svgList} from '../assets/svgList';
-import ProgressBar from '../components/ProgessBar';
+import ProgressBar from '../components/ProgressBar';
 import {StatusBarHeight} from '../components/Safe';
 import {RootState, useAppDispatch} from '../store';
 import userSlice from '../slices/user';
@@ -52,6 +53,7 @@ type verseContent = {
 
 export default function Typing(props: TypingProps) {
   const lang = useSelector((state: RootState) => state.user.lang);
+  const payModal = useSelector((state: RootState) => state.payments.payModal);
   const needToPay = useSelector((state: RootState) => state.payments.needToPay);
 
   const [pressedButton, setPressedButton] = useState('');
@@ -80,6 +82,11 @@ export default function Typing(props: TypingProps) {
   const dispatch = useAppDispatch();
   const reduxVersion = useSelector((state: RootState) => state.user.version);
 
+  useEffect(() => {
+    if (!showModal) {
+      ref.current?.focus();
+    }
+  }, [showModal]);
   useEffect(() => {
     const focusListener = props.navigation.addListener('focus', () => {
       getData();
@@ -202,10 +209,24 @@ export default function Typing(props: TypingProps) {
   };
 
   useEffect(() => {
-    if (!needToPay) {
+    if (!payModal) {
       ref.current?.focus();
     }
-  }, [needToPay]);
+    const backBtnListener = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (payModal) {
+          dispatch(paymentSlice.actions.setPayModal({payModal: false}));
+          return true;
+        } else {
+          return false;
+        }
+      },
+    );
+    return () => {
+      backBtnListener.remove();
+    };
+  }, [payModal]);
   const [givenText, setGivenText] = useState('');
   const [editable, setEditable] = useState(true);
   const [givenVerse, setGivenVerse] = useState<verseContent>();
@@ -231,6 +252,9 @@ export default function Typing(props: TypingProps) {
   const [textArrayING, setTextArrayING] = useState<Array<string>>([]);
   const [textArrayAfter, setTextArrayAfter] = useState<Array<string>>([]);
   const [areaHeightForPaymentModal, setAreaHeightForPaymentModal] = useState(0);
+  const [isSatisfyPricing, setIsSatisfyPricing] = useState(false);
+  const [completedChapterCount, setCompletedChapterCount] = useState(0);
+  const [usedBookCount, setUsedBookCount] = useState(0);
   const getData = async () => {
     try {
       const response = await axios.get(`${Config.API_URL}/typing/baseinfo`);
@@ -289,6 +313,7 @@ export default function Typing(props: TypingProps) {
       setEditable(true);
       console.log('prevVerse', prevVerse);
       ref.current?.focus();
+      checkIsSatisfyPricing();
     } catch (e) {
       const errorResponse = (
         e as AxiosError<{message: string; statusCode: number}>
@@ -396,6 +421,30 @@ export default function Typing(props: TypingProps) {
       console.log(errorResponse?.data);
     }
   };
+
+  const checkIsSatisfyPricing = async () => {
+    try {
+      const response = await axios.get(
+        `${Config.API_URL}/payments/issatisfypricing`,
+      );
+      console.log('checkIsSatisfyPricing', response.data);
+      setIsSatisfyPricing(response.data.isSatisfyPricing);
+      setCompletedChapterCount(response.data.completedChapterCount);
+      setUsedBookCount(response.data.usedBookCount);
+    } catch (error) {
+      const errorResponse = (
+        error as AxiosError<{message: string; statusCode: number}>
+      ).response;
+      console.log(errorResponse?.data);
+    }
+  };
+
+  useEffect(() => {
+    if (!needToPay) {
+      setAreaHeightForPaymentModal(0);
+      ref.current?.focus();
+    }
+  }, [needToPay]);
   return (
     <View style={styles.entire}>
       <View style={{flex: 1, paddingLeft: 1}}>
@@ -476,6 +525,24 @@ export default function Typing(props: TypingProps) {
                 maxLength={givenText.length + 1}
                 caretHidden={true}
                 onChangeText={text => {
+                  console.log('onchangetext', needToPay, isSatisfyPricing);
+                  if (needToPay && isSatisfyPricing) {
+                    ref.current?.blur();
+                    setAreaHeightForPaymentModal(keyBoardHeight);
+                    dispatch(
+                      paymentSlice.actions.setPayModal({payModal: true}),
+                    );
+                    let reason = '';
+                    if (usedBookCount >= 4) reason = reason + 'UsedBookCnt';
+                    if (usedBookCount >= 4 && completedChapterCount >= 5)
+                      reason = reason + ' + ';
+                    if (completedChapterCount >= 5)
+                      reason = reason + 'CompletedChapCnt';
+                    trackEvent('Payment Modal Shown', {
+                      reason: reason,
+                    });
+                    return;
+                  }
                   if (editable) handleTextChange(text);
                 }}
                 value={text}
@@ -708,10 +775,13 @@ export default function Typing(props: TypingProps) {
                 if (keyBoardStatus) {
                   setPressedButton('keyboard');
                   setPressedButton('');
-                  setAreaHeightForPaymentModal(keyBoardHeight);
-                  // dispatch(
-                  //   paymentSlice.actions.setNeedToPay({needToPay: true}),
-                  // );
+                  // console.log('pressed', needToPay);
+                  // if (needToPay) {
+                  //   setAreaHeightForPaymentModal(keyBoardHeight);
+                  //   dispatch(
+                  //     paymentSlice.actions.setPayModal({payModal: true}),
+                  //   );
+                  // }
                   ref.current?.blur();
                 }
               }}>
@@ -922,7 +992,7 @@ export default function Typing(props: TypingProps) {
           </Animated.View>
         </View>
       )}
-      {needToPay && <View style={{height: areaHeightForPaymentModal}} />}
+      {payModal && <View style={{height: areaHeightForPaymentModal}} />}
     </View>
   );
 }

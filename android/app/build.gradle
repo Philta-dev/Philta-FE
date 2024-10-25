@@ -81,8 +81,8 @@ android {
         applicationId "com.philta"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2409191
-        versionName "1.2.0"
+        versionCode 2410251
+        versionName "2.0.0"
         resValue "string", "build_config_package", "com.philta"
         missingDimensionStrategy "store", "play"
 

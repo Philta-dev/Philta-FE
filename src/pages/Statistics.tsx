@@ -11,7 +11,7 @@ import {svgList} from '../assets/svgList';
 import Text from '../components/Text';
 import TextBold from '../components/TextBold';
 import ProgressCirle from '../components/ProgressCircle';
-import ProgressBar from '../components/ProgessBar';
+import ProgressBar from '../components/ProgressBar';
 
 type StatisticsNavigationProp = NativeStackNavigationProp<
   MyPageNavStackParamList,
@@ -153,8 +153,8 @@ export default function Statistics(props: StatisticsProps) {
           size={56}
           width={6}
           progressColor="#5656D6"
-          nonProgressColor="#F4F4F4"
-          progress={oldTestProgress < 0.0001 ? 0.0001 : oldTestProgress}
+          nonProgressColor={testament ? '#BEC0C7' : '#F4F4F4'}
+          progress={oldTestProgress}
           selected={testament}
           text={oldTestamentName}
           fonstSize={14}
@@ -173,8 +173,8 @@ export default function Statistics(props: StatisticsProps) {
           size={56}
           width={6}
           progressColor="#5656D6"
-          nonProgressColor="#F4F4F4"
-          progress={newTestProgress < 0.0001 ? 0.0001 : newTestProgress}
+          nonProgressColor={!testament ? '#BEC0C7' : '#F4F4F4'}
+          progress={newTestProgress}
           selected={!testament}
           text={newTestamentName}
           fonstSize={14}

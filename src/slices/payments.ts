@@ -1,7 +1,8 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  needToPay: false,
+  needToPay: true,
+  payModal: false,
 };
 
 const paymentSlice = createSlice({
@@ -10,6 +11,9 @@ const paymentSlice = createSlice({
   reducers: {
     setNeedToPay(state, action) {
       state.needToPay = action.payload.needToPay;
+    },
+    setPayModal(state, action) {
+      state.payModal = action.payload.payModal;
     },
   },
   extraReducers: builder => {},

@@ -121,6 +121,7 @@ export default function EnterName(props: EnterNameProps) {
         </Text>
       </View>
       <Pressable
+        disabled={!name}
         onPress={() => enterName()}
         style={[
           styles.submitBtn,
