@@ -232,36 +232,6 @@ export default function BaseNav() {
             ),
           }}
         />
-        {/* <Tab.Screen
-          name="Favorite"
-          component={Favorite}
-          options={{
-            header: props => (
-              <View style={styles.header}>
-                <View style={styles.headerLeft} />
-                <View style={styles.headerCenter}>
-                  <TextBold style={styles.headerTitleTxt}>북마크</TextBold>
-                </View>
-                <View style={styles.headerRight}>
-                  <Pressable
-                    onPress={() =>
-                      props.navigation.navigate('Search', {page: 'favorite'})
-                    }>
-                    <SvgXml xml={svgList.searchBtn} width={24} height={24} />
-                  </Pressable>
-
-                  <Pressable
-                    style={styles.headerDropDown}
-                    onPress={() => setDropDown(true)}>
-                    <Text style={styles.headerDropDownTxt}>
-                      {dropDownItems[selectedIndex]}
-                    </Text>
-                  </Pressable>
-                </View>
-              </View>
-            ),
-          }}
-        /> */}
         <Tab.Screen
           name="MyPageNav"
           component={MyPageNav}

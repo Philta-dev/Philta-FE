@@ -633,7 +633,7 @@ export default function Typing(props: TypingProps) {
                       x1={0}
                       x2={0}
                       y1={5}
-                      y2={24}
+                      y2={21}
                       strokeWidth={4}
                       stroke={cursor ? 'transparent' : '#5856D6'}
                     />
@@ -827,7 +827,10 @@ export default function Typing(props: TypingProps) {
                   verse: -1,
                 }),
               );
-              props.navigation.navigate('Favorite');
+              setTimeout(() => {
+                // props.navigation.navigate('Favorite');
+                props.navigation.navigate('MyPageNav', {screen: 'Favorite'});
+              }, 500);
             }}>
             <View style={[styles.modalBtnIcon]}>
               <SvgXml
@@ -851,7 +854,7 @@ export default function Typing(props: TypingProps) {
                   verse: -1,
                 }),
               );
-              props.navigation.navigate('Statistics');
+              props.navigation.navigate('MyPageNav', {screen: 'Statistics'});
             }}
             style={styles.modalBtn}>
             <View style={styles.modalBtnIcon}>
