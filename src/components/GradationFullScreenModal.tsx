@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,16 +6,19 @@ import {
   Text,
   Platform,
   Linking,
+  useWindowDimensions,
+  Animated,
 } from 'react-native';
 import {Svg, SvgXml} from 'react-native-svg';
 import LinearGradient from 'react-native-linear-gradient';
-import {useAppDispatch} from '../store';
+import {RootState, useAppDispatch} from '../store';
 import paymentSlice from '../slices/payments';
 import {svgList} from '../assets/svgList';
 
 import {requestSubscription, getAvailablePurchases} from 'react-native-iap';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {trackEvent} from '../services/trackEvent.service';
+import {useSelector} from 'react-redux';
 
 type GradationFullScreenModalProps = {
   sku?: string;
@@ -26,7 +29,12 @@ type GradationFullScreenModalProps = {
 export default function GradationFullScreenModal(
   props: GradationFullScreenModalProps,
 ) {
-  useEffect(() => {}, []);
+  const lang = useSelector((state: RootState) => state.user.lang);
+  const {height} = useWindowDimensions();
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  useEffect(() => {
+    setIsSmallScreen(height <= 670);
+  }, [height]);
   const dispatch = useAppDispatch();
   const [restoreFailed, setRestoreFailed] = useState(false);
 
@@ -67,15 +75,16 @@ export default function GradationFullScreenModal(
           console.log('receipt', receipt);
           await EncryptedStorage.setItem('receipt', receipt);
           trackEvent('Payment Restored');
+          dispatch(paymentSlice.actions.setPayModal({payModal: false}));
         } else {
           console.log('no purchases');
           dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
           await EncryptedStorage.removeItem('receipt');
-          if (props.setIndicator) {
-            props.setIndicator(false);
-          }
           setRestoreFailed(true);
           // dispatch(paymentSlice.actions.setPayModal({payModal: false}));
+        }
+        if (props.setIndicator) {
+          props.setIndicator(false);
         }
       })
       .catch(async error => {
@@ -87,6 +96,21 @@ export default function GradationFullScreenModal(
         dispatch(paymentSlice.actions.setPayModal({payModal: false}));
       });
   };
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (restoreFailed) {
+      const timer = setTimeout(() => {
+        setRestoreFailed(false);
+      }, 2000);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+      return () => clearTimeout(timer);
+    }
+  }, [restoreFailed]);
 
   return (
     <View style={styles.entire}>
@@ -103,72 +127,175 @@ export default function GradationFullScreenModal(
           }}>
           <SvgXml width={24} height={24} xml={svgList.modal.xBtn} />
         </Pressable>
-        <SvgXml width={80} height={80} xml={svgList.appLogo} />
+        <SvgXml
+          width={isSmallScreen ? 64 : 80}
+          height={isSmallScreen ? 64 : 80}
+          xml={svgList.appLogo}
+        />
       </View>
-
+      <View style={{height: isSmallScreen ? 8 : 28}} />
       <Text
         style={[
           styles.txt,
           {
             fontFamily: 'Pretendard-Medium',
-            lineHeight: 25.6,
-            letterSpacing: -0.32,
-            fontSize: 16,
-            marginTop: 28,
-            marginBottom: 10,
+            lineHeight: isSmallScreen ? (lang == 'en' ? 25.6 : 24) : 25.6,
+            letterSpacing: isSmallScreen
+              ? lang == 'en'
+                ? 0.48
+                : -0.3
+              : lang == 'en'
+              ? 0.48
+              : -0.32,
+            fontSize: isSmallScreen ? (lang == 'en' ? 16 : 15) : 16,
           },
         ]}>
-        안녕하세요, 개발팀입니다.
+        {lang == 'en'
+          ? 'Greetings from the development team.'
+          : '안녕하세요, 개발팀입니다.'}
       </Text>
-      <SvgXml width={312} xml={svgList.modal.slogan} />
+      <View
+        style={{
+          height: isSmallScreen
+            ? lang == 'en'
+              ? 8
+              : 16.4
+            : lang == 'en'
+            ? 10
+            : 10.5,
+        }}
+      />
+
+      {lang == 'en' ? (
+        <SvgXml
+          width={isSmallScreen ? 320 : 320}
+          xml={
+            isSmallScreen
+              ? svgList.modal.sloganSmallEng
+              : svgList.modal.sloganEng
+          }
+        />
+      ) : (
+        <SvgXml
+          width={isSmallScreen ? 262 : 312}
+          xml={isSmallScreen ? svgList.modal.sloganSmall : svgList.modal.slogan}
+        />
+      )}
+      {lang == 'en' ? (
+        <View style={{height: isSmallScreen ? 11 : 21}} />
+      ) : (
+        <View style={{height: isSmallScreen ? 13.27 : 25.55}} />
+      )}
+
       <Text
         style={[
           styles.txt,
           {
             fontFamily: 'Pretendard-Medium',
 
-            lineHeight: 24.31,
-            fontSize: 17,
+            lineHeight: isSmallScreen
+              ? lang == 'en'
+                ? 22.88
+                : 22.08
+              : lang == 'en'
+              ? 22.88
+              : 24.31,
+            fontSize: isSmallScreen
+              ? lang == 'en'
+                ? 16
+                : 16
+              : lang == 'en'
+              ? 16
+              : 17,
             textAlign: 'center',
-            marginTop: 25,
-            marginBottom: 4,
           },
+          lang == 'en' && {letterSpacing: 0.32},
         ]}>
-        {'현대인에게 가장 친숙한 핸드폰을\n말씀을 위한 도구로 바꾸기 위해'}
+        {lang == 'en'
+          ? 'so we started with the vision to'
+          : '현대인에게 가장 친숙한 핸드폰을\n말씀을 위한 도구로 바꾸기 위해'}
       </Text>
-      <SvgXml width={280} xml={svgList.modal.slogan2} />
-      <Text
-        style={[
-          styles.txt,
-          {
-            fontFamily: 'Pretendard-Medium',
+      {lang == 'en' ? (
+        <View style={{height: isSmallScreen ? 2 : 3}} />
+      ) : (
+        <View style={{height: isSmallScreen ? 1 : 4}} />
+      )}
 
-            lineHeight: 24.31,
-            fontSize: 17,
-            marginTop: 6,
-            marginBottom: 20,
-          },
-        ]}>
-        {'라는 비전을 갖고 시작했습니다.'}
-      </Text>
+      {lang == 'en' ? (
+        <SvgXml
+          width={isSmallScreen ? 275 : 320}
+          xml={
+            isSmallScreen
+              ? svgList.modal.slogan2SmallEng
+              : svgList.modal.slogan2Eng
+          }
+        />
+      ) : (
+        <SvgXml
+          width={isSmallScreen ? 204 : 280}
+          xml={
+            isSmallScreen ? svgList.modal.slogan2Small : svgList.modal.slogan2
+          }
+        />
+      )}
+      {lang != 'en' && (
+        <>
+          <View style={{height: isSmallScreen ? 1 : 6}} />
+          <Text
+            style={[
+              styles.txt,
+              {
+                fontFamily: 'Pretendard-Medium',
+
+                lineHeight: isSmallScreen ? 22.08 : 24.31,
+                fontSize: isSmallScreen ? 16 : 17,
+              },
+            ]}>
+            {'라는 비전을 갖고 시작했습니다.'}
+          </Text>
+        </>
+      )}
+      {lang == 'en' ? (
+        <View style={{height: isSmallScreen ? 20 : 21}} />
+      ) : (
+        <View style={{height: isSmallScreen ? 14 : 20}} />
+      )}
+
       <SvgXml width={120} xml={svgList.modal.separator} />
+      {lang == 'en' ? (
+        <View style={{height: isSmallScreen ? 13 : 19}} />
+      ) : (
+        <View style={{height: isSmallScreen ? 13 : 14}} />
+      )}
+
       <Text
         style={[
           styles.txt,
           {
             fontFamily: 'Pretendard-Medium',
 
-            lineHeight: 22.4,
-            fontSize: 14,
-            letterSpacing: -0.28,
+            lineHeight: isSmallScreen
+              ? lang == 'en'
+                ? 18.6
+                : 19.6
+              : lang == 'en'
+              ? 18.6
+              : 22.4,
+            fontSize: lang == 'en' ? 15 : 14,
+            letterSpacing: lang == 'en' ? 0.3 : -0.28,
             textAlign: 'center',
-            marginTop: 14,
           },
         ]}>
-        {
-          '성경 66권을 개인마다 데이터베이스에\n저장하고 유지하기 위해서는\n소량의 서버비용(3천원)이 소요됩니다.'
-        }
+        {lang == 'en'
+          ? 'A small server fee is required to\nstore and maintain the 66 books\nin a personalized database.'
+          : '성경 66권을 개인마다 데이터베이스에\n저장하고 유지하기 위해서는\n소량의 서버비용(3천원)이 소요됩니다.'}
       </Text>
+      {lang == 'en' ? (
+        <View style={{height: isSmallScreen ? 14 : 48}} />
+      ) : (
+        <View style={{height: isSmallScreen ? 8 : 39}} />
+      )}
+
       <Text
         style={[
           styles.txt,
@@ -176,14 +303,21 @@ export default function GradationFullScreenModal(
             color: '#ABABF5',
             fontFamily: 'Pretendard-Medium',
 
-            fontSize: 13,
-            letterSpacing: -0.26,
+            fontSize: lang == 'en' ? 14 : 13,
+            letterSpacing: lang == 'en' ? 0.28 : -0.26,
             textAlign: 'center',
-            marginTop: 39,
           },
         ]}>
-        {'원하실 때 취소하실 수 있습니다.'}
+        {lang == 'en'
+          ? 'You can cancel whenever you want.'
+          : '원하실 때 취소하실 수 있습니다.'}
       </Text>
+      {lang == 'en' ? (
+        <View style={{height: 13}} />
+      ) : (
+        <View style={{height: 14}} />
+      )}
+
       <Pressable
         style={styles.btn}
         onPress={() => {
@@ -192,17 +326,19 @@ export default function GradationFullScreenModal(
         <Text
           style={{
             color: 'white',
-            fontFamily: 'Pretendard-ExtraBold',
+            fontFamily:
+              lang == 'en' ? 'Pretendard-Bold' : 'Pretendard-ExtraBold',
             fontSize: 18,
             lineHeight: 24,
-            letterSpacing: -0.32,
+            letterSpacing: lang == 'en' ? 0.18 : -0.32,
             textAlign: 'center',
           }}>
-          구독 시작하기
+          {lang == 'en' ? 'Start a subscription' : '구독 시작하기'}
         </Text>
         <View style={{width: 10}} />
         <SvgXml width={20} height={20} xml={svgList.modal.backBtn} />
       </Pressable>
+      <View style={{height: isSmallScreen ? 18 : 33}} />
 
       <Pressable
         onPress={() => {
@@ -217,21 +353,103 @@ export default function GradationFullScreenModal(
               color: '#ABABF5',
               fontFamily: 'Pretendard-Medium',
 
-              fontSize: 13,
-              letterSpacing: -0.26,
+              fontSize: isSmallScreen
+                ? lang == 'en'
+                  ? 13
+                  : 12
+                : lang == 'en'
+                ? 14
+                : 13,
+              letterSpacing: isSmallScreen
+                ? lang == 'en'
+                  ? 0.13
+                  : -0.24
+                : lang == 'en'
+                ? 0.14
+                : -0.26,
               textAlign: 'center',
-              marginTop: 56,
               lineHeight: 20,
             },
           ]}>
-          {!restoreFailed
-            ? '비용을 줄일 수 있는 개발자 분들의 자문 환영합니다\n이미 구독 중이신가요?'
-            : '시스템상에서 구독 중이 아니신 것으로 파악됩니다.\n오류라고 생각되시면 문의 부탁드립니다.\n(마이페이지 > 문의하기)'}
+          {restoreFailed
+            ? ''
+            : lang == 'en'
+            ? 'We welcome developer suggestions to reduce costs.'
+            : '비용을 줄일 수 있는 개발자 분들의 자문 환영합니다.'}
+        </Text>
+        <Text
+          style={[
+            styles.txt,
+            {
+              color: '#ABABF5',
+              fontFamily: 'Pretendard-Medium',
+              textDecorationStyle: 'solid',
+              textDecorationLine: 'underline',
+              textDecorationColor: '#ABABF5',
+
+              fontSize: isSmallScreen
+                ? lang == 'en'
+                  ? 13
+                  : 12
+                : lang == 'en'
+                ? 14
+                : 13,
+              letterSpacing: isSmallScreen
+                ? lang == 'en'
+                  ? 0.13
+                  : -0.24
+                : lang == 'en'
+                ? 0.14
+                : -0.26,
+              textAlign: 'center',
+              lineHeight: 20,
+            },
+          ]}>
+          {restoreFailed
+            ? ''
+            : lang == 'en'
+            ? 'Already subscribed?'
+            : '이미 구독 중이신가요?'}
         </Text>
       </Pressable>
+      {restoreFailed && (
+        <View
+          style={{
+            backgroundColor: '#3E3D51',
+            position: 'absolute',
+            left: isSmallScreen ? 9 : lang == 'en' ? 23 : 20,
+            right: isSmallScreen ? 11 : lang == 'en' ? 17 : 20,
+            bottom: isSmallScreen ? 14 : lang == 'en' ? 24 : 21,
+            flexDirection: 'row',
+            paddingHorizontal: isSmallScreen ? 8 : 5,
+            paddingVertical: isSmallScreen ? 6 : 11,
+            borderTopWidth: 1,
+            borderTopColor: '#FFF',
+          }}>
+          <SvgXml width={24} height={24} xml={svgList.modal.toastIcon} />
+          <View style={{width: isSmallScreen ? 12 : lang == 'en' ? 12 : 18}} />
+          <Text
+            style={[
+              {
+                color: 'white',
+                fontFamily: 'Pretendard-Medium',
+                fontSize: 13,
+                lineHeight: isSmallScreen ? 18.2 : lang == 'en' ? 16.9 : 18.2,
+              },
+              lang != 'en' && {
+                letterSpacing: -0.26,
+              },
+            ]}>
+            {lang == 'en'
+              ? 'It appears that you are not currently subscribed to\nour system. If you believe this is an error, please\ndo not hesitate to contact us for assistance.'
+              : '시스템상에서 구독 중이 아니신 것으로 파악됩니다.\n오류라고 생각되시면 문의 부탁드립니다.\n(마이페이지 > 문의하기)'}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
+// ''
 
 const styles = StyleSheet.create({
   entire: {
