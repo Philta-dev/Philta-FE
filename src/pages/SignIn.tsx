@@ -198,7 +198,7 @@ export default function SignIn(props: SignInProps) {
     <View style={styles.entire}>
       <View style={styles.title}>
         {/* <Splash loop={true} /> */}
-        <SvgXml xml={svgList.appLogo} width={150} height={150} />
+        <SvgXml xml={svgList.appLogo} width={100} height={100} />
       </View>
       <View style={styles.btnView}>
         <Pressable
@@ -222,8 +222,6 @@ export default function SignIn(props: SignInProps) {
                   ? svgList.socialLogin.appleEng
                   : svgList.socialLogin.apple
               }
-              width={160}
-              height={32}
             />
           </Pressable>
         )}
