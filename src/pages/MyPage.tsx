@@ -8,6 +8,7 @@ import {
   ScrollView,
   Linking,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import {useEffect, useRef, useState} from 'react';
 import axios, {AxiosError} from 'axios';
@@ -57,6 +58,8 @@ export default function MyPage(props: MyPageProps) {
   const [nickName, setNickName] = useState('');
   const [nickNameValue, setNickNameValue] = useState('');
 
+  const [indicator, setIndicator] = useState(false);
+
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
     const unsubscriber = appleAuth.onCredentialRevoked(async () => {
@@ -96,6 +99,7 @@ export default function MyPage(props: MyPageProps) {
 
   const logout = async () => {
     try {
+      setIndicator(true);
       const response = await axios.post(`${Config.API_URL}/auth/logout`);
       console.log(response.data);
       if (socialType === 'kakao') {
@@ -103,9 +107,13 @@ export default function MyPage(props: MyPageProps) {
       } else if (socialType == 'google') {
         await GoogleSignin.signOut();
       }
-      await EncryptedStorage.removeItem('receipt');
+      if (await EncryptedStorage.getItem('receipt'))
+        await EncryptedStorage.removeItem('receipt');
       resetTrackUser();
-      await EncryptedStorage.removeItem('refreshToken');
+      if (await EncryptedStorage.getItem('refreshTokenr'))
+        await EncryptedStorage.removeItem('refreshToken');
+      setIndicator(false);
+      console.log('logout');
       dispatch(userSlice.actions.setToken({accessToken: ''}));
     } catch (e) {
       const errorResponse = (
@@ -118,6 +126,7 @@ export default function MyPage(props: MyPageProps) {
   const quit = async () => {
     console.log('quit');
     try {
+      setIndicator(true);
       const response = await axios.delete(`${Config.API_URL}/auth/quit`);
       console.log(response.data);
       if (socialType === 'kakao') {
@@ -128,6 +137,7 @@ export default function MyPage(props: MyPageProps) {
       await EncryptedStorage.removeItem('receipt');
       resetTrackUser();
       await EncryptedStorage.removeItem('refreshToken');
+      setIndicator(false);
       dispatch(userSlice.actions.setToken({accessToken: ''}));
     } catch (error) {
       const errorResponse = (
@@ -608,6 +618,21 @@ export default function MyPage(props: MyPageProps) {
           </View>
         </View>
       </Modal>
+      {indicator && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
     </ScrollView>
   );
 }
