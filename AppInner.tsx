@@ -123,11 +123,11 @@ function AppInner() {
   useEffect(() => {
     const init = async () => {};
     init().finally(async () => {
-      // setShowCustomSplash(true);
+      await BootSplash.hide({fade: true});
+      setShowCustomSplash(true);
       setTimeout(async () => {
-        await BootSplash.hide({fade: true});
-        // setShowCustomSplash(false);
-      }, 1500);
+        setShowCustomSplash(false);
+      }, 4000);
     });
   }, []);
   const [showCustomSplash, setShowCustomSplash] = useState(false);
@@ -246,7 +246,7 @@ function AppInner() {
 
     const subscriptions = await getSubscriptions({
       // skus: ['test'],
-      skus: ['test', 'philta.monthly.test'],
+      skus: ['test', 'tyble.monthly'],
     });
     console.log('subscriptions', subscriptions);
     if (subscriptions[0].subscriptionOfferDetails) {
@@ -370,17 +370,18 @@ function AppInner() {
     };
   }, [accessToken]);
 
+  // return true ? (
   return showCustomSplash ? (
     <View
       style={{
-        // backgroundColor: 'white',
+        backgroundColor: 'white',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 5,
         paddingRight: 8,
       }}>
-      {/* <Splash /> */}
+      <Splash />
     </View>
   ) : loadingPage ? (
     <View

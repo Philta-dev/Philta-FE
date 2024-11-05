@@ -8,7 +8,12 @@ export default function Splash(props: {loop?: boolean}) {
       source={require('../../assets/jsons/splash.json')}
       autoPlay
       loop={props.loop ?? false}
-      style={{width: 510, height: 510}}
+      style={{
+        width: 190,
+        height: 190,
+        marginLeft: 8,
+        marginTop: 12,
+      }}
     />
   );
 }
