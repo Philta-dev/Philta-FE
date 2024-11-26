@@ -110,7 +110,7 @@ export default function MyPage(props: MyPageProps) {
       if (await EncryptedStorage.getItem('receipt'))
         await EncryptedStorage.removeItem('receipt');
       resetTrackUser();
-      if (await EncryptedStorage.getItem('refreshTokenr'))
+      if (await EncryptedStorage.getItem('refreshToken'))
         await EncryptedStorage.removeItem('refreshToken');
       setIndicator(false);
       console.log('logout');
@@ -134,9 +134,13 @@ export default function MyPage(props: MyPageProps) {
       } else if (socialType === 'google') {
         await GoogleSignin.revokeAccess();
       }
-      await EncryptedStorage.removeItem('receipt');
+      if (await EncryptedStorage.getItem('receipt')) {
+        await EncryptedStorage.removeItem('receipt');
+      }
       resetTrackUser();
-      await EncryptedStorage.removeItem('refreshToken');
+      if (await EncryptedStorage.getItem('refreshToken')) {
+        await EncryptedStorage.removeItem('refreshToken');
+      }
       setIndicator(false);
       dispatch(userSlice.actions.setToken({accessToken: ''}));
     } catch (error) {

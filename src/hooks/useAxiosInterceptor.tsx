@@ -68,7 +68,9 @@ const useAxiosInterceptor = () => {
           const douleErrorResponseStatusCode = error2.response?.data.statusCode;
           if (douleErrorResponseStatusCode == 1083) {
             console.log('refresh token expired');
-            await EncryptedStorage.removeItem('refreshToken');
+            if (await EncryptedStorage.getItem('refreshToken')) {
+              await EncryptedStorage.removeItem('refreshToken');
+            }
             dispatch(
               userSlice.actions.setToken({
                 accessToken: '',

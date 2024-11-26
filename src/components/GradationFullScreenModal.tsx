@@ -79,7 +79,10 @@ export default function GradationFullScreenModal(
         } else {
           console.log('no purchases');
           dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
-          await EncryptedStorage.removeItem('receipt');
+          const receipt = await EncryptedStorage.getItem('receipt');
+          if (receipt) {
+            await EncryptedStorage.removeItem('receipt');
+          }
           setRestoreFailed(true);
           // dispatch(paymentSlice.actions.setPayModal({payModal: false}));
         }
@@ -89,7 +92,9 @@ export default function GradationFullScreenModal(
       })
       .catch(async error => {
         console.log('getAvailablePurchases', error);
-        await EncryptedStorage.removeItem('receipt');
+        if (await EncryptedStorage.getItem('receipt')) {
+          await EncryptedStorage.removeItem('receipt');
+        }
         if (props.setIndicator) {
           props.setIndicator(false);
         }

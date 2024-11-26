@@ -232,9 +232,11 @@ function AppInner() {
     );
 
     purchaseErrorSubscription = purchaseErrorListener(
-      (error: PurchaseError) => {
+      async (error: PurchaseError) => {
         console.warn('purchaseErrorListener', error);
-        EncryptedStorage.removeItem('receipt');
+        if (await EncryptedStorage.getItem('receipt')) {
+          EncryptedStorage.removeItem('receipt');
+        }
         if (error.code?.toLowerCase().includes('already')) {
           _restoreSubscription();
         }
@@ -246,7 +248,7 @@ function AppInner() {
 
     const subscriptions = await getSubscriptions({
       // skus: ['test'],
-      skus: ['test', 'tyble.monthly'],
+      skus: ['monthly', 'tyble.monthly'],
     });
     console.log('subscriptions', subscriptions);
     if (subscriptions[0].subscriptionOfferDetails) {
@@ -275,7 +277,7 @@ function AppInner() {
         `${Config.API_URL}/payments/appleverify`,
         {
           receiptData: receipt,
-          productId: 'test',
+          productId: 'monthly',
         },
       );
       console.log('validation reciept for server', response.data.data.status);
@@ -285,7 +287,9 @@ function AppInner() {
         await EncryptedStorage.setItem('receipt', receipt);
       } else {
         dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
-        await EncryptedStorage.removeItem('receipt');
+        if (await EncryptedStorage.getItem('receipt')) {
+          await EncryptedStorage.removeItem('receipt');
+        }
       }
       setIndicator(false);
     } catch (error) {
@@ -293,7 +297,9 @@ function AppInner() {
         error as AxiosError<{message: string; statusCode: number}>
       ).response;
       console.log(errorResponse?.data);
-      await EncryptedStorage.removeItem('receipt');
+      if (await EncryptedStorage.getItem('receipt')) {
+        await EncryptedStorage.removeItem('receipt');
+      }
     }
   };
 
@@ -304,7 +310,7 @@ function AppInner() {
         `${Config.API_URL}/payments/googleverify`,
         {
           purchaseToken: receipt,
-          productId: 'test',
+          productId: 'monthly',
         },
       );
       console.log(
@@ -318,7 +324,9 @@ function AppInner() {
         await EncryptedStorage.setItem('receipt', receipt);
       } else {
         dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
-        await EncryptedStorage.removeItem('receipt');
+        if (await EncryptedStorage.getItem('receipt')) {
+          await EncryptedStorage.removeItem('receipt');
+        }
       }
       setIndicator(false);
     } catch (error) {
@@ -326,7 +334,9 @@ function AppInner() {
         error as AxiosError<{message: string; statusCode: number}>
       ).response;
       console.log(errorResponse?.data);
-      await EncryptedStorage.removeItem('receipt');
+      if (await EncryptedStorage.getItem('receipt')) {
+        await EncryptedStorage.removeItem('receipt');
+      }
     }
   };
 
@@ -345,13 +355,17 @@ function AppInner() {
         } else {
           console.log('no purchases');
           dispatch(paymentSlice.actions.setNeedToPay({needToPay: true}));
-          await EncryptedStorage.removeItem('receipt');
+          if (await EncryptedStorage.getItem('receipt')) {
+            await EncryptedStorage.removeItem('receipt');
+          }
           dispatch(paymentSlice.actions.setPayModal({payModal: false}));
         }
       })
       .catch(async error => {
         console.log('getAvailablePurchases', error);
-        await EncryptedStorage.removeItem('receipt');
+        if (await EncryptedStorage.getItem('receipt')) {
+          await EncryptedStorage.removeItem('receipt');
+        }
         dispatch(paymentSlice.actions.setPayModal({payModal: false}));
       });
   };
