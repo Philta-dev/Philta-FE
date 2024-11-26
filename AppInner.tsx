@@ -3,7 +3,13 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
-import {ActivityIndicator, Platform, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Linking,
+  Platform,
+  Pressable,
+  View,
+} from 'react-native';
 
 import {useSelector} from 'react-redux';
 import {RootState, useAppDispatch} from './src/store';
@@ -49,6 +55,8 @@ import {
 } from 'react-native-iap';
 import GradationFullScreenModal from './src/components/GradationFullScreenModal';
 import paymentSlice from './src/slices/payments';
+import DeviceInfo from 'react-native-device-info';
+import TextBold from './src/components/TextBold';
 
 export type SignInNavParamList = {
   SignIn: undefined;
@@ -82,6 +90,54 @@ function AppInner() {
   );
   const needToPay = useSelector((state: RootState) => state.payments.needToPay);
   const payModal = useSelector((state: RootState) => state.payments.payModal);
+
+  const compareVersions = (myversion: string, minimumVersion: string) => {
+    const myVersionParts = myversion.split('.').map(Number);
+    const minimumVersionParts = minimumVersion.split('.').map(Number);
+
+    const maxLength = Math.max(
+      myVersionParts.length,
+      minimumVersionParts.length,
+    );
+
+    for (let i = 0; i < maxLength; i++) {
+      const v1 = myVersionParts[i] || 0;
+      const v2 = minimumVersionParts[i] || 0;
+
+      if (v1 > v2) {
+        return true; // myversion이 더 높음
+      }
+      if (v1 < v2) {
+        return false; // minimumVersion이 더 높음
+      }
+    }
+
+    return true;
+  };
+  const [appVersionModal, setAppVersionModal] = useState(false);
+  useEffect(() => {
+    const version = DeviceInfo.getVersion();
+    const versionCheck = async () => {
+      try {
+        const response = await axios.get(`${Config.API_URL}/auth/appversion`);
+        console.log('App Version Check', response.data.current_app_version);
+        // if (response.data.version != version) {
+        console.log('App Version Check', version);
+        if (!compareVersions(version, response.data.current_app_version)) {
+          setAppVersionModal(true);
+        } else {
+          setAppVersionModal(false);
+        }
+        // }
+      } catch (error) {
+        const errorResponse = (
+          error as AxiosError<{message: string; statusCode: number}>
+        ).response;
+        console.log(errorResponse?.data);
+      }
+    };
+    versionCheck();
+  }, []);
 
   const accessToken = useSelector((state: RootState) => state.user.accessToken);
   const reissue = async () => {
@@ -461,6 +517,68 @@ function AppInner() {
             zIndex: 100,
           }}>
           <ActivityIndicator size="large" color="#fff" />
+        </View>
+      )}
+      {appVersionModal && (
+        <View
+          style={{
+            position: 'absolute',
+            backgroundColor: '#17171985',
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 100,
+            padding: 36,
+          }}>
+          <View
+            style={{
+              width: '100%',
+              backgroundColor: 'white',
+              borderRadius: 8,
+              padding: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <TextBold
+              style={{
+                fontSize: 18,
+                letterSpacing: -0.1,
+                color: '#000',
+                marginVertical: 12,
+              }}>
+              앱 업데이트 안내
+            </TextBold>
+            <Text
+              style={{fontSize: 15, letterSpacing: -0.1, textAlign: 'center'}}>
+              {
+                '더 나은 서비스를 위해\n타이블 앱이 업데이트 되었습니다.\n최신 앱을 설치해주세요.'
+              }
+            </Text>
+            <View style={{height: 23}} />
+            <Pressable
+              onPress={() => {
+                if (Platform.OS == 'ios') {
+                  Linking.openURL(
+                    'https://apps.apple.com/kr/app/%ED%95%84%ED%83%80/id6504729498',
+                  );
+                } else {
+                  Linking.openURL(
+                    'https://play.google.com/store/apps/details?id=com.philta&pcampaignid=web_share',
+                  );
+                }
+              }}
+              style={{
+                width: '100%',
+                borderRadius: 4,
+                backgroundColor: '#5656D6',
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingVertical: 12,
+              }}>
+              <Text style={{fontSize: 16, color: '#FCFCFE'}}>앱 업데이트</Text>
+            </Pressable>
+          </View>
         </View>
       )}
     </NavigationContainer>
