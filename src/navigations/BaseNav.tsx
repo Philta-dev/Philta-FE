@@ -22,7 +22,7 @@ import {useSelector} from 'react-redux';
 export type RootTabParamList = {
   Typing: undefined;
   Indexing: undefined;
-  MyPageNav: undefined;
+  MyPageNav: {page?: string};
   Favorite: undefined;
   Statistics: undefined;
 };
@@ -141,6 +141,7 @@ const CustomTabbar = ({state, descriptors, navigation}: any) => {
 
 export default function BaseNav() {
   const dispatch = useAppDispatch();
+  const vers = useSelector((state: RootState) => state.user.version);
   const lang = useSelector((state: RootState) => state.user.lang);
   const [dropDown, setDropDown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -148,7 +149,7 @@ export default function BaseNav() {
   const getVersionData = async () => {
     try {
       const response = await axios.get(`${Config.API_URL}/index/version`);
-      console.log(response.data);
+      console.log('BaseNav > getVersionData > response.data', response.data);
       setDropDownItems(response.data.versions);
       setSelectedIndex(
         response.data.versions.indexOf(response.data.current_version),
@@ -185,7 +186,7 @@ export default function BaseNav() {
 
   useEffect(() => {
     getVersionData();
-  }, []);
+  }, [vers]);
   useEffect(() => {
     if (selectedIndex === -1) return;
     if (!dropDown) return;

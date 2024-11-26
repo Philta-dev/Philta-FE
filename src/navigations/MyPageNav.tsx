@@ -41,7 +41,10 @@ export type MyPageStackNavigationProp =
 
 const Stack = createNativeStackNavigator<MyPageNavStackParamList>();
 
-export default function MyPageNav() {
+export default function MyPageNav(props: {
+  navigation: MyPageStackNavigationProp;
+  route: {params: {page?: string}};
+}) {
   const dispatch = useAppDispatch();
   const lang = useSelector((state: RootState) => state.user.lang);
   const [indicator, setIndicator] = useState(false);
@@ -98,6 +101,13 @@ export default function MyPageNav() {
     });
     selectVersion(selectedIndex);
   }, [selectedIndex]);
+
+  useEffect(() => {
+    if (props.route.params?.page) {
+      console.log(props.route.params);
+      props.navigation.navigate(props.route.params.page);
+    }
+  }, [props.route.params?.page]);
   return (
     <View style={{flex: 1}}>
       <Stack.Navigator

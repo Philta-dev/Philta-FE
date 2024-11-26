@@ -829,7 +829,7 @@ export default function Typing(props: TypingProps) {
               );
               setTimeout(() => {
                 // props.navigation.navigate('Favorite');
-                props.navigation.navigate('MyPageNav', {screen: 'Favorite'});
+                props.navigation.navigate('MyPageNav', {page: 'Favorite'});
               }, 500);
             }}>
             <View style={[styles.modalBtnIcon]}>
@@ -854,7 +854,7 @@ export default function Typing(props: TypingProps) {
                   verse: -1,
                 }),
               );
-              props.navigation.navigate('MyPageNav', {screen: 'Statistics'});
+              props.navigation.navigate('MyPageNav', {page: 'Statistics'});
             }}
             style={styles.modalBtn}>
             <View style={styles.modalBtnIcon}>
