@@ -197,8 +197,8 @@ export default function SignIn(props: SignInProps) {
   return (
     <View style={styles.entire}>
       <View style={styles.title}>
-        {/* <Splash loop={true} /> */}
-        <SvgXml xml={svgList.appLogo} width={100} height={100} />
+        <Splash loop={true} />
+        {/* <SvgXml xml={svgList.appLogo} width={100} height={100} /> */}
       </View>
       <View style={styles.btnView}>
         <Pressable
@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 50,
+    marginTop: 60,
   },
   btnView: {
     flex: 3,
